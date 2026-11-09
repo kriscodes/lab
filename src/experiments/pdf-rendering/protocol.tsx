@@ -6,8 +6,9 @@ export function PdfRenderingProtocol({ experiment }: { experiment: ExperimentMet
     <article className="lr-protocol">
       <p className="lr-mono">STUDY 001 / PROPOSED METHOD</p>
       <h1 className="lr-title">
-        Useful progress.
-        <br /> At <em>what cost?</em>
+        {'Useful progress. '}
+        <br />
+        At <em>what cost?</em>
       </h1>
       <p className="lr-lead">
         Can progress updates adapt to their own cost without making the wait feel longer?

@@ -16,8 +16,9 @@ export default function HomePage() {
         <span>HYPOTHESIS · UNTESTED</span>
       </div>
       <h1 className="lr-title">
-        {copy.headline}
-        <br /> {copy.secondLine}
+        {`${copy.headline} `}
+        <br />
+        {copy.secondLine}
         <em>{copy.emphasis}</em>
       </h1>
       <div className="lr-deck">
