@@ -1,0 +1,37 @@
+{
+  "name": "@kriscodes/lab",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Controlled frontend engineering experiments and reproducible research.",
+  "type": "module",
+  "engines": {
+    "node": ">=22.23.4"
+  },
+  "scripts": {
+    "dev": "next dev --hostname 127.0.0.1",
+    "build": "next build && node scripts/verify-export.mjs",
+    "preview": "node scripts/serve-export.mjs",
+    "lint": "eslint . --max-warnings 0",
+    "typecheck": "next typegen && tsc --noEmit",
+    "test": "node --experimental-strip-types --test tests/*.test.mjs",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "verify": "npm run format:check && npm run lint && npm run typecheck && npm test && npm run build",
+    "assets": "node scripts/prepare-assets.mjs"
+  },
+  "dependencies": {
+    "next": "16.4.5",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.5",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "eslint": "10.14.0",
+    "eslint-config-next": "16.4.5",
+    "prettier": "3.9.10",
+    "sharp": "0.35.5",
+    "typescript": "5.9.3"
+  }
+}
