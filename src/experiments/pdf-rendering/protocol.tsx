@@ -57,6 +57,11 @@ export function PdfRenderingProtocol({ experiment }: { experiment: ExperimentMet
         the update policy, without claiming to invent progressive PDF rendering.
       </p>
       <ul className="lr-references">
+        <li>
+          <a href="https://github.com/kriscodes/lab/blob/main/docs/RESEARCH-001-PRIOR-ART.md">
+            Prior-art review and detailed study proposal <span aria-hidden="true">↗</span>
+          </a>
+        </li>
         {experiment.references.map(({ title, url }) => (
           <li key={url}>
             <a href={url}>
