@@ -29,13 +29,13 @@ test('registry entries have unique identities and canonical linkable slugs', () 
     }
   }
   assert.equal(getExperiment('unknown-experiment'), undefined);
-  assert.equal(getExperiment('../data-grid-rendering'), undefined);
+  assert.equal(getExperiment('../pdf-rendering'), undefined);
 });
 
 test('navigation categories are unique and each points to meaningful registered content', () => {
   const categories = getPopulatedCategories();
   assert.equal(new Set(categories).size, categories.length);
-  assert.deepEqual(categories, ['Rendering and reactivity']);
+  assert.deepEqual(categories, ['PDF rendering']);
   for (const category of categories) {
     assert.ok(category.trim());
     assert.ok(EXPERIMENTS.some((experiment) => experiment.category === category));
@@ -43,21 +43,17 @@ test('navigation categories are unique and each points to meaningful registered 
   assert.ok(EXPERIMENTS.every((experiment) => categories.includes(experiment.category)));
 });
 
-test('Experiment 001 is a reproducible protocol and cannot be surfaced as a measured finding', () => {
-  const experiment = getExperiment('data-grid-rendering');
+test('Experiment 001 is an unmeasured PDF proposal and cannot be surfaced as a finding', () => {
+  const experiment = getExperiment('pdf-rendering');
   assert.ok(experiment);
   assert.equal(experiment.id, '001');
-  assert.equal(experiment.title, 'Data Grid Rendering Performance');
-  assert.equal(experiment.status, 'protocol');
-  assert.deepEqual(experiment.strategies, [
-    'All rows',
-    'Client-side pagination',
-    'Virtualized rendering',
-  ]);
-  assert.deepEqual(experiment.recordCounts, [1000, 10000, 100000]);
-  assert.deepEqual(experiment.technologies, ['React', 'TypeScript']);
-  assert.match(experiment.summary, /planned for the next phase/u);
-  assert.match(experiment.hypothesis, /remain to be measured/u);
+  assert.equal(experiment.title, 'The Cost of Rendering Progress');
+  assert.equal(experiment.status, 'proposal');
+  assert.ok(experiment.strategies.includes('Final-frame-only diagnostic'));
+  assert.deepEqual(experiment.technologies, ['PDF.js', 'TypeScript']);
+  assert.match(experiment.summary, /No benchmark runs/u);
+  assert.match(experiment.hypothesis, /remains to be measured/u);
+  assert.equal(getExperiment('data-grid-rendering'), undefined);
   assert.deepEqual(getPublishedFindings(), []);
   assert.ok(!getPublishedFindings().includes(experiment));
   assert.ok(getPublishedFindings().every((entry) => entry.status === 'published'));
@@ -75,7 +71,7 @@ test('registry and navigation outputs are stable and immutable at runtime', () =
   assert.ok(Object.isFrozen(getPublishedFindings()));
   for (const experiment of EXPERIMENTS) {
     assert.ok(Object.isFrozen(experiment));
-    for (const field of ['technologies', 'strategies', 'recordCounts', 'references']) {
+    for (const field of ['technologies', 'strategies', 'references']) {
       assert.ok(Object.isFrozen(experiment[field]));
       assert.throws(() => experiment[field].push('mutated'), TypeError);
     }

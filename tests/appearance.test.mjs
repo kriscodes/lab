@@ -127,7 +127,7 @@ function createPage(t, storage = createStorage()) {
 function assertAppearance(page, appearance) {
   assert.equal(getAppearance(), appearance);
   assert.equal(page.document.documentElement.dataset.theme, appearance);
-  assert.equal(page.meta.content, appearance === 'dark' ? '#101113' : '#ffffff');
+  assert.equal(page.meta.content, appearance === 'dark' ? '#10161f' : '#ffffff');
 }
 
 test('saved dark preference is applied by the actual pre-hydration bootstrap without a write', (t) => {

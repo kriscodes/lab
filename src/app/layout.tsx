@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next';
+import Link from 'next/link';
 import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
 import { SITE_NAME, SITE_ORIGIN } from '@/lib/site';
@@ -24,7 +25,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <meta name="theme-color" content="#ffffff" suppressHydrationWarning />
         <link
           rel="preload"
-          href="/fonts/instrument-sans-latin.woff2"
+          href="/fonts/ibm-plex-sans-400.woff2"
           as="font"
           type="font/woff2"
           crossOrigin="anonymous"
@@ -35,12 +36,22 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <a className="skip-link" href="#main">
           Skip to content
         </a>
-        <div className="site-shell">
-          <SiteHeader />
-          <main id="main" tabIndex={-1}>
-            {children}
-          </main>
-          <SiteFooter />
+        <div id="lab-refined">
+          <div className="lr-page">
+            <SiteHeader />
+            <main id="main" tabIndex={-1}>
+              {children}
+            </main>
+            <details className="lr-disclosure">
+              <summary>What makes a finding worth publishing?</summary>
+              <p>
+                A method you can repeat, raw measurements you can inspect, and limits stated
+                alongside the conclusion. No benchmark results have been collected yet.{' '}
+                <Link href="/methodology/">Read the publication standards.</Link>
+              </p>
+            </details>
+            <SiteFooter />
+          </div>
         </div>
       </body>
     </html>

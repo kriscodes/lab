@@ -24,7 +24,7 @@ export function ThemeToggle() {
   return (
     <>
       <button
-        className="theme-toggle"
+        className="lr-theme"
         type="button"
         aria-label="Dark appearance"
         aria-pressed={appearance === 'dark'}
@@ -62,6 +62,7 @@ export function ThemeToggle() {
             strokeLinecap="round"
           />
         </svg>
+        Appearance
       </button>
       <span className="sr-only" role="status" aria-live="polite">
         {message}

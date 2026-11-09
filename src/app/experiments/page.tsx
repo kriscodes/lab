@@ -1,42 +1,29 @@
-import { ExperimentEntry } from '@/components/experiment-entry';
-import { EXPERIMENTS, getPopulatedCategories } from '@/lib/experiments';
+import Link from 'next/link';
+import { EXPERIMENTS, getExperimentPath } from '@/lib/experiments';
 import { pageMetadata } from '@/lib/site';
 
 export const metadata = pageMetadata(
-  'Experiments',
-  'The Engineering Lab research log. Experiment 001 defines a controlled comparison of data-grid rendering strategies; measurements are not yet collected.',
+  'Studies',
+  'PDF rendering research. A proposed study; no measured findings have been published.',
   '/experiments/',
 );
-
-/** Lists actual investigations with their stage, without empty categories or invented studies. */
 export default function ExperimentsPage() {
   return (
-    <>
-      <header className="document-hero">
-        <p className="eyebrow mono">The research log</p>
-        <h1>Follow the question.</h1>
-        <p className="document-intro">
-          Protocols, experiments, and their findings. Each entry keeps the assumptions and
-          limitations close to the work.
-        </p>
-        <p className="stage-note">
-          The first entry is a protocol. A runnable benchmark and measured findings are the next
-          phase.
-        </p>
-      </header>
-      {getPopulatedCategories().map((category) => (
-        <section key={category} id="rendering-and-reactivity" aria-labelledby="rendering-title">
-          <header className="section-heading">
-            <h2 id="rendering-title">{category}</h2>
-            <span className="mono section-label">Research protocol</span>
-          </header>
-          {EXPERIMENTS.filter((experiment) => experiment.category === category).map(
-            (experiment) => (
-              <ExperimentEntry key={experiment.id} experiment={experiment} />
-            ),
-          )}
+    <article className="lr-protocol">
+      <p className="lr-mono">THE RESEARCH LOG</p>
+      <h1 className="lr-title">
+        Follow the <em>question.</em>
+      </h1>
+      <p className="lr-lead">Questions, methods, and the evidence they produce.</p>
+      {EXPERIMENTS.map((experiment) => (
+        <section key={experiment.id} className="lr-policy">
+          <p className="lr-mono">STUDY {experiment.id} / PROPOSED STUDY</p>
+          <h2>
+            <Link href={getExperimentPath(experiment.slug)}>{experiment.title} ↗</Link>
+          </h2>
+          <p>{experiment.summary}</p>
         </section>
       ))}
-    </>
+    </article>
   );
 }

@@ -1,3 +1,7 @@
+# Validation history
+
+The following records validation of the earlier foundation revision. The current publication design and proposed PDF study require the current verification run; the earlier screenshots are historical.
+
 # Engineering Lab foundation validation
 
 Reviewed November 8, 2026, on the `codex/lab-foundation` feature branch. The initial repository commit is `24c8ac7b36600a9851ac9d36e5e58210555e78e3`.

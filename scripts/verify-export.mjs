@@ -3,7 +3,7 @@ import { dirname, extname, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ORIGIN = 'https://lab.kristiansalmeron.com';
-const ROUTES = ['/', '/experiments/', '/experiments/data-grid-rendering/', '/methodology/'];
+const ROUTES = ['/', '/experiments/', '/experiments/pdf-rendering/', '/methodology/'];
 
 /** Decode resource and metadata values without requiring a runtime HTML parser. */
 function decode(value) {

@@ -6,7 +6,7 @@ import test from 'node:test';
 import { verifyExport } from './verify-export.mjs';
 
 const ORIGIN = 'https://lab.kristiansalmeron.com';
-const ROUTES = ['/', '/experiments/', '/experiments/data-grid-rendering/', '/methodology/'];
+const ROUTES = ['/', '/experiments/', '/experiments/pdf-rendering/', '/methodology/'];
 
 /** Create portable static output rather than importing application components into the audit tests. */
 async function fixture(t, changes = {}) {
@@ -32,7 +32,7 @@ async function fixture(t, changes = {}) {
 <meta property="og:url" content="${ORIGIN}${route}"><meta property="og:image" content="${ORIGIN}/social-preview.png">
 <meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="${ORIGIN}/social-preview.png">
 <script src="/assets/site.js"></script></head><body><main id="main"><h1>Research protocol</h1>
-<a href="/experiments/data-grid-rendering/#main">Inspect the protocol</a></main>
+<a href="/experiments/pdf-rendering/#main">Inspect the protocol</a></main>
 <script>const serialized = '<meta property="og:url" content="ignore serialized React payload">';</script></body></html>`;
   }
   for (const [name, content] of Object.entries({ ...files, ...changes })) {

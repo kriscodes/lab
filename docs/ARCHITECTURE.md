@@ -1,6 +1,6 @@
 # Architecture
 
-Engineering Lab is an independent Next.js, React, and TypeScript application. It owns its repository, dependency lockfile, checks, and future deployment. Portfolio and Toolbox remain independent applications. Shared typography and visual conventions are documented rather than distributed through a runtime package.
+Engineering Lab is an independent Next.js, React, and TypeScript application. It owns its repository, dependency lockfile, checks, and future deployment. Portfolio and Toolbox remain independent applications. Each application has its own approved visual identity and no shared runtime package.
 
 ## Static application
 
@@ -13,25 +13,23 @@ The static-export choice follows [Next.js's documented export model](https://nex
 | Location                                             | Responsibility                                                         |
 | ---------------------------------------------------- | ---------------------------------------------------------------------- |
 | `src/app/layout.tsx`                                 | Document metadata, local fonts, shared shell, and appearance bootstrap |
-| `src/app/page.tsx`                                   | Lab introduction and real experiment entries                           |
+| `src/app/page.tsx`                                   | Study 001 publication cover                                            |
 | `src/app/experiments/`                               | Experiment index and statically generated experiment routes            |
 | `src/app/methodology/`                               | Shared research and measurement principles                             |
 | `src/app/not-found.tsx`                              | Accessible recovery links for unknown routes                           |
 | `src/app/sitemap.ts`, `robots.ts`                    | Static crawler files                                                   |
-| `src/components/experiment-layout.tsx`               | Consistent research-document structure                                 |
-| `src/components/experiment-entry.tsx`                | Experiment summaries and status                                        |
 | `src/components/site-header.tsx`, `theme-toggle.tsx` | Navigation and progressive appearance controls                         |
 | `src/lib/experiments.ts`                             | Typed experiment registry and publication state                        |
 | `src/lib/site.ts`                                    | Canonical site identity and metadata conventions                       |
 | `src/lib/appearance.ts`                              | Appearance preference parsing                                          |
-| `src/experiments/data-grid-rendering/protocol.tsx`   | Experiment-owned protocol document content                             |
+| `src/experiments/pdf-rendering/protocol.tsx`         | Experiment-owned protocol document content                             |
 | `scripts/verify-export.mjs`                          | Audit the generated static routes, metadata, links, and assets         |
 
 ## Publication model
 
-An experiment in `protocol` state describes a research question, hypothesis, proposed controls, measurement definitions, limitations, and reproduction plan. It has no measured findings. `published` is reserved for an experiment with evidence that has passed the publication checks. `getPublishedFindings()` supplies findings from published work; the initial foundation has none.
+An experiment in `proposal` state is still being investigated and has no measurements. An experiment in `protocol` state describes a research question, hypothesis, proposed controls, measurement definitions, limitations, and reproduction plan. It has no measured findings. `published` is reserved for an experiment with evidence that has passed the publication checks. `getPublishedFindings()` supplies findings from published work; the initial foundation has none.
 
-Experiment 001, Data Grid Rendering Performance, is a protocol in this release. Dataset sizes and test conditions are planned inputs. They are not performance measurements. The foundation does not contain an implemented benchmark runner, interactive grid comparison, collected results, result charts, or export controls. Those are the next implementation phase.
+Experiment 001, The Cost of Rendering Progress, is a proposed PDF study. Its first step is a diagnostic pilot before an adaptive-policy comparison. The application does not contain a PDF benchmark runner or collected results. The previous data-grid proposal is no longer a public entry.
 
 Before publishing measured findings:
 
@@ -46,13 +44,13 @@ The export audit checks delivered files and metadata. It cannot establish whethe
 
 ## Future experiment boundaries
 
-Keep the initial infrastructure small: metadata, a reusable document layout, and a typed publication status. Add controls, runner code, measurement records, and JSON/CSV export when Experiment 001 is implemented. Do not add a general plugin system in advance.
+Keep the initial infrastructure small: metadata, the approved publication layout, and a typed publication status. Add controls, runner code, measurement records, and JSON/CSV export when Experiment 001 is implemented. Do not add a general plugin system in advance.
 
 Future SolidJS, Svelte, or other implementations should have isolated build outputs and load only the implementation under test in a fresh runner document. Keep the same dataset, workload, styling constraints, and measurement protocol. A parent research page can describe or launch a runner, but its rendering and unrelated framework bundles must not be included in the measured workload. An iframe alone does not guarantee process isolation; compare like environments and document remaining interference.
 
 ## Accessibility and appearance
 
-Static landmarks, headings, navigation, skip links, and prose remain usable before JavaScript loads. Theme controls enhance the reading experience and write only the Lab's `lab.theme.v1` preference. They do not read or migrate Portfolio, Toolbox, or archived-project browser data. Local Instrument Sans and IBM Plex Mono assets retain their licenses. Visible focus, responsive layout, readable contrast, and reduced-motion behavior require browser checks in addition to automated tests.
+Static landmarks, headings, navigation, skip links, and prose remain usable before JavaScript loads. Theme controls enhance the reading experience and write only the Lab's `lab.theme.v1` preference. They do not read or migrate Portfolio, Toolbox, or archived-project browser data. Local IBM Plex Sans, Source Serif 4, and IBM Plex Mono assets retain their licenses. Visible focus, responsive layout, readable contrast, and reduced-motion behavior require browser checks in addition to automated tests.
 
 ## Validation and release boundary
 

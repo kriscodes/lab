@@ -4,9 +4,9 @@ A public notebook for controlled frontend engineering investigations. This repos
 
 ## Current scope
 
-This foundation includes a research homepage, experiment index, methodology page, custom 404, and the individually linkable **Experiment 001: Data Grid Rendering Performance** protocol. It shares the approved Instrument Sans / IBM Plex Mono typography and neutral light/dark palette without a shared runtime package.
+This application implements the approved publication design: IBM Plex Sans, Source Serif 4, IBM Plex Mono, white/ink/cobalt colors, horizontal navigation, and an open study layout. All fonts are self-hosted.
 
-Experiment 001 is a **protocol**, not an executed benchmark. There is no interactive grid, measurement collection, result visualization, export implementation, or published performance finding yet. Those belong to the next phase. Only populated research topics appear; no placeholder experiments or fabricated results are included.
+Experiment 001 is **The Cost of Rendering Progress**, a proposed PDF rendering study. Its homepage, method, research log, methodology, and custom 404 are statically exported. No PDF runner, measurement collection, or published performance finding exists yet. The diagnostic pilot and adaptive comparison are research proposals, not results.
 
 The canonical future site is `https://lab.kristiansalmeron.com/`. This source change does not publish it or configure DNS.
 
@@ -48,6 +48,7 @@ The experiment registry is a plain typed array in `src/lib/experiments.ts`. Each
 - [Visual specification](docs/VISUAL-SPECIFICATION.md)
 - [Adding experiments](docs/ADDING-EXPERIMENTS.md)
 - [Experiment 001 protocol](docs/EXPERIMENT-001-PROTOCOL.md)
+- [Prior-art review and proposed two-stage study](docs/RESEARCH-001-PRIOR-ART.md)
 - [Future deployment and release process](docs/DEPLOYMENT.md)
 - [Foundation validation and preview](docs/FOUNDATION-VALIDATION.md)
 

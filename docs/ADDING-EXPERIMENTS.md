@@ -2,7 +2,7 @@
 
 The Lab publishes questions, reproducible experiments, and findings supported by evidence. A finished page must explain both what was observed and what the experiment cannot establish.
 
-The foundation includes a small experiment registry and a consistent page structure. Experiment 001 is a protocol, not an implemented benchmark. Do not publish numerical results, result-shaped example data, or performance conclusions until measurements have been collected and reviewed.
+The foundation includes a small experiment registry and a consistent page structure. Experiment 001 is a proposed PDF study, not an implemented benchmark. Do not publish numerical results, result-shaped example data, or performance conclusions until measurements have been collected and reviewed.
 
 ## 1. Define a bounded question
 
@@ -23,14 +23,15 @@ Follow `src/lib/experiments.ts` and its `ExperimentMetadata` type. Keep metadata
 
 The existing metadata includes the title, summary, research category, lifecycle status, question, hypothesis, technologies, strategy inputs, methodology URL, and references. Record protocol version and source provenance in the methodology documentation until the runner needs a typed result contract. Dates describe actual events; do not insert an invented publication or measurement date.
 
-The foundation supports two lifecycle values:
+The foundation supports three lifecycle values:
 
 | Lifecycle   | What the page may claim                                                                 |
 | ----------- | --------------------------------------------------------------------------------------- |
+| `proposal`  | A candidate question and method under evaluation; no measured findings                  |
 | `protocol`  | The question, proposed method, and planned implementation; no measured findings         |
 | `published` | Versioned findings with raw measurements, environment, and reproducibility instructions |
 
-`getPublishedFindings()` excludes protocols from the findings surface. Keep Experiment 001 at `protocol` until its measured work is ready. A working demonstration alone does not justify changing it to `published`. If a later phase needs a separate interactive lifecycle value, make that a small explicit extension when it is needed. The foundation does not have measurement-collection fields or fixture results.
+`getPublishedFindings()` excludes proposals and protocols from the findings surface. Keep Experiment 001 unmeasured until its method and evidence are ready. A working demonstration alone does not justify changing it to `published`. If a later phase needs a separate interactive lifecycle value, make that a small explicit extension when it is needed. The foundation does not have measurement-collection fields or fixture results.
 
 Only expose a research category when it contains meaningful content. Do not create empty categories or placeholder experiments to fill navigation.
 
@@ -38,13 +39,13 @@ Only expose a research category when it contains meaningful content. Do not crea
 
 Every published experiment should contain the following sections. During the protocol phase, explicitly mark the interactive runner, measurements, and findings as pending rather than simulating them.
 
-The current route is `src/app/experiments/[slug]/page.tsx`, generated from the registry at build time. Reuse `src/components/experiment-layout.tsx` for the title, status, and section navigation. Keep the route responsible for page metadata, registry lookup, and explicit selection of an experiment's own content.
+The current route is `src/app/experiments/[slug]/page.tsx`, generated from the registry at build time. Preserve the approved publication shell and use experiment-owned article content. Keep the route responsible for page metadata, registry lookup, and explicit selection of an experiment's own content.
 
-Keep each investigation's body in `src/experiments/<slug>/`. Experiment 001 uses `src/experiments/data-grid-rendering/protocol.tsx`. Future experiments should supply their own question-specific body in their own folder; do not duplicate the data-grid protocol as a general template. Add a small explicit slug-to-body selection when registering another experiment. A dynamic plugin loader or plugin framework is unnecessary.
+Keep each investigation's body in `src/experiments/<slug>/`. Experiment 001 uses `src/experiments/pdf-rendering/protocol.tsx`. Future experiments should supply their own question-specific body in their own folder; do not duplicate another study’s protocol as a general template. Add a small explicit slug-to-body selection when registering another experiment. A dynamic plugin loader or plugin framework is unnecessary.
 
 Adding registry metadata alone does not create a complete experiment. Verify that its static route renders the matching body, status, and social metadata. Unknown slugs and registered entries without an implemented body should remain missing pages rather than displaying another experiment's content.
 
-Match the shared section anchors: `overview`, `design`, `measurements`, `findings`, and `reproduce`. Put interactive controls under the experiment-design section when implemented. If an investigation needs a different structure, update its navigation deliberately so links still reach meaningful sections.
+Give section anchors meaningful, stable names. Put interactive controls under the experiment-design section when implemented. If an investigation needs a different structure, update its navigation deliberately so links still reach meaningful sections.
 
 ### Overview
 
@@ -86,7 +87,7 @@ Link the source, exact revision used for published results, protocol, test setup
 
 The research page provides context, controls, accessible result presentation, and source links. A runner owns the workload and its measurement boundaries. Do not include animated charts, navigation updates, logging, or unrelated application work inside timed intervals.
 
-For Experiment 001, a separately built, minimal React runner is planned for the next phase. Future framework implementations should use their own entry points and bundles, with one implementation active per quantitative trial. Share neutral dataset and operation contracts rather than framework component instances.
+For Experiment 001, a separately built PDF renderer harness is proposed after the diagnostic pilot. Future framework implementations should use their own entry points and bundles, with one implementation active per quantitative trial. Share neutral dataset and operation contracts rather than framework component instances.
 
 An iframe can separate a demo's document and styles. It does not guarantee a dedicated CPU thread or renderer process. Published measurements should run directly in the minimal runner, serially, with the isolation method documented.
 
@@ -94,7 +95,7 @@ A plain typed registry and a few explicit functions are enough for the first exp
 
 ## 5. Plan result exports
 
-Use a small, versioned JSON result contract when the runner is implemented. Experiment 001 defines its proposed fields in [its protocol](./EXPERIMENT-001-PROTOCOL.md#result-export-contract).
+Use a small, versioned JSON result contract when the runner is implemented. Define its fields alongside [the experiment protocol](./EXPERIMENT-001-PROTOCOL.md) before collecting results.
 
 At minimum, a result needs the experiment and protocol version, source revision, configuration, environment, raw trials, metric units, collection status, and any exclusion reasons. Derived summaries must retain their sample count and calculation method.
 
