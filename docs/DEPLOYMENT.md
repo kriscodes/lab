@@ -19,18 +19,18 @@ Experiment 001 is a protocol at this stage. The release must not describe it as 
 
 Use a **Static Site**, following [Render's Next.js static-export instructions](https://render.com/docs/deploy-nextjs-app). The generated files are served from the CDN. This release has no API process, database, or server that sleeps between requests; a paid always-on compute instance is unnecessary. Creating a service can start its initial deployment.
 
-| Setting             | Value                                                    |
-| ------------------- | -------------------------------------------------------- |
-| Repository          | `kriscodes/lab`                                          |
-| Root directory      | Repository root                                          |
-| Release branch      | Reviewed `main`                                         |
-| Build command       | `npm ci && npm run build`                                |
-| Publish directory   | `out`                                                    |
-| Node version        | `22.23.4`                                                |
-| `SKIP_INSTALL_DEPS` | `true` when using the explicit install command above     |
-| Runtime secrets     | None required                                            |
-| Start command       | None; serve static output                                |
-| Automatic deploys   | Off; release deliberately after verification             |
+| Setting             | Value                                                |
+| ------------------- | ---------------------------------------------------- |
+| Repository          | `kriscodes/lab`                                      |
+| Root directory      | Repository root                                      |
+| Release branch      | Reviewed `main`                                      |
+| Build command       | `npm ci && npm run build`                            |
+| Publish directory   | `out`                                                |
+| Node version        | `22.23.4`                                            |
+| `SKIP_INSTALL_DEPS` | `true` when using the explicit install command above |
+| Runtime secrets     | None required                                        |
+| Start command       | None; serve static output                            |
+| Automatic deploys   | Off; release deliberately after verification         |
 
 The GitHub checks do not deploy anything. Merging source does not release it while Render automatic deployment is disabled. Future releases should identify the exact intended source commit and verify that the deployed commit matches it.
 
