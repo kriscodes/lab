@@ -1,6 +1,6 @@
 # Engineering Lab — Kristian Salmeron
 
-A public notebook for controlled frontend engineering investigations. This repository is independent of [Portfolio](https://github.com/kriscodes/portfolio) and [Toolbox](https://github.com/kriscodes/toolbox), with its own dependencies, checks, and future release lifecycle.
+A public notebook for controlled frontend engineering investigations. This repository is independent of [Portfolio](https://github.com/kriscodes/portfolio) and [Toolbox](https://github.com/kriscodes/toolbox), with its own dependencies, checks, and release lifecycle.
 
 ## Current scope
 
@@ -8,7 +8,13 @@ This application implements the approved publication design: IBM Plex Sans, Sour
 
 Experiment 001 is **The Cost of Rendering Progress**, a proposed PDF rendering study. Its homepage, method, research log, methodology, and custom 404 are statically exported. No PDF runner, measurement collection, or published performance finding exists yet. The diagnostic pilot and adaptive comparison are research proposals, not results.
 
-The canonical future site is `https://lab.kristiansalmeron.com/`. This source change does not publish it or configure DNS.
+The publication site is live at [lab.kristiansalmeron.com](https://lab.kristiansalmeron.com/). The current study remains a proposal; publishing the site does not establish a performance finding.
+
+## Related benchmark work
+
+[PDF Rendering Benchmark](https://github.com/kriscodes/pdf-rendering-benchmark) is a separate repository for reusable infrastructure investigating PDF structure, network delivery, and rendering architecture. Its current work is a corpus foundation, with deterministic PDF-pair generation on a feature branch. It does not yet contain a browser timing runner or published results.
+
+Lab hosts research questions, methods, and eventual findings. Experiment 001 specifically investigates intermediate-frame update cost and cadence, keeping network acquisition separate. The broader benchmark work can support future investigations, but it is not an implementation or validation of Experiment 001.
 
 ## Run locally
 
@@ -49,7 +55,7 @@ The experiment registry is a plain typed array in `src/lib/experiments.ts`. Each
 - [Adding experiments](docs/ADDING-EXPERIMENTS.md)
 - [Experiment 001 protocol](docs/EXPERIMENT-001-PROTOCOL.md)
 - [Prior-art review and proposed two-stage study](docs/RESEARCH-001-PRIOR-ART.md)
-- [Future deployment and release process](docs/DEPLOYMENT.md)
+- [Deployment and release process](docs/DEPLOYMENT.md)
 - [Foundation validation and preview](docs/FOUNDATION-VALIDATION.md)
 
 ## Checks and release boundaries
