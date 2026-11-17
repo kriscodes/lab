@@ -10,6 +10,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/',
     '/experiments/',
     '/methodology/',
+    '/privacy/',
     ...EXPERIMENTS.map(({ slug }) => getExperimentPath(slug)),
   ].map((path) => ({ url: `${SITE_ORIGIN}${path}` }));
 }

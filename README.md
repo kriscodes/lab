@@ -46,7 +46,7 @@ Other commands:
 
 ## Architecture and research conventions
 
-Next.js App Router, React, and TypeScript generate static HTML with `output: 'export'`. Content is rendered without requiring client JavaScript. The initial interactive enhancement is a light/dark preference stored only as `lab.theme.v1`; there is no analytics or measurement upload service.
+Next.js App Router, React, and TypeScript generate static HTML with `output: 'export'`. Content is rendered without requiring client JavaScript. The light/dark preference is stored as `lab.theme.v1`. An optional first-party Studio Insights script reports audience activity to the existing Portfolio analytics service. This is separate from research measurements: no benchmark runner or benchmark-result upload is introduced. See [analytics integration and privacy](docs/ANALYTICS.md). This tracking version must be deployed before new metrics can collect.
 
 The experiment registry is a plain typed array in `src/lib/experiments.ts`. Each investigation owns content under `src/experiments/<slug>/`; a small shared layout supplies the document structure. Future benchmark runners should be separate entry points/bundles, leaving the research shell outside measured work. Do not introduce a plugin framework before multiple real experiments justify one.
 
@@ -66,4 +66,4 @@ The export audit verifies the real HTML routes, canonical/social metadata, local
 
 Next.js 16.4 officially supports the pinned ESLint 10 configuration. Some bundled plugins still declare older ESLint peer ranges, so npm can print the [upstream-documented peer warnings](https://nextjs.org/docs/app/api-reference/config/eslint). The default `npm ci` command is verified without `--force`, peer overrides, or legacy-peer flags; the included React, accessibility, and import rules remain enabled.
 
-The self-hosted font assets include their SIL Open Font License files. No backend or infrastructure is shared with Portfolio, Toolbox, or CareIQ.
+The self-hosted font assets include their SIL Open Font License files. The static site retains its independent deployment. Optional audience measurement uses the existing Portfolio-owned Studio Insights service; no Lab backend or research measurement service is created.

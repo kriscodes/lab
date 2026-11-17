@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import Link from 'next/link';
+import Script from 'next/script';
 import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
 import { SITE_NAME, SITE_ORIGIN } from '@/lib/site';
@@ -17,7 +18,7 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = { width: 'device-width', initialScale: 1 };
 
-/** Exports a static research shell; appearance is the only initial client-side interaction. */
+/** Exports the research shell with optional appearance and first-party audience measurement. */
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" data-theme="light" suppressHydrationWarning>
@@ -53,6 +54,12 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             <SiteFooter />
           </div>
         </div>
+        <Script
+          src="https://analytics.kristiansalmeron.com/analytics-assets/tracker.js"
+          strategy="afterInteractive"
+          data-site="lab"
+          referrerPolicy="no-referrer"
+        />
       </body>
     </html>
   );
