@@ -16,7 +16,7 @@ The export audit checks the five content routes, canonical and social metadata, 
 
 ## Render configuration
 
-Configure the existing Static Site with these build settings:
+[`render.yaml`](../render.yaml) manages the existing `kriscodes-lab` Static Site with these build settings:
 
 | Setting             | Value                                                |
 | ------------------- | ---------------------------------------------------- |
@@ -30,7 +30,13 @@ Configure the existing Static Site with these build settings:
 | Runtime secrets     | None                                                 |
 | Start command       | None                                                 |
 
-GitHub Actions verifies source but does not deploy it. Automatic deployment is configured in Render, outside this repository; inspect that setting before merging or starting a release. Match the deployment to the intended source commit.
+GitHub Actions runs `npm run verify` on every pull request and push to `main`, with a manual run option. CI covers formatting, lint, types, tests, production build, and the export audit. Use a regular feature branch, open a pull request, wait for CI, then merge into `main`. Render automatically deploys matching changes only after that commit's checks pass (`autoDeployTrigger: checksPass`). A failure or zero detected checks blocks automatic deployment. Do not add workflow path filters that skip checks on deployable commits.
+
+The build filter includes application source, public assets, scripts, dependency files, and runtime/build configuration. Documentation-only changes run CI without deploying the site. Update the filter when introducing new build inputs.
+
+The Blueprint tracks `main` with Auto Sync enabled. Adopt the existing service when connecting the Blueprint; do not create a duplicate. The `sync: false` entries preserve environment values already configured on the adopted service. For a new installation, supply the Node version above, `SKIP_INSTALL_DEPS=true`, and `NEXT_TELEMETRY_DISABLED=1`.
+
+Blueprint configuration syncs and manual deploys are separate from commit-triggered deployments. Review configuration changes and merge only after PR checks pass. Manual releases are for recovery after verifying the selected commit's checks. After deploying a specific commit, restore **After CI Checks Pass** if Render disabled auto-deploy. Routine releases do not use deploy hooks.
 
 Serve the exported directory routes directly. Do not add a catch-all rewrite to `/index.html`: unknown paths must return `404.html` with HTTP 404. Required content routes are `/`, `/experiments/`, `/experiments/pdf-rendering/`, `/methodology/`, and `/privacy/`.
 

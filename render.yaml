@@ -1,0 +1,32 @@
+# Manage the existing Lab static site. See docs/DEPLOYMENT.md.
+services:
+  - type: web
+    name: kriscodes-lab
+    runtime: static
+    repo: https://github.com/kriscodes/lab
+    branch: main
+    buildCommand: npm ci && npm run build
+    staticPublishPath: out
+    autoDeployTrigger: checksPass
+    buildFilter:
+      paths:
+        - src/**
+        - public/**
+        - scripts/**
+        - package.json
+        - package-lock.json
+        - .node-version
+        - .npmrc
+        - next.config.*
+        - next-env.d.ts
+        - tsconfig*.json
+        - render.yaml
+    domains:
+      - lab.kristiansalmeron.com
+    envVars:
+      - key: NODE_VERSION
+        sync: false
+      - key: SKIP_INSTALL_DEPS
+        sync: false
+      - key: NEXT_TELEMETRY_DISABLED
+        sync: false
