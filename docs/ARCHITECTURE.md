@@ -1,59 +1,52 @@
 # Architecture
 
-Engineering Lab is an independent Next.js, React, and TypeScript application. It owns its repository, dependency lockfile, checks, and future deployment. Portfolio and Toolbox remain independent applications. Each application has its own approved visual identity and no shared runtime package.
+Lab is a static publication site built with Next.js App Router, React, and TypeScript. It has its own dependency lockfile and verification workflow. Portfolio and Toolbox are separate applications.
 
-## Static application
+## Application structure
 
-The App Router builds readable HTML for the homepage, experiment index, experiment pages, methodology, and a custom not-found page. `output: 'export'` and `trailingSlash: true` produce a portable `out/` directory. Server Components execute during the build; there is no request-time Next.js server, database, API, authentication, analytics service, or secret required by this foundation.
+`next.config.ts` sets `output: 'export'`, `trailingSlash: true`, and unoptimized images. Server Components execute at build time; the `out/` directory contains the deployable site. There is no Lab application server, database, or secret configuration.
 
-The static-export choice follows [Next.js's documented export model](https://nextjs.org/docs/app/guides/static-exports). Browser interactions belong in small Client Components. Browser APIs must be accessed in browser lifecycle code rather than during prerendering. Features requiring a running server would be a separate architectural decision.
+| Location                              | Responsibility                                                              |
+| ------------------------------------- | --------------------------------------------------------------------------- |
+| `src/app/layout.tsx`                  | Shared shell, metadata, appearance bootstrap, and optional audience tracker |
+| `src/app/experiments/[slug]/page.tsx` | Static experiment routes and experiment-specific content selection          |
+| `src/app/methodology/`                | Measurement and publication standards                                       |
+| `src/app/privacy/`                    | Audience-measurement notice and preference links                            |
+| `src/lib/experiments.ts`              | Typed registry, publication states, and findings selection                  |
+| `src/experiments/pdf-rendering/`      | Study-specific copy and proposed method                                     |
+| `src/lib/site.ts`                     | Canonical identity and page metadata                                        |
+| `src/lib/appearance.ts`               | Theme preference parsing and startup behavior                               |
+| `scripts/verify-export.mjs`           | Checks generated routes, metadata, assets, and local references             |
 
-## Source map
+The public routes are `/`, `/experiments/`, `/experiments/pdf-rendering/`, `/methodology/`, and `/privacy/`. Unknown routes use the exported `404.html`. Sitemap and robots files are generated during the build.
 
-| Location                                             | Responsibility                                                         |
-| ---------------------------------------------------- | ---------------------------------------------------------------------- |
-| `src/app/layout.tsx`                                 | Document metadata, local fonts, shared shell, and appearance bootstrap |
-| `src/app/page.tsx`                                   | Study 001 publication cover                                            |
-| `src/app/experiments/`                               | Experiment index and statically generated experiment routes            |
-| `src/app/methodology/`                               | Shared research and measurement principles                             |
-| `src/app/not-found.tsx`                              | Accessible recovery links for unknown routes                           |
-| `src/app/sitemap.ts`, `robots.ts`                    | Static crawler files                                                   |
-| `src/components/site-header.tsx`, `theme-toggle.tsx` | Navigation and progressive appearance controls                         |
-| `src/lib/experiments.ts`                             | Typed experiment registry and publication state                        |
-| `src/lib/site.ts`                                    | Canonical site identity and metadata conventions                       |
-| `src/lib/appearance.ts`                              | Appearance preference parsing                                          |
-| `src/experiments/pdf-rendering/protocol.tsx`         | Experiment-owned protocol document content                             |
-| `scripts/verify-export.mjs`                          | Audit the generated static routes, metadata, links, and assets         |
+## Adding a study
 
-## Publication model
+1. Add a stable ID and slug to `src/lib/experiments.ts`. Describe the research question, hypothesis, controls, measurements, and limitations before implementing a runner.
+2. Put the study's article in `src/experiments/<slug>/` and add its explicit content selection to the experiment route. Registry metadata alone is not a complete page.
+3. Keep section anchors, canonical metadata, navigation, and the export audit aligned with the new route. Unknown or unimplemented studies must remain missing pages.
+4. Add checks for the study's actual contracts: deterministic inputs, correct workloads, metric units, result serialization, and failure handling as they are implemented.
 
-An experiment in `proposal` state is still being investigated and has no measurements. An experiment in `protocol` state describes a research question, hypothesis, proposed controls, measurement definitions, limitations, and reproduction plan. It has no measured findings. `published` is reserved for an experiment with evidence that has passed the publication checks. `getPublishedFindings()` supplies findings from published work; the initial foundation has none.
+The registry supports three states:
 
-Experiment 001, The Cost of Rendering Progress, is a proposed PDF study. Its first step is a diagnostic pilot before an adaptive-policy comparison. The application does not contain a PDF benchmark runner or collected results. The previous data-grid proposal is no longer a public entry.
+| State       | Meaning                                                              |
+| ----------- | -------------------------------------------------------------------- |
+| `proposal`  | A question and candidate method; no measured findings                |
+| `protocol`  | A defined method and implementation plan; no measured findings       |
+| `published` | Findings supported by raw measurements and reproduction instructions |
 
-Before publishing measured findings:
+`getPublishedFindings()` includes only `published` entries. Study 001 is currently a `proposal`. Its method is recorded in [decision 003](decisions/003-pdf-progress-study.md).
 
-1. Implement and test equivalent workloads and deterministic dataset generation.
-2. Define each metric's units, timing boundaries, supported browser APIs, and failure states.
-3. Run comparable production builds under a recorded protocol; retain individual runs and invalid/aborted outcomes.
-4. Record commit, dependency versions, browser, operating system, hardware information available to the operator, viewport, parameters, and collection method.
-5. Publish raw results and reproduction instructions alongside analysis, uncertainty, and limitations. Unsupported metrics remain unavailable.
-6. Review every conclusion against the collected evidence. A browser timing proxy must not be labeled as direct paint, full interaction latency, or framework superiority.
+Before publishing findings, retain raw trials, failed or invalid outcomes, units, timing boundaries, protocol version, source revision, dependency versions, browser, hardware, viewport, and run parameters. Report sample counts, uncertainty, exclusions, and limits. Unsupported metrics must not become zero. A successful build cannot validate a performance claim.
 
-The export audit checks delivered files and metadata. It cannot establish whether a performance claim is true; publication requires review of actual evidence.
+## Browser behavior
 
-## Future experiment boundaries
+Small Client Components manage appearance controls. The `lab.theme.v1` preference belongs to this site. Static headings, links, navigation, and article content remain available without JavaScript. Fonts are served locally, with attribution and licenses in `public/fonts/`.
 
-Keep the initial infrastructure small: metadata, the approved publication layout, and a typed publication status. Add controls, runner code, measurement records, and JSON/CSV export when Experiment 001 is implemented. Do not add a general plugin system in advance.
+`src/app/layout.tsx` loads Portfolio's tracker after hydration with `data-site="lab"` and `referrerPolicy="no-referrer"`. The tracker is an optional external dependency; its failure must not prevent reading. Audience events are not benchmark measurements. See [decision 002](decisions/002-audience-measurement.md).
 
-Future SolidJS, Svelte, or other implementations should have isolated build outputs and load only the implementation under test in a fresh runner document. Keep the same dataset, workload, styling constraints, and measurement protocol. A parent research page can describe or launch a runner, but its rendering and unrelated framework bundles must not be included in the measured workload. An iframe alone does not guarantee process isolation; compare like environments and document remaining interference.
+Future measurement runners should have separate entry points and bundles. Keep article rendering, navigation, and unrelated framework code outside timed work. An iframe isolates a document, but does not guarantee a dedicated process or CPU thread.
 
-## Accessibility and appearance
+## Verification
 
-Static landmarks, headings, navigation, skip links, and prose remain usable before JavaScript loads. Theme controls enhance the reading experience and write only the Lab's `lab.theme.v1` preference. They do not read or migrate Portfolio, Toolbox, or archived-project browser data. Local IBM Plex Sans, Source Serif 4, and IBM Plex Mono assets retain their licenses. Visible focus, responsive layout, readable contrast, and reduced-motion behavior require browser checks in addition to automated tests.
-
-## Validation and release boundary
-
-`npm run verify` runs the repository's formatting, lint, type, unit, production-build, and export checks. GitHub Actions executes that command on pull requests and pushes to `main`; it has no deployment job or hosting credentials.
-
-Build verification is separate from browser verification and future live-site checks. Keep work on feature branches and use pull requests. Production deployment, hosting-resource creation, and DNS changes require explicit owner approval. See [future deployment instructions](DEPLOYMENT.md).
+GitHub Actions runs `npm run verify` for pull requests and changes to `main`, with read-only repository permissions. It contains no deployment job. Browser checks still cover keyboard use, narrow layouts, theme persistence, blocked storage, reduced motion, and content with JavaScript disabled. Hosting checks are described in [Deployment](DEPLOYMENT.md).
