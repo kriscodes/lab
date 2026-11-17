@@ -1,0 +1,46 @@
+# Prepared for review only. Importing this Blueprint creates and deploys resources.
+# Activate only after reviewing docs/STAGING.md. No production resources are defined here.
+# yaml-language-server: $schema=https://render.com/schema/render.yaml.json
+previews:
+  generation: 'off'
+projects:
+  - name: Lab Staging
+    environments:
+      - name: staging
+        services:
+          - type: web
+            name: kriscodes-lab-staging
+            runtime: static
+            repo: https://github.com/kriscodes/lab
+            branch: staging
+            buildCommand: npm ci && npm run build
+            staticPublishPath: out
+            autoDeployTrigger: checksPass
+            buildFilter:
+              paths:
+                - src/**
+                - public/**
+                - scripts/**
+                - package.json
+                - package-lock.json
+                - .node-version
+                - .npmrc
+                - next.config.*
+                - next-env.d.ts
+                - tsconfig*.json
+                - render.staging.yaml
+            domains:
+              - lab.staging.kristiansalmeron.com
+            envVars:
+              - key: NODE_VERSION
+                value: 22.23.4
+              - key: SKIP_INSTALL_DEPS
+                value: 'true'
+              - key: NEXT_TELEMETRY_DISABLED
+                value: '1'
+              - key: NEXT_PUBLIC_ANALYTICS_ORIGIN
+                value: https://analytics.staging.kristiansalmeron.com
+            headers:
+              - path: /*
+                name: X-Robots-Tag
+                value: noindex, nofollow, noarchive
