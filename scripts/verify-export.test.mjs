@@ -6,7 +6,7 @@ import test from 'node:test';
 import { verifyExport } from './verify-export.mjs';
 
 const ORIGIN = 'https://lab.kristiansalmeron.com';
-const ROUTES = ['/', '/experiments/', '/experiments/pdf-rendering/', '/methodology/'];
+const ROUTES = ['/', '/experiments/', '/experiments/pdf-rendering/', '/methodology/', '/privacy/'];
 
 /** Create portable static output rather than importing application components into the audit tests. */
 async function fixture(t, changes = {}) {
@@ -47,7 +47,7 @@ test('accepts complete nested exports and ignores metadata serialized inside scr
   const { directory } = await fixture(t);
   const result = await verifyExport(directory);
   assert.deepEqual(result.errors, []);
-  assert.equal(result.pageCount, 4);
+  assert.equal(result.pageCount, 5);
   assert.equal(result.assetCount, 4);
 });
 

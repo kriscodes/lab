@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { ThemeToggle } from './theme-toggle';
 
 export function SiteFooter() {
@@ -5,9 +6,10 @@ export function SiteFooter() {
     <footer className="lr-footer">
       <span>Questions first. Evidence next.</span>
       <div className="lr-footer-links">
-        <a href="https://kristiansalmeron.com/">
+        <a href="https://kristiansalmeron.com/" referrerPolicy="origin">
           Portfolio <span aria-hidden="true">↗</span>
         </a>
+        <Link href="/privacy/">Privacy & analytics</Link>
         <ThemeToggle />
       </div>
     </footer>
