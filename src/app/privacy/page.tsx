@@ -9,7 +9,7 @@ export const metadata = pageMetadata(
 /** Explain audience measurement separately from any future research experiment. */
 export default function PrivacyPage() {
   return (
-    <article className="lr-protocol">
+    <article className="lr-protocol lr-privacy">
       <p className="lr-mono">YOUR BROWSER, YOUR CHOICE</p>
       <h1 className="lr-title">
         Privacy & <em>analytics.</em>

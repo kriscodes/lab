@@ -559,3 +559,8 @@ summary {
 #lab-refined main:focus {
   outline: none;
 }
+
+/* Keep the privacy notice readable on wide screens without changing research layouts. */
+#lab-refined .lr-privacy {
+  max-width: 820px;
+}
