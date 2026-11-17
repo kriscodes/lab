@@ -59,8 +59,8 @@ export function PdfRenderingProtocol({ experiment }: { experiment: ExperimentMet
       </p>
       <ul className="lr-references">
         <li>
-          <a href="https://github.com/kriscodes/lab/blob/main/docs/RESEARCH-001-PRIOR-ART.md">
-            Prior-art review and detailed study proposal <span aria-hidden="true">↗</span>
+          <a href="https://github.com/kriscodes/lab/blob/main/docs/decisions/003-pdf-progress-study.md">
+            Study rationale and proposed method <span aria-hidden="true">↗</span>
           </a>
         </li>
         {experiment.references.map(({ title, url }) => (
