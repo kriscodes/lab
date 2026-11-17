@@ -42,7 +42,9 @@ export default function PrivacyPage() {
             We record approved page paths, coarse device category, recognized referral or campaign
             source, page opens, relevant link clicks, and fixed tool actions. Page paths exclude
             query strings and fragments; only approved campaign labels are retained. Unknown sources
-            remain unknown. Lab protocol opens are reading activity, not benchmark runs.
+            remain unknown. Links between these three sites share only the source origin, never its
+            page path or query, for arrival attribution. Lab protocol opens are reading activity,
+            not benchmark runs.
           </p>
           <p>
             Active time estimates visible browsing until 60 seconds after recent activity, including
