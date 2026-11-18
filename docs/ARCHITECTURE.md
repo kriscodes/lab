@@ -20,7 +20,7 @@ Lab is a static publication site built with Next.js App Router, React, and TypeS
 
 The public routes are `/`, `/experiments/`, `/experiments/pdf-rendering/`, `/experiments/pdf-first-page/`, `/experiments/pdf-first-page/evidence/`, `/experiments/pdf-first-page/replicate/`, `/methodology/`, and `/privacy/`. Unknown routes use the exported `404.html`. Sitemap and robots files are generated during the build.
 
-`src/experiments/pdf-first-page/` owns the dated loading-lab snapshot, editorial report, evidence ledger, replication guide and shared reading navigation. Its explicit static route modules select these components; the dynamic experiment route generates only the older proposal. The homepage reuses the loading overview. `src/components/command-block.tsx` adds optional clipboard copying to commands that remain visible without JavaScript. Download fixtures are byte-preserved under `public/downloads/pdf-lab-001/` and covered by integrity tests.
+`src/experiments/pdf-first-page/` owns the dated loading-lab snapshot, editorial report, evidence ledger, replication guide and shared reading navigation. Its explicit static route modules select these components; the dynamic experiment route generates only the older proposal. The homepage is a separate editorial cover linking to Lab 001. Its SVG experiment is server-rendered, then animated by a small Client Component with pause and reduced-motion support. The publication disclosure remains on research routes only. `src/components/command-block.tsx` adds optional clipboard copying to commands that remain visible without JavaScript. Download fixtures are byte-preserved under `public/downloads/pdf-lab-001/` and covered by integrity tests.
 
 ## Adding a study
 

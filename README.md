@@ -37,7 +37,7 @@ The research content remains readable without JavaScript. Theme controls store a
 
 ## Local review of Lab 001
 
-After `npm run verify`, run `LAB_PREVIEW_PORT=4191 npm run preview` and open `http://127.0.0.1:4191/`. Review the report, `/experiments/pdf-first-page/evidence/`, and `/experiments/pdf-first-page/replicate/` at desktop and narrow widths, in both appearances. Check disclosures, keyboard navigation, command copying and downloads. The static content and original corpus remain available without JavaScript.
+After `npm run verify`, run `LAB_PREVIEW_PORT=4191 npm run preview` and open `http://127.0.0.1:4191/experiments/pdf-first-page/`. Review the report, `/experiments/pdf-first-page/evidence/`, and `/experiments/pdf-first-page/replicate/` at desktop and narrow widths, in both appearances. Check disclosures, keyboard navigation, command copying and downloads. The static content and original corpus remain available without JavaScript.
 
 The original PDF files and manifest in `public/downloads/pdf-lab-001/` are immutable research inputs. Do not format the manifest or regenerate them while editing the site. The tests verify their identity. Source evidence links are pinned to a reviewed benchmark commit; update the dated publication deliberately after an independent evidence audit. See decision 004 for the boundary between independent replication and the original machine's fixed-window schedule.
 

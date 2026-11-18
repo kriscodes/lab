@@ -1276,3 +1276,163 @@ summary {
     overflow-wrap: anywhere;
   }
 }
+
+/* A quiet editorial cover with a kinetic experiment in the margin. */
+#lab-refined .labs-home-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 30px;
+  color: var(--lr-blue);
+  font:
+    400 14px/1.5 'IBM Plex Mono',
+    monospace;
+}
+#lab-refined .labs-home-hero {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+  align-items: center;
+  min-height: 560px;
+  padding: 18px 0 40px;
+}
+#lab-refined .labs-home-hero h1 {
+  position: relative;
+  z-index: 1;
+  font:
+    400 clamp(64px, 7.9vw, 105px)/1.04 'Source Serif 4',
+    Georgia,
+    serif;
+  letter-spacing: -0.055em;
+  padding-bottom: 10px;
+}
+#lab-refined .labs-home-hero h1 em {
+  color: var(--lr-blue);
+  font-weight: 400;
+}
+#lab-refined .labs-home-art {
+  position: relative;
+  width: 115%;
+  margin-left: -8%;
+  color: var(--lr-blue);
+}
+#lab-refined .labs-home-sculpture {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+#lab-refined .labs-home-guides {
+  opacity: 0.36;
+}
+#lab-refined .labs-home-motion {
+  position: absolute;
+  bottom: 9px;
+  right: 8%;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--lr-rule);
+  border-radius: 50%;
+  color: var(--lr-muted);
+}
+#lab-refined .labs-home-motion:hover {
+  color: var(--lr-blue);
+  border-color: var(--lr-blue);
+}
+#lab-refined .labs-home-index {
+  border-top: 1px solid var(--lr-rule);
+  padding: 24px 0 40px;
+}
+#lab-refined .labs-home-study {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  width: min(100%, 290px);
+  padding: 10px 0;
+  text-decoration: none;
+  font:
+    400 25px/1.3 'Source Serif 4',
+    Georgia,
+    serif;
+}
+#lab-refined .labs-home-study:hover {
+  color: var(--lr-blue);
+}
+#lab-refined .labs-home-study-mark {
+  position: relative;
+  width: 44px;
+  height: 48px;
+  color: var(--lr-blue);
+}
+#lab-refined .labs-home-study-mark span {
+  position: absolute;
+  top: 5px;
+  left: 8px;
+  width: 27px;
+  height: 36px;
+  border: 1px solid currentColor;
+  background: var(--lr-paper);
+  transform: rotate(-12deg);
+}
+#lab-refined .labs-home-study-mark span:nth-child(2) {
+  transform: rotate(0deg);
+}
+#lab-refined .labs-home-study-mark span:nth-child(3) {
+  transform: rotate(12deg);
+}
+#lab-refined .labs-home-study-plus {
+  margin-left: auto;
+  font:
+    400 25px/1 'IBM Plex Sans',
+    sans-serif;
+  color: var(--lr-blue);
+}
+#lab-refined .labs-home-footer {
+  justify-content: flex-end;
+}
+@media (max-width: 950px) {
+  #lab-refined .labs-home-hero {
+    min-height: 480px;
+  }
+  #lab-refined .labs-home-hero h1 {
+    font-size: clamp(56px, 8vw, 76px);
+  }
+}
+@media (max-width: 650px) {
+  #lab-refined .labs-home-heading {
+    padding-top: 25px;
+  }
+  #lab-refined .labs-home-heading svg {
+    width: 22px;
+  }
+  #lab-refined .labs-home-hero {
+    grid-template-columns: 1fr;
+    min-height: auto;
+    padding: 38px 0 12px;
+  }
+  #lab-refined .labs-home-hero h1 {
+    font-size: clamp(52px, 11.5vw, 75px);
+    letter-spacing: -0.05em;
+  }
+  #lab-refined .labs-home-art {
+    width: 108%;
+    max-width: 440px;
+    margin: 8px auto 0;
+    justify-self: center;
+  }
+  #lab-refined .labs-home-motion {
+    bottom: 0;
+    right: 4%;
+  }
+  #lab-refined .labs-home-index {
+    padding: 18px 0 24px;
+  }
+  #lab-refined .labs-home-study {
+    width: 100%;
+  }
+  #lab-refined .labs-home-footer {
+    align-items: flex-end;
+  }
+}

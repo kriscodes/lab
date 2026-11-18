@@ -1,8 +1,8 @@
 import type { Metadata, Viewport } from 'next';
-import Link from 'next/link';
 import Script from 'next/script';
 import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
+import { ResearchDisclosure } from '@/components/research-disclosure';
 import { SITE_NAME, SITE_ORIGIN } from '@/lib/site';
 import { APPEARANCE_BOOTSTRAP } from '@/lib/appearance';
 import './globals.css';
@@ -43,14 +43,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             <main id="main" tabIndex={-1}>
               {children}
             </main>
-            <details className="lr-disclosure">
-              <summary>What makes a finding worth publishing?</summary>
-              <p>
-                A method you can repeat, raw measurements you can inspect, and limits stated
-                alongside the conclusion. An attempted measurement is not automatically an accepted
-                finding. <Link href="/methodology/">Read the publication standards.</Link>
-              </p>
-            </details>
+            <ResearchDisclosure />
             <SiteFooter />
           </div>
         </div>

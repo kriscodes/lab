@@ -13,15 +13,21 @@ export function SiteHeader() {
           lab<span>.</span>
         </Link>
         <span className="lr-owner">
-          Independent engineering
-          <br />
-          by Kristian Salmeron
+          {path === '/' ? (
+            'Kristian Salmeron'
+          ) : (
+            <>
+              Independent engineering
+              <br />
+              by Kristian Salmeron
+            </>
+          )}
         </span>
       </div>
       <nav className="lr-nav" aria-label="Lab navigation">
         <Link
           href="/experiments/"
-          aria-current={path?.startsWith('/experiments') || path === '/' ? 'page' : undefined}
+          aria-current={path?.startsWith('/experiments') ? 'page' : undefined}
         >
           Studies
         </Link>
