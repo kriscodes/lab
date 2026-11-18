@@ -1,3 +1,5 @@
+/** @file Defines the immutable experiment catalog and the navigation derived from it. */
+
 export type ExperimentStatus = 'proposal' | 'protocol' | 'in-progress' | 'published';
 
 export interface ExperimentReference {
@@ -96,15 +98,19 @@ const populatedCategories: readonly string[] = Object.freeze([
 const publishedFindings: readonly ExperimentMetadata[] = Object.freeze(
   EXPERIMENTS.filter(({ status }) => status === 'published'),
 );
-export function getExperiment(slug: string): ExperimentMetadata | undefined {
-  return EXPERIMENTS.find((experiment) => experiment.slug === slug);
+/** Finds a registered experiment by its exact URL slug. */
+export function getExperiment(experimentSlug: string): ExperimentMetadata | undefined {
+  return EXPERIMENTS.find((experiment) => experiment.slug === experimentSlug);
 }
+/** Returns only categories with registered content, in catalog order. */
 export function getPopulatedCategories(): readonly string[] {
   return populatedCategories;
 }
+/** Returns accepted publications without promoting proposals or work in progress. */
 export function getPublishedFindings(): readonly ExperimentMetadata[] {
   return publishedFindings;
 }
-export function getExperimentPath(slug: string): string {
-  return `/experiments/${slug}/`;
+/** Builds the canonical trailing-slash path for an experiment. */
+export function getExperimentPath(experimentSlug: string): string {
+  return `/experiments/${experimentSlug}/`;
 }

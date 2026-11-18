@@ -1,2 +1,3 @@
-// Keep the actual static-output contract in the same regression run as experiment metadata.
+/** @file Includes the static-output contract in the standard application regression test run. */
+
 import '../scripts/verify-export.test.mjs';

@@ -1,9 +1,11 @@
+/** @file Audits exported routes, metadata, links, and assets before a static build is published. */
+
 import { readdir, readFile } from 'node:fs/promises';
 import { dirname, extname, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const ORIGIN = 'https://lab.kristiansalmeron.com';
-const ROUTES = [
+const SITE_ORIGIN = 'https://lab.kristiansalmeron.com';
+const CONTENT_ROUTES = [
   '/',
   '/experiments/',
   '/experiments/pdf-rendering/',
@@ -15,53 +17,58 @@ const ROUTES = [
 ];
 
 /** Decode resource and metadata values without requiring a runtime HTML parser. */
-function decode(value) {
-  return value.replace(
+function decodeHtmlEntities(attributeValue) {
+  return attributeValue.replace(
     /&(?:amp|quot|apos|lt|gt);/gu,
     (entity) => ({ '&amp;': '&', '&quot;': '"', '&apos;': "'", '&lt;': '<', '&gt;': '>' })[entity],
   );
 }
 
 /** Ignore script payloads so serialized React markup is not mistaken for real tags. */
-function readTags(html) {
-  const markup = html
+function readHtmlTags(htmlMarkup) {
+  const markupWithoutScripts = htmlMarkup
     .replace(/<!--[\s\S]*?-->/gu, '')
     .replace(/(<script\b[^>]*>)[\s\S]*?<\/script>/giu, '$1</script>');
-  return [...markup.matchAll(/<([a-z][\w:-]*)\b((?:"[^"]*"|'[^']*'|[^'">])*)>/giu)].map((match) => {
+  return [
+    ...markupWithoutScripts.matchAll(/<([a-z][\w:-]*)\b((?:"[^"]*"|'[^']*'|[^'">])*)>/giu),
+  ].map((matchedTag) => {
     const attributes = Object.fromEntries(
-      [...match[2].matchAll(/([^\s=/>]+)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+)))?/gu)].map(
-        (attribute) => [
-          attribute[1].toLowerCase(),
-          decode(attribute[2] ?? attribute[3] ?? attribute[4] ?? ''),
+      [...matchedTag[2].matchAll(/([^\s=/>]+)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+)))?/gu)].map(
+        (matchedAttribute) => [
+          matchedAttribute[1].toLowerCase(),
+          decodeHtmlEntities(
+            matchedAttribute[2] ?? matchedAttribute[3] ?? matchedAttribute[4] ?? '',
+          ),
         ],
       ),
     );
-    return { name: match[1].toLowerCase(), attributes };
+    return { name: matchedTag[1].toLowerCase(), attributes };
   });
 }
 
 /** Enumerate only files inside the publish directory; do not follow symbolic links. */
-async function listFiles(directory, root = directory) {
-  const files = [];
-  for (const entry of await readdir(directory, { withFileTypes: true })) {
-    const path = resolve(directory, entry.name);
-    if (entry.isSymbolicLink())
-      throw new Error(`Public export contains a symbolic link: ${relative(root, path)}`);
-    if (entry.isDirectory()) files.push(...(await listFiles(path, root)));
-    else files.push(relative(root, path).replaceAll('\\', '/'));
+async function listExportedFiles(exportDirectory, exportRoot = exportDirectory) {
+  const exportedFiles = [];
+  for (const directoryEntry of await readdir(exportDirectory, { withFileTypes: true })) {
+    const filePath = resolve(exportDirectory, directoryEntry.name);
+    if (directoryEntry.isSymbolicLink())
+      throw new Error(`Public export contains a symbolic link: ${relative(exportRoot, filePath)}`);
+    if (directoryEntry.isDirectory())
+      exportedFiles.push(...(await listExportedFiles(filePath, exportRoot)));
+    else exportedFiles.push(relative(exportRoot, filePath).replaceAll('\\', '/'));
   }
-  return files;
+  return exportedFiles;
 }
 
 /** Audit generated static documents and their local dependencies without network requests. */
 export async function verifyExport(
-  directory = resolve(dirname(fileURLToPath(import.meta.url)), '../out'),
+  exportDirectory = resolve(dirname(fileURLToPath(import.meta.url)), '../out'),
 ) {
-  const root = resolve(directory);
+  const exportRoot = resolve(exportDirectory);
   const errors = [];
-  let files;
+  let exportedFiles;
   try {
-    files = await listFiles(root);
+    exportedFiles = await listExportedFiles(exportRoot);
   } catch (error) {
     if (error.code !== 'ENOENT') throw error;
     return {
@@ -70,85 +77,96 @@ export async function verifyExport(
       assetCount: 0,
     };
   }
-  const names = new Set(files);
-  const documents = new Map();
-  const assets = new Set();
-  for (const name of files.filter((name) => name.endsWith('.html'))) {
-    const html = await readFile(resolve(root, name), 'utf8');
-    documents.set(name, { html, tags: readTags(html) });
+  const exportedFileNames = new Set(exportedFiles);
+  const exportedDocuments = new Map();
+  const referencedAssets = new Set();
+  for (const fileName of exportedFiles.filter((fileName) => fileName.endsWith('.html'))) {
+    const htmlMarkup = await readFile(resolve(exportRoot, fileName), 'utf8');
+    exportedDocuments.set(fileName, { html: htmlMarkup, tags: readHtmlTags(htmlMarkup) });
   }
 
   /** Map an on-site URL to the file emitted by a trailing-slash static export. */
-  function localFile(pathname) {
-    const path = decodeURIComponent(pathname).replace(/^\/+|\/+$/gu, '');
-    if (!path) return 'index.html';
-    return extname(path) ? path : `${path}/index.html`;
+  function getExportedFilePath(pathname) {
+    const filePath = decodeURIComponent(pathname).replace(/^\/+|\/+$/gu, '');
+    if (!filePath) return 'index.html';
+    return extname(filePath) ? filePath : `${filePath}/index.html`;
   }
 
   /** Check real local resources and page destinations, including static fragment targets. */
-  function checkReference(value, source, { resource = true, local = false } = {}) {
-    if (!value || /^(?:data:|mailto:|tel:)/iu.test(value)) return;
-    let url;
+  function validateLocalReference(
+    attributeValue,
+    sourceFileName,
+    { resource: isResource = true, local: requiresLocalResource = false } = {},
+  ) {
+    if (!attributeValue || /^(?:data:|mailto:|tel:)/iu.test(attributeValue)) return;
+    let referenceUrl;
     try {
-      url = new URL(value, `${ORIGIN}/${source}`);
+      referenceUrl = new URL(attributeValue, `${SITE_ORIGIN}/${sourceFileName}`);
     } catch {
-      errors.push(`${source}: invalid URL ${value}`);
+      errors.push(`${sourceFileName}: invalid URL ${attributeValue}`);
       return;
     }
-    if (!['http:', 'https:'].includes(url.protocol)) {
-      errors.push(`${source}: unsupported URL ${value}`);
+    if (!['http:', 'https:'].includes(referenceUrl.protocol)) {
+      errors.push(`${sourceFileName}: unsupported URL ${attributeValue}`);
       return;
     }
-    if (url.origin !== ORIGIN) {
-      if (local) errors.push(`${source}: expected a local resource (${value})`);
+    if (referenceUrl.origin !== SITE_ORIGIN) {
+      if (requiresLocalResource)
+        errors.push(`${sourceFileName}: expected a local resource (${attributeValue})`);
       return;
     }
-    let target;
+    let targetFileName;
     try {
-      target = localFile(url.pathname);
+      targetFileName = getExportedFilePath(referenceUrl.pathname);
     } catch {
-      errors.push(`${source}: invalid URL encoding ${value}`);
+      errors.push(`${sourceFileName}: invalid URL encoding ${attributeValue}`);
       return;
     }
-    if (!names.has(target)) {
-      errors.push(`${source}: missing local target ${value}`);
+    if (!exportedFileNames.has(targetFileName)) {
+      errors.push(`${sourceFileName}: missing local target ${attributeValue}`);
       return;
     }
-    if (resource) assets.add(target);
-    if (!resource && url.hash && documents.has(target)) {
-      let fragment;
+    if (isResource) referencedAssets.add(targetFileName);
+    if (!isResource && referenceUrl.hash && exportedDocuments.has(targetFileName)) {
+      let fragmentId;
       try {
-        fragment = decodeURIComponent(url.hash.slice(1));
+        fragmentId = decodeURIComponent(referenceUrl.hash.slice(1));
       } catch {
-        errors.push(`${source}: invalid fragment ${value}`);
+        errors.push(`${sourceFileName}: invalid fragment ${attributeValue}`);
         return;
       }
-      if (!documents.get(target).tags.some((tag) => tag.attributes.id === fragment))
-        errors.push(`${source}: missing fragment target ${value}`);
+      if (
+        !exportedDocuments.get(targetFileName).tags.some((tag) => tag.attributes.id === fragmentId)
+      )
+        errors.push(`${sourceFileName}: missing fragment target ${attributeValue}`);
     }
   }
 
-  for (const route of ROUTES) {
-    const name = localFile(route);
-    const document = documents.get(name);
-    if (!document) {
+  for (const route of CONTENT_ROUTES) {
+    const fileName = getExportedFilePath(route);
+    const exportedDocument = exportedDocuments.get(fileName);
+    if (!exportedDocument) {
       errors.push(`${route}: exported page is missing`);
       continue;
     }
-    const { tags, html } = document;
-    const title = html.match(/<title\b[^>]*>([^<]+)<\/title>/iu)?.[1]?.trim();
-    if (!title || !/Lab/iu.test(title)) errors.push(`${route}: meaningful Lab title is missing`);
+    const { tags, html: htmlMarkup } = exportedDocument;
+    const pageTitle = htmlMarkup.match(/<title\b[^>]*>([^<]+)<\/title>/iu)?.[1]?.trim();
+    if (!pageTitle || !/Lab/iu.test(pageTitle))
+      errors.push(`${route}: meaningful Lab title is missing`);
     if (tags.filter((tag) => tag.name === 'h1').length !== 1)
       errors.push(`${route}: expected one visible page heading`);
     if (!tags.some((tag) => tag.name === 'main')) errors.push(`${route}: main landmark is missing`);
     if (!tags.some((tag) => tag.name === 'html' && tag.attributes.lang))
       errors.push(`${route}: document language is missing`);
-    const canonical = tags.filter(
+    const canonicalLinks = tags.filter(
       (tag) => tag.name === 'link' && tag.attributes.rel === 'canonical',
     );
-    if (canonical.length !== 1 || canonical[0].attributes.href !== `${ORIGIN}${route}`)
+    if (
+      canonicalLinks.length !== 1 ||
+      canonicalLinks[0].attributes.href !== `${SITE_ORIGIN}${route}`
+    )
       errors.push(`${route}: canonical URL must match the public route`);
-    for (const key of [
+    for (const metadataKey of [
       'description',
       'og:title',
       'og:description',
@@ -157,19 +175,21 @@ export async function verifyExport(
       'twitter:card',
       'twitter:image',
     ]) {
-      const values = tags.filter(
-        (tag) => tag.name === 'meta' && (tag.attributes.name ?? tag.attributes.property) === key,
+      const matchingMetadata = tags.filter(
+        (tag) =>
+          tag.name === 'meta' && (tag.attributes.name ?? tag.attributes.property) === metadataKey,
       );
-      if (values.length !== 1 || !values[0].attributes.content?.trim()) {
-        errors.push(`${route}: expected one nonempty ${key} value`);
+      if (matchingMetadata.length !== 1 || !matchingMetadata[0].attributes.content?.trim()) {
+        errors.push(`${route}: expected one nonempty ${metadataKey} value`);
         continue;
       }
-      const value = values[0].attributes.content;
-      if (key === 'og:url' && value !== `${ORIGIN}${route}`)
+      const attributeValue = matchingMetadata[0].attributes.content;
+      if (metadataKey === 'og:url' && attributeValue !== `${SITE_ORIGIN}${route}`)
         errors.push(`${route}: og:url does not match its canonical`);
-      if (key === 'twitter:card' && value !== 'summary_large_image')
+      if (metadataKey === 'twitter:card' && attributeValue !== 'summary_large_image')
         errors.push(`${route}: Twitter card should include the social preview`);
-      if (key.endsWith('image')) checkReference(value, name, { local: true });
+      if (metadataKey.endsWith('image'))
+        validateLocalReference(attributeValue, fileName, { local: true });
     }
     if (
       tags.some(
@@ -182,10 +202,10 @@ export async function verifyExport(
       errors.push(`${route}: public content is marked noindex`);
   }
 
-  const notFound = documents.get('404.html');
-  if (!notFound) errors.push('404.html: not-found page is missing');
+  const notFoundDocument = exportedDocuments.get('404.html');
+  if (!notFoundDocument) errors.push('404.html: not-found page is missing');
   else if (
-    !notFound.tags.some(
+    !notFoundDocument.tags.some(
       (tag) =>
         tag.name === 'meta' &&
         tag.attributes.name === 'robots' &&
@@ -194,56 +214,64 @@ export async function verifyExport(
   )
     errors.push('404.html: not-found document must be noindex');
 
-  for (const [name, { tags }] of documents) {
-    for (const { name: tag, attributes: attrs } of tags) {
-      if (attrs.src) checkReference(attrs.src, name);
-      if (attrs.poster) checkReference(attrs.poster, name);
-      if (attrs.srcset && !attrs.srcset.startsWith('data:'))
-        for (const entry of attrs.srcset.split(','))
-          checkReference(entry.trim().split(/\s+/u)[0], name);
-      if (tag === 'a' && attrs.href) checkReference(attrs.href, name, { resource: false });
+  for (const [fileName, { tags }] of exportedDocuments) {
+    for (const { name: tagName, attributes } of tags) {
+      if (attributes.src) validateLocalReference(attributes.src, fileName);
+      if (attributes.poster) validateLocalReference(attributes.poster, fileName);
+      if (attributes.srcset && !attributes.srcset.startsWith('data:'))
+        for (const imageCandidate of attributes.srcset.split(','))
+          validateLocalReference(imageCandidate.trim().split(/\s+/u)[0], fileName);
+      if (tagName === 'a' && attributes.href)
+        validateLocalReference(attributes.href, fileName, { resource: false });
       if (
-        tag === 'link' &&
-        /(?:^|\s)(?:stylesheet|icon|preload|modulepreload)(?:\s|$)/iu.test(attrs.rel ?? '')
+        tagName === 'link' &&
+        /(?:^|\s)(?:stylesheet|icon|preload|modulepreload)(?:\s|$)/iu.test(attributes.rel ?? '')
       )
-        checkReference(attrs.href, name);
+        validateLocalReference(attributes.href, fileName);
     }
   }
-  for (const name of files.filter((name) => name.endsWith('.css'))) {
-    const css = await readFile(resolve(root, name), 'utf8');
-    for (const match of css.matchAll(/url\(\s*(?:"([^"]+)"|'([^']+)'|([^\s)]+))\s*\)/giu))
-      checkReference(match[1] ?? match[2] ?? match[3], name);
+  for (const fileName of exportedFiles.filter((fileName) => fileName.endsWith('.css'))) {
+    const stylesheetContent = await readFile(resolve(exportRoot, fileName), 'utf8');
+    for (const matchedResource of stylesheetContent.matchAll(
+      /url\(\s*(?:"([^"]+)"|'([^']+)'|([^\s)]+))\s*\)/giu,
+    ))
+      validateLocalReference(
+        matchedResource[1] ?? matchedResource[2] ?? matchedResource[3],
+        fileName,
+      );
   }
-  const sitemap = names.has('sitemap.xml')
-    ? await readFile(resolve(root, 'sitemap.xml'), 'utf8')
+  const sitemapMarkup = exportedFileNames.has('sitemap.xml')
+    ? await readFile(resolve(exportRoot, 'sitemap.xml'), 'utf8')
     : '';
-  const locations = [...sitemap.matchAll(/<loc>\s*([^<]+)\s*<\/loc>/giu)].map((match) =>
-    decode(match[1]),
+  const sitemapUrls = [...sitemapMarkup.matchAll(/<loc>\s*([^<]+)\s*<\/loc>/giu)].map(
+    (matchedLocation) => decodeHtmlEntities(matchedLocation[1]),
   );
   if (
-    locations.length !== ROUTES.length ||
-    ROUTES.some((route) => !locations.includes(`${ORIGIN}${route}`))
+    sitemapUrls.length !== CONTENT_ROUTES.length ||
+    CONTENT_ROUTES.some((route) => !sitemapUrls.includes(`${SITE_ORIGIN}${route}`))
   )
     errors.push('sitemap.xml: expected exactly the public content routes');
-  const robots = names.has('robots.txt') ? await readFile(resolve(root, 'robots.txt'), 'utf8') : '';
+  const robotsContent = exportedFileNames.has('robots.txt')
+    ? await readFile(resolve(exportRoot, 'robots.txt'), 'utf8')
+    : '';
   if (
-    !/^User-agent:\s*\*\s*$/imu.test(robots) ||
-    /^Disallow:\s*\/\s*$/imu.test(robots) ||
-    !robots.includes(`Sitemap: ${ORIGIN}/sitemap.xml`)
+    !/^User-agent:\s*\*\s*$/imu.test(robotsContent) ||
+    /^Disallow:\s*\/\s*$/imu.test(robotsContent) ||
+    !robotsContent.includes(`Sitemap: ${SITE_ORIGIN}/sitemap.xml`)
   )
     errors.push('robots.txt: expected crawlable content and the canonical sitemap');
-  return { errors, pageCount: ROUTES.length, assetCount: assets.size };
+  return { errors, pageCount: CONTENT_ROUTES.length, assetCount: referencedAssets.size };
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  const result = await verifyExport(process.argv[2]);
-  if (result.errors.length) {
+  const auditResult = await verifyExport(process.argv[2]);
+  if (auditResult.errors.length) {
     console.error(
-      `Static export audit failed:\n${result.errors.map((error) => `- ${error}`).join('\n')}`,
+      `Static export audit failed:\n${auditResult.errors.map((error) => `- ${error}`).join('\n')}`,
     );
     process.exitCode = 1;
   } else
     console.log(
-      `Static export audit passed: ${result.pageCount} content routes, custom 404, ${result.assetCount} local assets.`,
+      `Static export audit passed: ${auditResult.pageCount} content routes, custom 404, ${auditResult.assetCount} local assets.`,
     );
 }
