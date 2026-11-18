@@ -13,8 +13,7 @@ export const metadata = pageMetadata(
 export default function HomePage() {
   return (
     <div className="labs-home">
-      <div className="labs-home-heading">
-        <p>Labs</p>
+      <div className="labs-home-ornament">
         <svg width="27" height="27" viewBox="0 0 28 28" aria-hidden="true">
           <path
             d="M14 1v26M1 14h26M5 5l18 18M5 23 23 5"
@@ -51,7 +50,6 @@ export default function HomePage() {
             </g>
             <circle cx="65" cy="7" r="3" stroke="currentColor" strokeWidth="1.3" />
             <circle cx="78" cy="18" r="1.7" fill="currentColor" />
-            <path d="M14 44v8m-4-4h8" stroke="currentColor" strokeWidth="1.2" />
           </svg>
           <span className="labs-home-study-name">Lab001</span>
           <span className="labs-home-study-action" aria-hidden="true">

@@ -62,7 +62,7 @@ Before publishing findings, retain raw trials, failed or invalid outcomes, units
 
 `src/lib/appearance.ts` owns the `lab.theme.v1` preference. A fixed, trusted bootstrap applies a saved dark appearance before hydration. The appearance control observes document state and updates the browser theme color. Blocked storage still permits an in-memory choice for the current visit, and storage events synchronize other tabs.
 
-The home animation respects reduced-motion preferences, has a manual pause control, and skips visual updates when the document is hidden or the artwork is outside the viewport. The initial SVG remains visible without JavaScript. The Lab001 row uses a decorative test-tube illustration; the entire row is a normal link.
+The home animation respects reduced-motion preferences and skips visual updates when the document is hidden or the artwork is outside the viewport. Its presentation has no manual playback control. The initial SVG remains visible without JavaScript. The Lab001 row uses a decorative test-tube illustration; the entire row is a normal link.
 
 `CommandBlock` adds clipboard copying to commands that remain selectable in static HTML. Clipboard errors produce a visible fallback message. Fonts are local, with source attribution and licenses in `public/fonts/`.
 

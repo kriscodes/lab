@@ -1295,15 +1295,12 @@ summary {
 }
 
 /* A quiet editorial cover with a kinetic experiment in the margin. */
-#lab-refined .labs-home-heading {
+#lab-refined .labs-home-ornament {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
   padding-top: 30px;
   color: var(--accent-color);
-  font:
-    400 14px/1.5 'IBM Plex Mono',
-    monospace;
 }
 #lab-refined .labs-home-hero {
   position: relative;
@@ -1341,22 +1338,6 @@ summary {
 }
 #lab-refined .labs-home-guides {
   opacity: 0.36;
-}
-#lab-refined .labs-home-motion {
-  position: absolute;
-  bottom: 9px;
-  right: 8%;
-  display: grid;
-  place-items: center;
-  width: 44px;
-  height: 44px;
-  border: 1px solid var(--border-color);
-  border-radius: 50%;
-  color: var(--text-muted);
-}
-#lab-refined .labs-home-motion:hover {
-  color: var(--accent-color);
-  border-color: var(--accent-color);
 }
 #lab-refined .labs-home-index {
   border-top: 1px solid var(--border-color);
@@ -1424,10 +1405,10 @@ summary {
   }
 }
 @media (max-width: 650px) {
-  #lab-refined .labs-home-heading {
+  #lab-refined .labs-home-ornament {
     padding-top: 25px;
   }
-  #lab-refined .labs-home-heading svg {
+  #lab-refined .labs-home-ornament svg {
     width: 22px;
   }
   #lab-refined .labs-home-hero {
@@ -1444,10 +1425,6 @@ summary {
     max-width: 440px;
     margin: 8px auto 0;
     justify-self: center;
-  }
-  #lab-refined .labs-home-motion {
-    bottom: 0;
-    right: 4%;
   }
   #lab-refined .labs-home-study {
     grid-template-columns: 62px minmax(0, 1fr) auto;

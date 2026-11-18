@@ -65,9 +65,9 @@ The preview opens at `http://127.0.0.1:4174/`. Set `LAB_PREVIEW_PORT` to use ano
 
 ## Review the experience
 
-Start at `/` for the large hero, motion control, Lab001 entry, and footer. On a short page, the footer should sit at the bottom of the viewport; on a long page it should follow the content and scroll normally. It must not cover the article. Header navigation contains Studies and Method. Footer links use Portfolio and Privacy; decorative arrow glyphs are not part of the design.
+Start at `/` for the large hero, Lab001 entry, and footer. On a short page, the footer should sit at the bottom of the viewport; on a long page it should follow the content and scroll normally. It must not cover the article. Header navigation contains Studies and Method. Footer links use Portfolio and Privacy; decorative arrow glyphs are not part of the design.
 
-For Lab001, open `/experiments/pdf-first-page/`, `/experiments/pdf-first-page/evidence/`, and `/experiments/pdf-first-page/replicate/`. Check desktop and narrow widths, both appearances, keyboard navigation, native disclosures, command copying, and downloads. Confirm that the animation starts paused for reduced-motion preferences and can be paused manually. Static headings, links, article text, commands, and the initial artwork must remain available without JavaScript.
+For Lab001, open `/experiments/pdf-first-page/`, `/experiments/pdf-first-page/evidence/`, and `/experiments/pdf-first-page/replicate/`. Check desktop and narrow widths, both appearances, keyboard navigation, native disclosures, command copying, and downloads. Confirm that the sculpture remains still for reduced-motion preferences and stops updating while the page or artwork is hidden. Static headings, links, article text, commands, and the initial artwork must remain available without JavaScript.
 
 ## Protect the evidence
 

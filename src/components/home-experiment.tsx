@@ -1,4 +1,4 @@
-/** A server-rendered wire sculpture with progressive motion, pause, and visibility controls. */
+/** A server-rendered wire sculpture that follows motion preferences and visibility changes. */
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
@@ -52,19 +52,17 @@ function createCoilFrame(elapsedSeconds: number) {
 
 const INITIAL_COIL_FRAME = createCoilFrame(0);
 
-/** Render a static first frame and add pausable motion when the visitor allows it. */
+/** Render a static first frame and animate only when the visitor allows motion. */
 export function HomeExperiment() {
   const sculptureElementRef = useRef<SVGSVGElement>(null);
-  const [animationPaused, setAnimationPaused] = useState(false);
-  const [animationReady, setAnimationReady] = useState(false);
+  const [animationAllowed, setAnimationAllowed] = useState(false);
   const elapsedAnimationSecondsRef = useRef(0);
 
   useEffect(() => {
     const reducedMotionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
     /** Follow the visitor’s reduced-motion preference before enabling animation. */
     const syncMotionPreference = () => {
-      setAnimationPaused(reducedMotionPreference.matches);
-      setAnimationReady(true);
+      setAnimationAllowed(!reducedMotionPreference.matches);
     };
     syncMotionPreference();
     reducedMotionPreference.addEventListener('change', syncMotionPreference);
@@ -72,14 +70,14 @@ export function HomeExperiment() {
   }, []);
 
   useEffect(() => {
-    if (!animationReady || animationPaused || !sculptureElementRef.current) return;
+    if (!animationAllowed || !sculptureElementRef.current) return;
     const sculptureElement = sculptureElementRef.current;
     const coilRingPaths = sculptureElement.querySelectorAll<SVGPathElement>('[data-coil-ring]');
     let animationFrameId = 0;
     let lastFrameTimeMilliseconds = 0;
     let sculptureVisible = true;
 
-    /** Advance visible frames at most 30 times a second, preserving time across pauses. */
+    /** Advance visible frames at most 30 times a second without counting hidden time. */
     const renderAnimationFrame = (timestampMilliseconds: number) => {
       animationFrameId = requestAnimationFrame(renderAnimationFrame);
       if (document.hidden || !sculptureVisible) {
@@ -109,7 +107,7 @@ export function HomeExperiment() {
       cancelAnimationFrame(animationFrameId);
       visibilityObserver.disconnect();
     };
-  }, [animationPaused, animationReady]);
+  }, [animationAllowed]);
 
   return (
     <div className="labs-home-art">
@@ -137,21 +135,6 @@ export function HomeExperiment() {
         <circle cx="572" cy="190" r="8" fill="currentColor" />
         <circle cx="83" cy="439" r="5" fill="currentColor" />
       </svg>
-      <button
-        className="labs-home-motion"
-        type="button"
-        hidden={!animationReady}
-        aria-label={animationPaused ? 'Play animation' : 'Pause animation'}
-        onClick={() => setAnimationPaused(!animationPaused)}
-      >
-        <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
-          {animationPaused ? (
-            <path d="m5 3 8 5-8 5Z" fill="currentColor" />
-          ) : (
-            <path d="M5 3v10m6-10v10" stroke="currentColor" strokeWidth="1.5" />
-          )}
-        </svg>
-      </button>
     </div>
   );
 }
