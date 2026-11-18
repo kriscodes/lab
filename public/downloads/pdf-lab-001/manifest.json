@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "profileId": "text-100-v1",
+  "purpose": "generator-smoke-test-not-performance-results",
+  "pageCount": 100,
+  "rowsPerPage": 40,
+  "pageSizePoints": [
+    612.0,
+    792.0
+  ],
+  "fontPolicy": "standard Helvetica; fonts are not embedded",
+  "sourceSha256": "465b1d7b547fa3349ddc23de665621f82657baa1bbcd97c4ff1e58bc39f0fe36",
+  "generatorSha256": "4e8bc0d5b163b0188bb83d1993b7feb095752a4b11e31fc47cfb5c26d3c890a7",
+  "toolVersions": {
+    "python": "3.13.18",
+    "reportlab": "5.1.0",
+    "qpdf": "qpdf version 12.4.2",
+    "zlib": "1.2.12"
+  },
+  "qpdfCommonOptions": [
+    "--deterministic-id",
+    "--object-streams=disable",
+    "--stream-data=compress",
+    "--recompress-flate",
+    "--compression-level=6"
+  ],
+  "visualEquivalence": "not-automatically-checked",
+  "documents": [
+    {
+      "id": "text-100-nonlinearized",
+      "file": "text-100-nonlinearized.pdf",
+      "pageCount": 100,
+      "linearized": false,
+      "bytes": 86329,
+      "sha256": "d9ad470b1f56976f907aad64712c2269b380cb0af7e52a5c3670dc3290af162a",
+      "qpdfCheckPassed": true,
+      "qpdfLinearizationCheckPassed": null
+    },
+    {
+      "id": "text-100-linearized",
+      "file": "text-100-linearized.pdf",
+      "pageCount": 100,
+      "linearized": true,
+      "bytes": 87189,
+      "sha256": "efb5faa8018ec5a2b508eb703d55fa39e8cb4746b6aad29d05a841b6c3cf874a",
+      "qpdfCheckPassed": true,
+      "qpdfLinearizationCheckPassed": true
+    }
+  ]
+}

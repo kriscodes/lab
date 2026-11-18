@@ -58,8 +58,8 @@ export default function MethodologyPage() {
           </section>
         ))}
       </div>
-      <Link className="lr-open" href="/experiments/pdf-rendering/">
-        Read Study 001 <span aria-hidden="true">↗</span>
+      <Link className="lr-open" href="/experiments/">
+        Explore the studies <span aria-hidden="true">↗</span>
       </Link>
     </article>
   );

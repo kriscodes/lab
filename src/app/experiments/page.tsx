@@ -4,7 +4,7 @@ import { pageMetadata } from '@/lib/site';
 
 export const metadata = pageMetadata(
   'Studies',
-  'PDF rendering research. A proposed study; no measured findings have been published.',
+  'The research log: a PDF loading experiment in progress and a separate rendering-progress proposal.',
   '/experiments/',
 );
 export default function ExperimentsPage() {
@@ -16,8 +16,11 @@ export default function ExperimentsPage() {
       </h1>
       <p className="lr-lead">Questions, methods, and the evidence they produce.</p>
       {EXPERIMENTS.map((experiment) => (
-        <section key={experiment.id} className="lr-policy">
-          <p className="lr-mono">STUDY {experiment.id} / PROPOSED STUDY</p>
+        <section key={experiment.id} className="lr-policy lab-study-entry">
+          <p className="lr-mono">
+            {experiment.publicationLabel.toUpperCase()} /{' '}
+            {experiment.status === 'in-progress' ? 'IN PROGRESS' : 'PROPOSED STUDY'}
+          </p>
           <h2>
             <Link href={getExperimentPath(experiment.slug)}>{experiment.title} ↗</Link>
           </h2>

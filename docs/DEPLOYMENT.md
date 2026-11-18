@@ -12,7 +12,7 @@ npm run verify
 npm run preview
 ```
 
-The export audit checks the five content routes, canonical and social metadata, sitemap, robots file, local resources, and custom 404. Preview serves the actual export at `http://127.0.0.1:4174/`. Check direct nested-route loads, keyboard navigation, theme persistence, blocked storage, reduced motion, and a narrow viewport.
+The export audit checks the eight content routes, canonical and social metadata, sitemap, robots file, local resources, and custom 404. Preview serves the actual export at `http://127.0.0.1:4174/`. Check direct nested-route loads, keyboard navigation, theme persistence, blocked storage, reduced motion, and a narrow viewport.
 
 ## Render configuration
 
@@ -38,13 +38,13 @@ The Blueprint tracks `main` with Auto Sync enabled. Adopt the existing service w
 
 Blueprint configuration syncs and manual deploys are separate from commit-triggered deployments. Review configuration changes and merge only after PR checks pass. Manual releases are for recovery after verifying the selected commit's checks. After deploying a specific commit, restore **After CI Checks Pass** if Render disabled auto-deploy. Routine releases do not use deploy hooks.
 
-Serve the exported directory routes directly. Do not add a catch-all rewrite to `/index.html`: unknown paths must return `404.html` with HTTP 404. Required content routes are `/`, `/experiments/`, `/experiments/pdf-rendering/`, `/methodology/`, and `/privacy/`.
+Serve the exported directory routes directly. Do not add a catch-all rewrite to `/index.html`: unknown paths must return `404.html` with HTTP 404. Required content routes are `/`, `/experiments/`, `/experiments/pdf-rendering/`, `/experiments/pdf-first-page/`, `/experiments/pdf-first-page/evidence/`, `/experiments/pdf-first-page/replicate/`, `/methodology/`, and `/privacy/`.
 
 For domain setup or recovery, attach `lab.kristiansalmeron.com` to the Static Site and use the exact CNAME target supplied by Render. Verify domain ownership and TLS before serving traffic. Routine releases do not require DNS changes.
 
 ## Release checks and recovery
 
-After deployment, check each route over HTTPS, refresh nested routes, confirm an unknown URL returns HTTP 404, and inspect canonical URLs, social image, sitemap, fonts, and scripts. Verify that the current study is still labeled as a proposal and that no planned values appear as results.
+After deployment, check each route over HTTPS, refresh nested routes, confirm an unknown URL returns HTTP 404, and inspect canonical URLs, social image, sitemap, fonts, and scripts. Verify that the loading lab retains its dated in-progress snapshot, rejected/pending outcomes and replication boundaries. The separate rendering-progress study must remain an unmeasured proposal. Download the original corpus ZIP and verify its checksum; no planned values may appear as results.
 
 When changing the tracker integration, deploy its compatible Portfolio collector first. Check opt-out, Global Privacy Control, Do Not Track, and blocked storage across the real subdomains; localhost cannot verify shared-domain cookie behavior. The research pages must still work when analytics is blocked.
 

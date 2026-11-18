@@ -18,7 +18,9 @@ Lab is a static publication site built with Next.js App Router, React, and TypeS
 | `src/lib/appearance.ts`               | Theme preference parsing and startup behavior                               |
 | `scripts/verify-export.mjs`           | Checks generated routes, metadata, assets, and local references             |
 
-The public routes are `/`, `/experiments/`, `/experiments/pdf-rendering/`, `/methodology/`, and `/privacy/`. Unknown routes use the exported `404.html`. Sitemap and robots files are generated during the build.
+The public routes are `/`, `/experiments/`, `/experiments/pdf-rendering/`, `/experiments/pdf-first-page/`, `/experiments/pdf-first-page/evidence/`, `/experiments/pdf-first-page/replicate/`, `/methodology/`, and `/privacy/`. Unknown routes use the exported `404.html`. Sitemap and robots files are generated during the build.
+
+`src/experiments/pdf-first-page/` owns the dated loading-lab snapshot, editorial report, evidence ledger, replication guide and shared reading navigation. Its explicit static route modules select these components; the dynamic experiment route generates only the older proposal. The homepage reuses the loading overview. `src/components/command-block.tsx` adds optional clipboard copying to commands that remain visible without JavaScript. Download fixtures are byte-preserved under `public/downloads/pdf-lab-001/` and covered by integrity tests.
 
 ## Adding a study
 
@@ -27,15 +29,16 @@ The public routes are `/`, `/experiments/`, `/experiments/pdf-rendering/`, `/met
 3. Keep section anchors, canonical metadata, navigation, and the export audit aligned with the new route. Unknown or unimplemented studies must remain missing pages.
 4. Add checks for the study's actual contracts: deterministic inputs, correct workloads, metric units, result serialization, and failure handling as they are implemented.
 
-The registry supports three states:
+The registry supports four states:
 
-| State       | Meaning                                                              |
-| ----------- | -------------------------------------------------------------------- |
-| `proposal`  | A question and candidate method; no measured findings                |
-| `protocol`  | A defined method and implementation plan; no measured findings       |
-| `published` | Findings supported by raw measurements and reproduction instructions |
+| State         | Meaning                                                                            |
+| ------------- | ---------------------------------------------------------------------------------- |
+| `proposal`    | A question and candidate method; no measured findings                              |
+| `protocol`    | A defined method and implementation plan; no measured findings                     |
+| `in-progress` | Measurements exist, but the declared campaign and final interpretation remain open |
+| `published`   | Findings supported by raw measurements and reproduction instructions               |
 
-`getPublishedFindings()` includes only `published` entries. Study 001 is currently a `proposal`. Its method is recorded in [decision 003](decisions/003-pdf-progress-study.md).
+`getPublishedFindings()` includes only `published` entries. The original rendering-progress proposal retains registry ID `001`; the loading experiment uses ID `002` and the public notebook label `Lab 001`. Registry identities are distinct from publication labels. The proposal remains unmeasured ([decision 003](decisions/003-pdf-progress-study.md)); the loading campaign is in progress ([decision 004](decisions/004-pdf-loading-publication.md)).
 
 Before publishing findings, retain raw trials, failed or invalid outcomes, units, timing boundaries, protocol version, source revision, dependency versions, browser, hardware, viewport, and run parameters. Report sample counts, uncertainty, exclusions, and limits. Unsupported metrics must not become zero. A successful build cannot validate a performance claim.
 

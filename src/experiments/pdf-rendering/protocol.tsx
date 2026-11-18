@@ -4,7 +4,7 @@ import type { ExperimentMetadata } from '@/lib/experiments';
 export function PdfRenderingProtocol({ experiment }: { experiment: ExperimentMetadata }) {
   return (
     <article className="lr-protocol">
-      <p className="lr-mono">STUDY 001 / PROPOSED METHOD</p>
+      <p className="lr-mono">RENDERING PROGRESS / PROPOSED METHOD</p>
       <h1 className="lr-title">
         {'Useful progress. '}
         <br />

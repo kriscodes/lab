@@ -19,14 +19,14 @@ export function SiteHeader() {
         </span>
       </div>
       <nav className="lr-nav" aria-label="Lab navigation">
-        <Link href="/" aria-current={path === '/' ? 'page' : undefined}>
-          Study 001
-        </Link>
         <Link
-          href="/experiments/pdf-rendering/"
-          aria-current={path?.startsWith('/experiments/pdf-rendering') ? 'page' : undefined}
+          href="/experiments/"
+          aria-current={path?.startsWith('/experiments') || path === '/' ? 'page' : undefined}
         >
-          The method
+          Studies
+        </Link>
+        <Link href="/methodology/" aria-current={path === '/methodology/' ? 'page' : undefined}>
+          Method
         </Link>
         <a href={REPOSITORY_URL}>
           Source <span aria-hidden="true">↗</span>
