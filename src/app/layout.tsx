@@ -47,8 +47,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
               <summary>What makes a finding worth publishing?</summary>
               <p>
                 A method you can repeat, raw measurements you can inspect, and limits stated
-                alongside the conclusion. No benchmark results have been collected yet.{' '}
-                <Link href="/methodology/">Read the publication standards.</Link>
+                alongside the conclusion. An attempted measurement is not automatically an accepted
+                finding. <Link href="/methodology/">Read the publication standards.</Link>
               </p>
             </details>
             <SiteFooter />

@@ -6,3 +6,5 @@ package-lock.json
 next-env.d.ts
 public/fonts/
 docs/previews/
+# Preserve the original benchmark manifest byte for byte.
+public/downloads/pdf-lab-001/manifest.json

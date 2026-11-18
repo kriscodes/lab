@@ -35,7 +35,7 @@ test('registry entries have unique identities and canonical linkable slugs', () 
 test('navigation categories are unique and each points to meaningful registered content', () => {
   const categories = getPopulatedCategories();
   assert.equal(new Set(categories).size, categories.length);
-  assert.deepEqual(categories, ['PDF rendering']);
+  assert.deepEqual(categories, ['PDF loading', 'PDF rendering']);
   for (const category of categories) {
     assert.ok(category.trim());
     assert.ok(EXPERIMENTS.some((experiment) => experiment.category === category));

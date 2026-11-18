@@ -6,7 +6,7 @@ import { PdfRenderingProtocol } from '@/experiments/pdf-rendering/protocol';
 
 export const dynamicParams = false;
 export function generateStaticParams() {
-  return EXPERIMENTS.map(({ slug }) => ({ slug }));
+  return EXPERIMENTS.filter(({ slug }) => slug !== 'pdf-first-page').map(({ slug }) => ({ slug }));
 }
 export async function generateMetadata({
   params,

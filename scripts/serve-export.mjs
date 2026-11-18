@@ -15,6 +15,8 @@ const mime = {
   '.svg': 'image/svg+xml',
   '.png': 'image/png',
   '.woff2': 'font/woff2',
+  '.pdf': 'application/pdf',
+  '.zip': 'application/zip',
 };
 
 // Serve the actual export, with deep links and real 404 responses; this is a local review tool only.
