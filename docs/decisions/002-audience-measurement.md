@@ -10,7 +10,7 @@ Portfolio, Lab, and Toolbox use a common first-party analytics service. Lab must
 
 Load the Portfolio-owned tracker from `analytics.kristiansalmeron.com` after hydration with the fixed site marker `lab`. Portfolio owns event validation, collection, authentication, PostgreSQL storage, retention, and reporting. Lab supplies the script integration, origin-only links between the three sites, and a privacy notice with opt-out controls.
 
-Approved reading routes are the homepage, experiment index, PDF proposal, and methodology. `/privacy` is excluded from pageview collection. Opening a protocol is reading activity, not a benchmark run. No PDF performance data is collected by this tracker.
+The original collector rollout recognized the homepage, experiment index, PDF proposal, and methodology. The collector owns that allowlist, outside this repository; confirm support for the later Lab001 overview, evidence, and replication routes before claiming their visits are measured. Adding a static page does not automatically register it with analytics. `/privacy` is excluded from pageview collection. Opening a protocol is reading activity, not a benchmark run. No PDF performance data is collected by this tracker.
 
 ## Consequences
 

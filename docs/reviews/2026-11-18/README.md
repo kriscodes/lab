@@ -1,6 +1,8 @@
 # PDF loading publication review
 
-Local review on November 18, 2026. Branch: `feat/pdf-loading-lab`. Base: `cc7f7c4`. No deployment or remote branch push was performed.
+Historical local review recorded on November 18, 2026. Branch at review: `feat/pdf-loading-lab`. Base: `cc7f7c4`. The verification below describes that review session; no deployment or remote branch push occurred during it.
+
+The Lab001 report was published afterward. The current `feat/labs-front-page` design review gives `/` a separate cover and revises the shared footer/navigation. These screenshots and results remain evidence of the earlier report review, not a claim that they show the latest homepage or that later changes have been deployed.
 
 ## Implemented
 
@@ -11,7 +13,7 @@ Local review on November 18, 2026. Branch: `feat/pdf-loading-lab`. Base: `cc7f7c
 
 ## Verification
 
-`npm run verify` passed: formatting, zero-warning lint, TypeScript checks, all 15 tests, production build, and the export audit for eight content routes. Local validation used Node 24.22.1, which satisfies the package engine; the repository and hosted CI still declare Node 22.23.4. Hosted CI has not run for this local branch. A final CSS-only mobile command-wrap change was checked with Prettier and a successful production build/export audit afterward.
+`npm run verify` passed: formatting, zero-warning lint, TypeScript checks, all 15 tests, production build, and the export audit for eight content routes. Local validation used Node 24.22.1, which satisfies the package engine; the repository and hosted CI still declare Node 22.23.4. Hosted CI had not run for the branch at the time of this local review. A final CSS-only mobile command-wrap change was checked with Prettier and a successful production build/export audit afterward.
 
 Corpus tests check the two PDF sizes/hashes against the preserved manifest and the ZIP checksum. The actual ZIP downloaded through the browser matched SHA-256 `c0cd7cbcbf68a40e6abd6e7ed08bccabf172bdc80be693fe8df057c0bd63995a`; its exact inventory and both PDF hashes passed independent checks.
 
@@ -30,6 +32,6 @@ The command-copy action displayed success. The browser automation's separate cli
 
 ## Preserved boundaries
 
-The benchmark repository remains clean at `1d2ba55` on `feat/corpus-text-pair`. Its PDFs, sources, schedule and recorded outcomes were not edited. The website is a dated publication snapshot, not a live status feed or a visitor benchmark. Final-campaign updates still require audited evidence and a deliberate publication update. Full raw archives remain linked through Notion, with an access notice; public audit exports are linked separately.
+At the time of this review, the benchmark repository was clean at `1d2ba55` on `feat/corpus-text-pair`. Its PDFs, sources, schedule and recorded outcomes were not edited. The website is a dated publication snapshot, not a live status feed or a visitor benchmark. Final-campaign updates still require audited evidence and a deliberate publication update. Full raw archives remain linked through Notion, with an access notice; public audit exports are linked separately.
 
-The local production preview is `http://127.0.0.1:4191/`. To restart it from this checkout, use the supported Node runtime, run `npm run build`, then `LAB_PREVIEW_PORT=4191 npm run preview`.
+This review used a local production preview at `http://127.0.0.1:4191/`; an old preview address does not guarantee a running process. To restart it from this checkout, use the supported Node runtime, run `npm run build`, then `LAB_PREVIEW_PORT=4191 npm run preview`.

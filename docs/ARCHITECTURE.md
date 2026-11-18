@@ -1,55 +1,81 @@
 # Architecture
 
-Lab is a static publication site built with Next.js App Router, React, and TypeScript. It has its own dependency lockfile and verification workflow. Portfolio and Toolbox are separate applications.
+Labs is a static publication site built with Next.js App Router, React, and TypeScript. It has its own dependency lockfile and verification workflow. Portfolio and Toolbox are separate applications. The [code guide](CODE_GUIDE.md) describes individual files and functions; this document explains how the parts fit together.
 
-## Application structure
+## Static by design
 
-`next.config.ts` sets `output: 'export'`, `trailingSlash: true`, and unoptimized images. Server Components execute at build time; the `out/` directory contains the deployable site. There is no Lab application server, database, or secret configuration.
+`next.config.ts` sets `output: 'export'`, `trailingSlash: true`, and unoptimized images. Server Components execute at build time. The `out/` directory contains the pages and assets that hosting serves. Lab has no request-time application server, database, or runtime secrets.
 
-| Location                              | Responsibility                                                              |
-| ------------------------------------- | --------------------------------------------------------------------------- |
-| `src/app/layout.tsx`                  | Shared shell, metadata, appearance bootstrap, and optional audience tracker |
-| `src/app/experiments/[slug]/page.tsx` | Static experiment routes and experiment-specific content selection          |
-| `src/app/methodology/`                | Measurement and publication standards                                       |
-| `src/app/privacy/`                    | Audience-measurement notice and preference links                            |
-| `src/lib/experiments.ts`              | Typed registry, publication states, and findings selection                  |
-| `src/experiments/pdf-rendering/`      | Study-specific copy and proposed method                                     |
-| `src/lib/site.ts`                     | Canonical identity and page metadata                                        |
-| `src/lib/appearance.ts`               | Theme preference parsing and startup behavior                               |
-| `scripts/verify-export.mjs`           | Checks generated routes, metadata, assets, and local references             |
+Small Client Components add appearance switching, motion, command copying, and route-aware navigation. Their presence does not make the article depend on JavaScript: headings, text, links, commands, and native disclosures are included in the export.
 
-The public routes are `/`, `/experiments/`, `/experiments/pdf-rendering/`, `/experiments/pdf-first-page/`, `/experiments/pdf-first-page/evidence/`, `/experiments/pdf-first-page/replicate/`, `/methodology/`, and `/privacy/`. Unknown routes use the exported `404.html`. Sitemap and robots files are generated during the build.
+## Page structure
 
-`src/experiments/pdf-first-page/` owns the dated loading-lab snapshot, editorial report, evidence ledger, replication guide and shared reading navigation. Its explicit static route modules select these components; the dynamic experiment route generates only the older proposal. The homepage is a separate editorial cover linking to Lab 001. Its SVG experiment is server-rendered, then animated by a small Client Component with pause and reduced-motion support. The publication disclosure remains on research routes only. `src/components/command-block.tsx` adds optional clipboard copying to commands that remain visible without JavaScript. Download fixtures are byte-preserved under `public/downloads/pdf-lab-001/` and covered by integrity tests.
+`RootLayout` supplies the document metadata, appearance bootstrap, header, main landmark, publication disclosure, footer, and optional audience tracker. The page shell uses a minimum viewport height and flexible main content. The footer occupies normal document flow: it reaches the bottom on short pages and follows the article on long pages. It is neither fixed nor sticky.
+
+The home route is an editorial cover with one Lab001 entry. Its wire sculpture starts as a server-rendered SVG and becomes animated after hydration. The home omits the publication disclosure and explanatory research copy. Research routes retain their full editorial content and publication standards. The shared navigation uses words without decorative link arrows.
+
+## Routes and ownership
+
+| Route                                    | Purpose                                                | Source                                           |
+| ---------------------------------------- | ------------------------------------------------------ | ------------------------------------------------ |
+| `/`                                      | Labs cover and Lab001 entry                            | `src/app/page.tsx`                               |
+| `/experiments/`                          | Research index and publication states                  | `src/app/experiments/page.tsx`                   |
+| `/experiments/pdf-first-page/`           | Lab001 overview                                        | `src/experiments/pdf-first-page/overview.tsx`    |
+| `/experiments/pdf-first-page/evidence/`  | Dated evidence ledger and limits                       | `src/experiments/pdf-first-page/ledger.tsx`      |
+| `/experiments/pdf-first-page/replicate/` | Corpus downloads and portable replication guide        | `src/experiments/pdf-first-page/replication.tsx` |
+| `/experiments/pdf-rendering/`            | Separate rendering-progress proposal                   | `src/experiments/pdf-rendering/protocol.tsx`     |
+| `/methodology/`                          | Measurement and publication standards                  | `src/app/methodology/page.tsx`                   |
+| `/privacy/`                              | Audience-measurement notice and participation controls | `src/app/privacy/page.tsx`                       |
+
+The eight content routes are audited after every production build. Unknown paths use the exported `404.html`. `src/app/sitemap.ts` and `src/app/robots.ts` generate crawler documents during the build.
+
+Explicit route modules select the three Lab001 components. The dynamic `[slug]` route generates only the older proposal; it rejects unsupported or unknown slugs. Registry metadata alone does not create a complete article.
+
+## Research data and publication states
+
+`src/lib/experiments.ts` holds the typed, immutable registry. It supports four states:
+
+| State         | Meaning                                                                             |
+| ------------- | ----------------------------------------------------------------------------------- |
+| `proposal`    | A question and candidate method; no measured findings.                              |
+| `protocol`    | A defined method and implementation plan; no measured findings.                     |
+| `in-progress` | Measurements exist, but the declared campaign and final interpretation remain open. |
+| `published`   | Findings supported by raw measurements and reproduction instructions.               |
+
+`getPublishedFindings()` includes only `published` entries. The rendering-progress proposal retains registry ID `001`; the loading experiment uses registry ID `002` and public notebook label **Lab 001**. Registry identities and publication labels serve different purposes and must not be silently renumbered.
+
+`src/experiments/pdf-first-page/evidence.ts` owns the reviewed source revision, corpus metadata, research stages, and fixed-window outcomes. The snapshot remains **November 18, 2026, 09:06 Pacific**, with one rejected final-campaign attempt and two pending windows. It is not a live status feed. `getBenchmarkSourceUrl()` creates revision-pinned links so later benchmark edits do not silently replace the cited evidence.
+
+Download fixtures are byte-preserved in `public/downloads/pdf-lab-001/` and covered by integrity tests. Website build success establishes delivery and code correctness, not validity of a performance claim.
 
 ## Adding a study
 
-1. Add a stable ID and slug to `src/lib/experiments.ts`. Describe the research question, hypothesis, controls, measurements, and limitations before implementing a runner.
-2. Put the study's article in `src/experiments/<slug>/` and add its explicit content selection to the experiment route. Registry metadata alone is not a complete page.
-3. Keep section anchors, canonical metadata, navigation, and the export audit aligned with the new route. Unknown or unimplemented studies must remain missing pages.
-4. Add checks for the study's actual contracts: deterministic inputs, correct workloads, metric units, result serialization, and failure handling as they are implemented.
+1. Add a stable registry ID and slug. Describe the question, hypothesis, controls, measurements, and limitations before implementing a runner.
+2. Put the article in `src/experiments/<slug>/` and select it through an explicit route or a supported dynamic-route branch.
+3. Update section anchors, canonical metadata, navigation, sitemap, and the export-audit route inventory together. Unknown or unimplemented studies must remain missing pages.
+4. Add tests for actual contracts: deterministic inputs, workload correctness, metric units, result serialization, or failure handling as these behaviors are implemented.
+5. Update the code guide and relevant publication decision so another contributor can locate the content and evidence.
 
-The registry supports four states:
+Before publishing findings, retain raw trials, failed or invalid outcomes, units, timing boundaries, protocol version, source revision, dependency versions, browser, hardware, viewport, and run parameters. Report sample counts, uncertainty, exclusions, and limits. Unsupported metrics stay missing; they do not become zero.
 
-| State         | Meaning                                                                            |
-| ------------- | ---------------------------------------------------------------------------------- |
-| `proposal`    | A question and candidate method; no measured findings                              |
-| `protocol`    | A defined method and implementation plan; no measured findings                     |
-| `in-progress` | Measurements exist, but the declared campaign and final interpretation remain open |
-| `published`   | Findings supported by raw measurements and reproduction instructions               |
+## Appearance and optional browser behavior
 
-`getPublishedFindings()` includes only `published` entries. The original rendering-progress proposal retains registry ID `001`; the loading experiment uses ID `002` and the public notebook label `Lab 001`. Registry identities are distinct from publication labels. The proposal remains unmeasured ([decision 003](decisions/003-pdf-progress-study.md)); the loading campaign is in progress ([decision 004](decisions/004-pdf-loading-publication.md)).
+`src/lib/appearance.ts` owns the `lab.theme.v1` preference. A fixed, trusted bootstrap applies a saved dark appearance before hydration. The appearance control observes document state and updates the browser theme color. Blocked storage still permits an in-memory choice for the current visit, and storage events synchronize other tabs.
 
-Before publishing findings, retain raw trials, failed or invalid outcomes, units, timing boundaries, protocol version, source revision, dependency versions, browser, hardware, viewport, and run parameters. Report sample counts, uncertainty, exclusions, and limits. Unsupported metrics must not become zero. A successful build cannot validate a performance claim.
+The home animation respects reduced-motion preferences, has a manual pause control, and skips visual updates when the document is hidden or the artwork is outside the viewport. The initial SVG remains visible without JavaScript. The Lab001 row uses a decorative test-tube illustration; the entire row is a normal link.
 
-## Browser behavior
+`CommandBlock` adds clipboard copying to commands that remain selectable in static HTML. Clipboard errors produce a visible fallback message. Fonts are local, with source attribution and licenses in `public/fonts/`.
 
-Small Client Components manage appearance controls. The `lab.theme.v1` preference belongs to this site. Static headings, links, navigation, and article content remain available without JavaScript. Fonts are served locally, with attribution and licenses in `public/fonts/`.
+## Audience measurement
 
-`src/app/layout.tsx` loads Portfolio's tracker after hydration with `data-site="lab"` and `referrerPolicy="no-referrer"`. The tracker is an optional external dependency; its failure must not prevent reading. Audience events are not benchmark measurements. See [decision 002](decisions/002-audience-measurement.md).
+`RootLayout` loads the Portfolio-owned tracker after hydration with `data-site="lab"` and `referrerPolicy="no-referrer"`. `NEXT_PUBLIC_ANALYTICS_ORIGIN` may replace the default origin at build time. The tracker is optional: failure must not prevent reading, using navigation, or downloading the corpus.
 
-Future measurement runners should have separate entry points and bundles. Keep article rendering, navigation, and unrelated framework code outside timed work. An iframe isolates a document, but does not guarantee a dedicated process or CPU thread.
+The external collector owns route allowlists, validation, retention, and reporting. A new website route does not automatically become an approved analytics route. Confirm collector support separately when measurement is part of a release. Audience events are not benchmark measurements. See [decision 002](decisions/002-audience-measurement.md).
 
-## Verification
+## Verification and release boundary
 
-GitHub Actions runs `npm run verify` for pull requests and changes to `main`, with read-only repository permissions. It contains no deployment job. Browser checks still cover keyboard use, narrow layouts, theme persistence, blocked storage, reduced motion, and content with JavaScript disabled. Hosting checks are described in [Deployment](DEPLOYMENT.md).
+GitHub Actions runs `npm run verify` for pull requests, pushes to `main` and `staging`, and manual workflow dispatches. It uses read-only repository permissions and contains no deployment job. The Render configuration separately observes the production branch and passing checks.
+
+Local design review and local commits do not authorize a push, merge, or deployment. Use a descriptive feature branch, keep changes reviewable, and follow the current approval boundary in [Deployment](DEPLOYMENT.md).
+
+Browser review covers keyboard use, narrow layouts, footer flow, theme persistence, blocked storage, reduced motion, and content without JavaScript. Future measurement runners need separate entry points and bundles; keep publication rendering, navigation, and unrelated framework code outside timed work. An iframe isolates a document but does not guarantee a dedicated process or CPU thread.

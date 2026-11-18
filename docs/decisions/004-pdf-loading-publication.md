@@ -1,10 +1,10 @@
 # PDF loading lab publication
 
-Date: November 18, 2026. Status: local implementation; not deployed.
+Date: November 18, 2026. Status: accepted; the Lab001 report is published. The later dedicated Labs front page and footer refinements are in local design review and are not yet deployed.
 
 Publish Lab 001 as an editorial report with two deeper reading paths: the evidence ledger and a replication guide. The report answers what was tested and what the current evidence permits; the ledger retains rejected and pending outcomes; the guide provides the unchanged original PDFs and commands for a separate local attempt.
 
-Routes: `/experiments/pdf-first-page/`, `/experiments/pdf-first-page/evidence/`, and `/experiments/pdf-first-page/replicate/`. The homepage links to the loading report as Lab001. The study index and site navigation keep the older `/experiments/pdf-rendering/` proposal discoverable. That proposal concerns intermediate-frame update cadence and remains unmeasured. Its registry ID is retained; publication labels distinguish it from the benchmark notebook's Lab 001 designation.
+Routes: `/experiments/pdf-first-page/`, `/experiments/pdf-first-page/evidence/`, and `/experiments/pdf-first-page/replicate/`. The dedicated homepage in the current source links to the loading report as Lab001. At the start of this design review, the public homepage still rendered the report directly. The study index and site navigation keep the older `/experiments/pdf-rendering/` proposal discoverable. That proposal concerns intermediate-frame update cadence and remains unmeasured. Its registry ID is retained; publication labels distinguish it from the benchmark notebook's Lab 001 designation.
 
 Content is a dated snapshot of benchmark revision `1d2ba55efa2af1203202315d2f739e9cbe3401e1`, not a live status feed. One final-campaign attempt was rejected and two were pending at the snapshot. A valid observer workload is not an accepted performance result. The 5.105 ms clock boundary is not a PDF render time. No speed chart or generalized performance claim is justified by this record.
 
