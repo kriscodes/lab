@@ -39,7 +39,7 @@ projects:
               - key: NEXT_TELEMETRY_DISABLED
                 value: '1'
               - key: NEXT_PUBLIC_ANALYTICS_ORIGIN
-                value: https://analytics.staging.kristiansalmeron.com
+                value: https://kristian-salmeron-api-staging.onrender.com
             headers:
               - path: /*
                 name: X-Robots-Tag
