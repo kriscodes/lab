@@ -1,99 +1,120 @@
+/** A server-rendered wire sculpture with progressive motion, pause, and visibility controls. */
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
 
-const RING_COUNT = 52;
-const SEGMENTS = 56;
-const TAU = Math.PI * 2;
+const COIL_RING_COUNT = 52;
+const RING_SEGMENT_COUNT = 56;
+const FULL_CIRCLE_RADIANS = Math.PI * 2;
 
-/** Project a gently deforming coil. The first frame also renders without JavaScript. */
-function coilFrame(time: number) {
-  const turn = time * 0.13;
-  const tilt = 0.95 + Math.sin(time * 0.22) * 0.23;
-  const roll = -0.48 + Math.sin(time * 0.16) * 0.13;
-  return Array.from({ length: RING_COUNT }, (_, ring) => {
-    const u = (ring / RING_COUNT) * TAU;
-    const radius = 67 + Math.sin(u * 3 + time * 0.35) * 9;
-    let depth = 0;
-    const points = Array.from({ length: SEGMENTS + 1 }, (_, segment) => {
-      const v = (segment / SEGMENTS) * TAU;
-      const radial = 157 + Math.cos(v) * radius;
-      const x = radial * Math.cos(u);
-      const y = radial * Math.sin(u);
-      const z = Math.sin(v) * radius + Math.sin(u * 3 + time * 0.35) * 24;
-      const turnedX = x * Math.cos(turn) + z * Math.sin(turn);
-      const turnedZ = -x * Math.sin(turn) + z * Math.cos(turn);
-      const tiltedY = y * Math.cos(tilt) - turnedZ * Math.sin(tilt);
-      const tiltedZ = y * Math.sin(tilt) + turnedZ * Math.cos(tilt);
-      const perspective = 850 / (850 + tiltedZ);
-      const px = (turnedX * Math.cos(roll) - tiltedY * Math.sin(roll)) * perspective;
-      const py = (turnedX * Math.sin(roll) + tiltedY * Math.cos(roll)) * perspective;
-      depth += tiltedZ;
-      return `${segment === 0 ? 'M' : 'L'}${(320 + px).toFixed(2)},${(307 + py).toFixed(2)}`;
+/** Project the three-dimensional coil into SVG rings for a given elapsed time. */
+function createCoilFrame(elapsedSeconds: number) {
+  const turnAngle = elapsedSeconds * 0.13;
+  const tiltAngle = 0.95 + Math.sin(elapsedSeconds * 0.22) * 0.23;
+  const rollAngle = -0.48 + Math.sin(elapsedSeconds * 0.16) * 0.13;
+  return Array.from({ length: COIL_RING_COUNT }, (_, ringIndex) => {
+    const ringAngle = (ringIndex / COIL_RING_COUNT) * FULL_CIRCLE_RADIANS;
+    const ringRadius = 67 + Math.sin(ringAngle * 3 + elapsedSeconds * 0.35) * 9;
+    let combinedPointDepth = 0;
+    const pathSegments = Array.from({ length: RING_SEGMENT_COUNT + 1 }, (_, segmentIndex) => {
+      const segmentAngle = (segmentIndex / RING_SEGMENT_COUNT) * FULL_CIRCLE_RADIANS;
+      const distanceFromCenter = 157 + Math.cos(segmentAngle) * ringRadius;
+      const horizontalPosition = distanceFromCenter * Math.cos(ringAngle);
+      const verticalPosition = distanceFromCenter * Math.sin(ringAngle);
+      const depthPosition =
+        Math.sin(segmentAngle) * ringRadius + Math.sin(ringAngle * 3 + elapsedSeconds * 0.35) * 24;
+      const turnedHorizontalPosition =
+        horizontalPosition * Math.cos(turnAngle) + depthPosition * Math.sin(turnAngle);
+      const turnedDepth =
+        -horizontalPosition * Math.sin(turnAngle) + depthPosition * Math.cos(turnAngle);
+      const tiltedVerticalPosition =
+        verticalPosition * Math.cos(tiltAngle) - turnedDepth * Math.sin(tiltAngle);
+      const tiltedDepth =
+        verticalPosition * Math.sin(tiltAngle) + turnedDepth * Math.cos(tiltAngle);
+      const perspectiveScale = 850 / (850 + tiltedDepth);
+      const projectedHorizontalPosition =
+        (turnedHorizontalPosition * Math.cos(rollAngle) -
+          tiltedVerticalPosition * Math.sin(rollAngle)) *
+        perspectiveScale;
+      const projectedVerticalPosition =
+        (turnedHorizontalPosition * Math.sin(rollAngle) +
+          tiltedVerticalPosition * Math.cos(rollAngle)) *
+        perspectiveScale;
+      combinedPointDepth += tiltedDepth;
+      return `${segmentIndex === 0 ? 'M' : 'L'}${(320 + projectedHorizontalPosition).toFixed(2)},${(307 + projectedVerticalPosition).toFixed(2)}`;
     });
     return {
-      d: `${points.join(' ')}Z`,
-      opacity: 0.36 + ((depth / (SEGMENTS + 1) + 250) / 500) * 0.6,
+      pathData: `${pathSegments.join(' ')}Z`,
+      opacity: 0.36 + ((combinedPointDepth / (RING_SEGMENT_COUNT + 1) + 250) / 500) * 0.6,
     };
   });
 }
 
-const STILL_FRAME = coilFrame(0);
+const INITIAL_COIL_FRAME = createCoilFrame(0);
 
+/** Render a static first frame and add pausable motion when the visitor allows it. */
 export function HomeExperiment() {
-  const sculpture = useRef<SVGSVGElement>(null);
-  const [paused, setPaused] = useState(false);
-  const [ready, setReady] = useState(false);
-  const elapsed = useRef(0);
+  const sculptureElementRef = useRef<SVGSVGElement>(null);
+  const [animationPaused, setAnimationPaused] = useState(false);
+  const [animationReady, setAnimationReady] = useState(false);
+  const elapsedAnimationSecondsRef = useRef(0);
 
   useEffect(() => {
-    const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const updatePreference = () => {
-      setPaused(motion.matches);
-      setReady(true);
+    const reducedMotionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
+    /** Follow the visitor’s reduced-motion preference before enabling animation. */
+    const syncMotionPreference = () => {
+      setAnimationPaused(reducedMotionPreference.matches);
+      setAnimationReady(true);
     };
-    updatePreference();
-    motion.addEventListener('change', updatePreference);
-    return () => motion.removeEventListener('change', updatePreference);
+    syncMotionPreference();
+    reducedMotionPreference.addEventListener('change', syncMotionPreference);
+    return () => reducedMotionPreference.removeEventListener('change', syncMotionPreference);
   }, []);
 
   useEffect(() => {
-    if (!ready || paused || !sculpture.current) return;
-    const svg = sculpture.current;
-    const paths = svg.querySelectorAll<SVGPathElement>('[data-coil-ring]');
-    let frame = 0;
-    let previous = 0;
-    let visible = true;
+    if (!animationReady || animationPaused || !sculptureElementRef.current) return;
+    const sculptureElement = sculptureElementRef.current;
+    const coilRingPaths = sculptureElement.querySelectorAll<SVGPathElement>('[data-coil-ring]');
+    let animationFrameId = 0;
+    let lastFrameTimeMilliseconds = 0;
+    let sculptureVisible = true;
 
-    const tick = (now: number) => {
-      frame = requestAnimationFrame(tick);
-      if (document.hidden || !visible) {
-        previous = 0;
+    /** Advance visible frames at most 30 times a second, preserving time across pauses. */
+    const renderAnimationFrame = (timestampMilliseconds: number) => {
+      animationFrameId = requestAnimationFrame(renderAnimationFrame);
+      if (document.hidden || !sculptureVisible) {
+        lastFrameTimeMilliseconds = 0;
         return;
       }
-      if (previous && now - previous < 1000 / 30) return;
-      elapsed.current += previous ? Math.min(now - previous, 80) / 1000 : 0;
-      previous = now;
-      coilFrame(elapsed.current).forEach((ring, index) => {
-        paths[index].setAttribute('d', ring.d);
-        paths[index].setAttribute('opacity', String(ring.opacity));
+      if (
+        lastFrameTimeMilliseconds &&
+        timestampMilliseconds - lastFrameTimeMilliseconds < 1000 / 30
+      )
+        return;
+      elapsedAnimationSecondsRef.current += lastFrameTimeMilliseconds
+        ? Math.min(timestampMilliseconds - lastFrameTimeMilliseconds, 80) / 1000
+        : 0;
+      lastFrameTimeMilliseconds = timestampMilliseconds;
+      createCoilFrame(elapsedAnimationSecondsRef.current).forEach((coilRing, ringIndex) => {
+        coilRingPaths[ringIndex].setAttribute('d', coilRing.pathData);
+        coilRingPaths[ringIndex].setAttribute('opacity', String(coilRing.opacity));
       });
     };
-    const observer = new IntersectionObserver(([entry]) => {
-      visible = entry.isIntersecting;
+    const visibilityObserver = new IntersectionObserver(([visibilityEntry]) => {
+      sculptureVisible = visibilityEntry.isIntersecting;
     });
-    observer.observe(svg);
-    frame = requestAnimationFrame(tick);
+    visibilityObserver.observe(sculptureElement);
+    animationFrameId = requestAnimationFrame(renderAnimationFrame);
     return () => {
-      cancelAnimationFrame(frame);
-      observer.disconnect();
+      cancelAnimationFrame(animationFrameId);
+      visibilityObserver.disconnect();
     };
-  }, [paused, ready]);
+  }, [animationPaused, animationReady]);
 
   return (
     <div className="labs-home-art">
       <svg
-        ref={sculpture}
+        ref={sculptureElementRef}
         className="labs-home-sculpture"
         viewBox="0 0 640 600"
         fill="none"
@@ -104,8 +125,13 @@ export function HomeExperiment() {
           <path d="M320 35v16m0 512v16M24 307h16m560 0h16" />
         </g>
         <g stroke="currentColor" strokeWidth="1.1" strokeLinejoin="round">
-          {STILL_FRAME.map((ring, index) => (
-            <path key={index} data-coil-ring="" d={ring.d} opacity={ring.opacity} />
+          {INITIAL_COIL_FRAME.map((coilRing, ringIndex) => (
+            <path
+              key={ringIndex}
+              data-coil-ring=""
+              d={coilRing.pathData}
+              opacity={coilRing.opacity}
+            />
           ))}
         </g>
         <circle cx="572" cy="190" r="8" fill="currentColor" />
@@ -114,12 +140,12 @@ export function HomeExperiment() {
       <button
         className="labs-home-motion"
         type="button"
-        hidden={!ready}
-        aria-label={paused ? 'Play animation' : 'Pause animation'}
-        onClick={() => setPaused(!paused)}
+        hidden={!animationReady}
+        aria-label={animationPaused ? 'Play animation' : 'Pause animation'}
+        onClick={() => setAnimationPaused(!animationPaused)}
       >
         <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
-          {paused ? (
+          {animationPaused ? (
             <path d="m5 3 8 5-8 5Z" fill="currentColor" />
           ) : (
             <path d="M5 3v10m6-10v10" stroke="currentColor" strokeWidth="1.5" />

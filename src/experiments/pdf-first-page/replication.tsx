@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { CommandBlock } from '@/components/command-block';
 import {
-  benchmarkSource,
+  getBenchmarkSourceUrl,
   BENCHMARK_REVISION,
   CORPUS_DOCUMENTS,
   CORPUS_PATH,
@@ -10,7 +10,7 @@ import {
 } from './evidence';
 import { LabNavigation } from './navigation';
 
-const setupCommand = `git clone https://github.com/kriscodes/pdf-rendering-benchmark.git pdf-lab-001 &&
+const workspaceSetupCommand = `git clone https://github.com/kriscodes/pdf-rendering-benchmark.git pdf-lab-001 &&
 cd pdf-lab-001 &&
 git checkout --detach ${BENCHMARK_REVISION} &&
 npm install --global pnpm@11.28.12 &&
@@ -18,7 +18,7 @@ pnpm install --frozen-lockfile &&
 python3 -m venv .venv &&
 .venv/bin/python -m pip install -r packages/corpus/requirements.txt &&
 pnpm --filter @pdf-benchmark/runner exec playwright install chromium --only-shell`;
-const verifyCommand = `mkdir -p corpus/generated/pilot &&
+const corpusVerificationCommand = `mkdir -p corpus/generated/pilot &&
 unzip pdf-lab-001-corpus.zip -d corpus/generated/pilot &&
 qpdf --version &&
 pdftoppm -v &&
@@ -26,12 +26,12 @@ pdftoppm -v &&
 node --version &&
 pnpm --version &&
 pnpm corpus:verify`;
-const controlledCommand = `pnpm --filter @pdf-benchmark/runner build &&
+const controlledDeliveryCommand = `pnpm --filter @pdf-benchmark/runner build &&
 node packages/runner/dist/controlled-delivery.js --calibrate-only &&
 mkdir -p results/raw/controlled-delivery &&
 run_dir="$(mktemp -d "$PWD/results/raw/controlled-delivery/replicate.XXXXXX")" &&
 node packages/runner/dist/controlled-delivery.js --output-dir "$run_dir"`;
-const auditCommand = `# In the same terminal, after the controlled-delivery attempt:
+const independentAuditCommand = `# In the same terminal, after the controlled-delivery attempt:
 test -n "$run_dir" &&
 audit_dir="$(mktemp -d "$PWD/results/raw/manual-audit.XXXXXX")" &&
 .venv/bin/python packages/runner/scripts/summarize_controlled_delivery.py \\
@@ -39,12 +39,13 @@ audit_dir="$(mktemp -d "$PWD/results/raw/manual-audit.XXXXXX")" &&
   --output-prefix "$audit_dir/summary" \\
   --audit-json "$audit_dir/audit.json"`;
 
+/** Guides a separate attempt using the pinned inputs, controls and audit commands. */
 export function PdfLoadingReplication() {
   return (
     <article className="loading-lab">
       <div className="lr-kicker lr-mono">
         <span>PDF LOADING / LAB 001</span>
-        <Link href={LAB_PATH}>← Back to the overview</Link>
+        <Link href={LAB_PATH}>Back to the overview</Link>
       </div>
       <h1 className="lr-title lab-page-title">
         Make the experiment
@@ -54,7 +55,7 @@ export function PdfLoadingReplication() {
         The same inputs. A pinned source revision. A record of your own environment and every
         outcome.
       </p>
-      <LabNavigation current="replicate" />
+      <LabNavigation currentSection="replicate" />
       <div className="lab-evidence-layout">
         <nav className="lab-contents" aria-label="Replication steps">
           <span className="lr-mono">YOUR READING PATH</span>
@@ -100,8 +101,8 @@ export function PdfLoadingReplication() {
                   matching setup does not guarantee identical timings. These commands create
                   independent evidence, not a claim to reproduce the original machine exactly.
                 </p>
-                <a href={benchmarkSource('docs/corpus-validation.md#setup')}>
-                  Full environment and corpus setup ↗
+                <a href={getBenchmarkSourceUrl('docs/corpus-validation.md#setup')}>
+                  Full environment and corpus setup
                 </a>
               </div>
             </details>
@@ -115,7 +116,7 @@ export function PdfLoadingReplication() {
               checkout uses the reviewed source revision, so a later change to main cannot silently
               alter your attempt.
             </p>
-            <CommandBlock label="Create a separate workspace" command={setupCommand} />
+            <CommandBlock label="Create a separate workspace" command={workspaceSetupCommand} />
             <p className="lab-small">
               Keep this terminal open in the repository root for the following steps. Do not install
               or build inside an active measurement checkout.
@@ -134,10 +135,13 @@ export function PdfLoadingReplication() {
               href={`${CORPUS_PATH}pdf-lab-001-corpus.zip`}
               download="pdf-lab-001-corpus.zip"
             >
-              Download the original corpus <span aria-hidden="true">↓</span>
+              Download the original corpus
               <small>Two 100-page PDFs + manifest · ZIP</small>
             </a>
-            <CommandBlock label="Unpack and verify the corpus" command={verifyCommand} />
+            <CommandBlock
+              label="Unpack and verify the corpus"
+              command={corpusVerificationCommand}
+            />
             <p className="lab-small">
               The verifier checks hashes and qpdf structure, repeats generation, and compares all
               pages at 144 DPI. Inspect its saved samples of pages 1, 50 and 100 for layout defects.
@@ -146,15 +150,15 @@ export function PdfLoadingReplication() {
             <details className="lab-checksums">
               <summary>Inspect individual files and SHA-256 checksums</summary>
               <div>
-                {CORPUS_DOCUMENTS.map((document) => (
-                  <div key={document.file}>
+                {CORPUS_DOCUMENTS.map((corpusDocument) => (
+                  <div key={corpusDocument.file}>
                     <h3>
-                      <a href={`${CORPUS_PATH}${document.file}`} download>
-                        {document.label} PDF ↓
+                      <a href={`${CORPUS_PATH}${corpusDocument.file}`} download>
+                        {corpusDocument.label} PDF
                       </a>
                     </h3>
-                    <p>{document.bytes.toLocaleString('en-US')} bytes · 100 pages</p>
-                    <code>{document.sha256}</code>
+                    <p>{corpusDocument.bytes.toLocaleString('en-US')} bytes · 100 pages</p>
+                    <code>{corpusDocument.sha256}</code>
                   </div>
                 ))}
                 <div>
@@ -162,15 +166,15 @@ export function PdfLoadingReplication() {
                   <code>c0cd7cbcbf68a40e6abd6e7ed08bccabf172bdc80be693fe8df057c0bd63995a</code>
                 </div>
                 <a href={`${CORPUS_PATH}manifest.json`} download>
-                  Download the unchanged manifest ↓
+                  Download the unchanged manifest
                 </a>
               </div>
             </details>
             <p className="lab-small">
               To investigate generation itself, use the{' '}
-              <a href={benchmarkSource('docs/corpus-validation.md')}>generator protocol</a> in a
-              separate directory. Do not replace the downloaded originals. Toolchain differences can
-              change generated bytes; retain and investigate any failed verification.
+              <a href={getBenchmarkSourceUrl('docs/corpus-validation.md')}>generator protocol</a> in
+              a separate directory. Do not replace the downloaded originals. Toolchain differences
+              can change generated bytes; retain and investigate any failed verification.
             </p>
           </section>
 
@@ -205,8 +209,8 @@ export function PdfLoadingReplication() {
                 successful comparison.
               </p>
             </div>
-            <a className="lab-text-link" href={benchmarkSource('docs/first-page-local.md')}>
-              Full baseline protocol and controls <span aria-hidden="true">↗</span>
+            <a className="lab-text-link" href={getBenchmarkSourceUrl('docs/first-page-local.md')}>
+              Full baseline protocol and controls
             </a>
           </section>
 
@@ -240,21 +244,27 @@ export function PdfLoadingReplication() {
             </div>
             <CommandBlock
               label="Calibrate and run controlled delivery"
-              command={controlledCommand}
+              command={controlledDeliveryCommand}
             />
             <p className="lab-small">
               Run one attempt after calibration passes. Both the calibration-only invocation and the
               performance runner retain their own evidence. A rejected performance attempt may stop
               early; do not retry until something passes or widen a tolerance.
             </p>
-            <CommandBlock label="Independently audit the attempt" command={auditCommand} />
+            <CommandBlock
+              label="Independently audit the attempt"
+              command={independentAuditCommand}
+            />
             <p className="lab-small">
               The explicit audit path is intentional: the legacy command’s default uses a shared
               temporary filename. Keep it in the new private directory shown above. The auditor
               rejects incomplete evidence and writes comparison exports only after acceptance.
             </p>
-            <a className="lab-text-link" href={benchmarkSource('docs/controlled-delivery.md')}>
-              Read every control and acceptance gate <span aria-hidden="true">↗</span>
+            <a
+              className="lab-text-link"
+              href={getBenchmarkSourceUrl('docs/controlled-delivery.md')}
+            >
+              Read every control and acceptance gate
             </a>
           </section>
 
@@ -285,7 +295,7 @@ export function PdfLoadingReplication() {
               campaign’s calendar windows.
             </p>
             <Link className="lab-text-link" href={`${LAB_PATH}evidence/`}>
-              Compare the structure of our record <span aria-hidden="true">↗</span>
+              Compare the structure of our record
             </Link>
           </section>
 
@@ -323,8 +333,8 @@ export function PdfLoadingReplication() {
                 Its plan is tied to preserved files, absolute runtime paths and three calendar slots
                 on the original machine. It is not a portable quick start. Follow the independent
                 runner instructions above; use the{' '}
-                <a href={benchmarkSource('docs/final-windows.md')}>final protocol</a> as a reference
-                when declaring your own schedule.
+                <a href={getBenchmarkSourceUrl('docs/final-windows.md')}>final protocol</a> as a
+                reference when declaring your own schedule.
               </p>
             </details>
           </section>

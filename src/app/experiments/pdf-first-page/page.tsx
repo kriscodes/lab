@@ -1,3 +1,4 @@
+/** Publishes the PDF loading overview at its dedicated experiment route. */
 import { PdfLoadingOverview } from '@/experiments/pdf-first-page/overview';
 import { pageMetadata } from '@/lib/site';
 
@@ -7,6 +8,7 @@ export const metadata = pageMetadata(
   '/experiments/pdf-first-page/',
 );
 
-export default function Page() {
+/** Displays the PDF loading study overview. */
+export default function PdfLoadingOverviewPage() {
   return <PdfLoadingOverview />;
 }

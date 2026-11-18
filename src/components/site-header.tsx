@@ -1,11 +1,12 @@
+/** Site identity and study navigation, with a quieter owner label on the home page. */
 'use client';
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { REPOSITORY_URL } from '@/lib/site';
 
+/** Show the shared masthead and identify the current research section. */
 export function SiteHeader() {
-  const path = usePathname();
+  const currentPath = usePathname();
   return (
     <header className="lr-header">
       <div className="lr-brand">
@@ -13,7 +14,7 @@ export function SiteHeader() {
           lab<span>.</span>
         </Link>
         <span className="lr-owner">
-          {path === '/' ? (
+          {currentPath === '/' ? (
             'Kristian Salmeron'
           ) : (
             <>
@@ -27,16 +28,16 @@ export function SiteHeader() {
       <nav className="lr-nav" aria-label="Lab navigation">
         <Link
           href="/experiments/"
-          aria-current={path?.startsWith('/experiments') ? 'page' : undefined}
+          aria-current={currentPath?.startsWith('/experiments') ? 'page' : undefined}
         >
           Studies
         </Link>
-        <Link href="/methodology/" aria-current={path === '/methodology/' ? 'page' : undefined}>
+        <Link
+          href="/methodology/"
+          aria-current={currentPath === '/methodology/' ? 'page' : undefined}
+        >
           Method
         </Link>
-        <a href={REPOSITORY_URL}>
-          Source <span aria-hidden="true">↗</span>
-        </a>
       </nav>
     </header>
   );

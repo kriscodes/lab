@@ -1,11 +1,14 @@
+/** Presents the measurement and publication standards used by every study. */
 import Link from 'next/link';
 import { pageMetadata } from '@/lib/site';
+
 export const metadata = pageMetadata(
   'Methodology',
   'Measurement and publication standards: controlled workloads, explicit timing boundaries, repeated trials, raw samples, and limitations.',
   '/methodology/',
 );
-const standards = [
+
+const publicationStandards = [
   [
     'Ask',
     'Start with a falsifiable question.',
@@ -37,6 +40,8 @@ const standards = [
     'Link the source, dependency lockfile, fixture checksums, setup, methodology version, and raw results. Visitor runs remain distinct from reviewed, versioned findings.',
   ],
 ];
+
+/** Explains the standards a study must meet before its findings are published. */
 export default function MethodologyPage() {
   return (
     <article className="lr-protocol">
@@ -48,18 +53,20 @@ export default function MethodologyPage() {
         A measurement is useful when someone else can understand and repeat it.
       </p>
       <div className="lr-standards">
-        {standards.map(([label, title, body], index) => (
-          <section key={label} className="lr-policy">
-            <span className="lr-mono">
-              0{index + 1} / {label.toUpperCase()}
-            </span>
-            <h2>{title}</h2>
-            <p>{body}</p>
-          </section>
-        ))}
+        {publicationStandards.map(
+          ([standardLabel, standardTitle, standardDescription], standardIndex) => (
+            <section key={standardLabel} className="lr-policy">
+              <span className="lr-mono">
+                0{standardIndex + 1} / {standardLabel.toUpperCase()}
+              </span>
+              <h2>{standardTitle}</h2>
+              <p>{standardDescription}</p>
+            </section>
+          ),
+        )}
       </div>
       <Link className="lr-open" href="/experiments/">
-        Explore the studies <span aria-hidden="true">↗</span>
+        Explore the studies
       </Link>
     </article>
   );

@@ -1,6 +1,8 @@
+/** Presents the proposed PDF rendering study without implying collected findings. */
 import Link from 'next/link';
 import type { ExperimentMetadata } from '@/lib/experiments';
 
+/** Renders the proposed comparison, measurement controls and supporting references. */
 export function PdfRenderingProtocol({ experiment }: { experiment: ExperimentMetadata }) {
   return (
     <article className="lr-protocol">
@@ -60,19 +62,17 @@ export function PdfRenderingProtocol({ experiment }: { experiment: ExperimentMet
       <ul className="lr-references">
         <li>
           <a href="https://github.com/kriscodes/lab/blob/main/docs/decisions/003-pdf-progress-study.md">
-            Study rationale and proposed method <span aria-hidden="true">↗</span>
+            Study rationale and proposed method
           </a>
         </li>
         {experiment.references.map(({ title, url }) => (
           <li key={url}>
-            <a href={url}>
-              {title} <span aria-hidden="true">↗</span>
-            </a>
+            <a href={url}>{title}</a>
           </li>
         ))}
       </ul>
       <Link className="lr-open" href="/methodology/">
-        Measurement and publication standards <span aria-hidden="true">↗</span>
+        Measurement and publication standards
       </Link>
     </article>
   );

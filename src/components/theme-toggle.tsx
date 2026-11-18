@@ -1,3 +1,4 @@
+/** Optional light/dark appearance control with accessible confirmation and storage fallback. */
 'use client';
 
 import { useState, useSyncExternalStore } from 'react';
@@ -11,13 +12,14 @@ import {
 /** Offers an optional appearance preference while all research content remains server-rendered. */
 export function ThemeToggle() {
   const appearance = useSyncExternalStore(subscribeAppearance, getAppearance, getServerAppearance);
-  const [message, setMessage] = useState('');
+  const [appearanceAnnouncement, setAppearanceAnnouncement] = useState('');
 
+  /** Switch the appearance and announce whether the preference was saved. */
   function toggleAppearance() {
-    const next = getAppearance() === 'dark' ? 'light' : 'dark';
-    const persisted = setAppearance(next);
-    setMessage(
-      `${next === 'dark' ? 'Dark' : 'Light'} appearance.${persisted ? '' : ' Saved for this visit only.'}`,
+    const nextAppearance = getAppearance() === 'dark' ? 'light' : 'dark';
+    const preferenceWasSaved = setAppearance(nextAppearance);
+    setAppearanceAnnouncement(
+      `${nextAppearance === 'dark' ? 'Dark' : 'Light'} appearance.${preferenceWasSaved ? '' : ' Saved for this visit only.'}`,
     );
   }
 
@@ -65,7 +67,7 @@ export function ThemeToggle() {
         Appearance
       </button>
       <span className="sr-only" role="status" aria-live="polite">
-        {message}
+        {appearanceAnnouncement}
       </span>
     </>
   );

@@ -1,4 +1,7 @@
+/** Provides the static not-found page and a route back to the Labs home. */
 import Link from 'next/link';
+
+/** Explains that the requested page is missing and links back to the Labs home. */
 export default function NotFound() {
   return (
     <article className="lr-protocol lr-not-found">
@@ -8,7 +11,7 @@ export default function NotFound() {
       </h1>
       <p className="lr-lead">The research log has the current investigations and their status.</p>
       <Link className="lr-open" href="/">
-        Return to Study 001 <span aria-hidden="true">↗</span>
+        Return to Labs
       </Link>
     </article>
   );

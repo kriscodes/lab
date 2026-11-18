@@ -1,11 +1,13 @@
+/** Publication standards shared by research pages while the home stays intentionally spare. */
 'use client';
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
+/** Offer the publication criteria beneath research content, excluding the home page. */
 export function ResearchDisclosure() {
-  const path = usePathname();
-  if (path === '/') return null;
+  const currentPath = usePathname();
+  if (currentPath === '/') return null;
 
   return (
     <details className="lr-disclosure">

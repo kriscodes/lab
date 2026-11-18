@@ -2,23 +2,33 @@
 import Link from 'next/link';
 import { LAB_PATH, SNAPSHOT_DATE, SNAPSHOT_TIME } from './evidence';
 
-export function LabNavigation({ current }: { current: 'overview' | 'evidence' | 'replicate' }) {
-  const sections = [
+/** Links the overview, evidence ledger and replication guide, marking the current section. */
+export function LabNavigation({
+  currentSection,
+}: {
+  currentSection: 'overview' | 'evidence' | 'replicate';
+}) {
+  const navigationSections = [
     ['overview', LAB_PATH, 'Overview'],
     ['evidence', `${LAB_PATH}evidence/`, 'The evidence'],
     ['replicate', `${LAB_PATH}replicate/`, 'Replicate the experiment'],
   ] as const;
   return (
     <nav className="lab-navigation" aria-label="PDF loading lab">
-      {sections.map(([id, href, label]) => (
-        <Link key={id} href={href} aria-current={current === id ? 'page' : undefined}>
-          {label}
+      {navigationSections.map(([sectionId, sectionPath, sectionLabel]) => (
+        <Link
+          key={sectionId}
+          href={sectionPath}
+          aria-current={currentSection === sectionId ? 'page' : undefined}
+        >
+          {sectionLabel}
         </Link>
       ))}
     </nav>
   );
 }
 
+/** Shows when the reviewed evidence snapshot was captured, rather than a live status. */
 export function EvidenceDate() {
   return (
     <p className="lab-dateline">

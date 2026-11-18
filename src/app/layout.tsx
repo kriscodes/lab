@@ -1,3 +1,4 @@
+/** Shared document metadata, local fonts, navigation, footer, and optional audience tracker. */
 import type { Metadata, Viewport } from 'next';
 import Script from 'next/script';
 import { SiteHeader } from '@/components/site-header';

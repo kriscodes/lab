@@ -1,3 +1,4 @@
+/** The Labs cover pairs a kinetic hero with a compact index of published experiments. */
 import Link from 'next/link';
 import { HomeExperiment } from '@/components/home-experiment';
 import { pageMetadata } from '@/lib/site';
@@ -8,6 +9,7 @@ export const metadata = pageMetadata(
   '/',
 );
 
+/** Render the editorial home and its direct entry into Lab001. */
 export default function HomePage() {
   return (
     <div className="labs-home">

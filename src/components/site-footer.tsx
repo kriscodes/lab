@@ -1,21 +1,19 @@
-'use client';
-
+/** Shared closing note and quiet navigation at the natural end of every page. */
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import { ThemeToggle } from './theme-toggle';
 
+/** Invite another visit and keep privacy, portfolio, and appearance controls easy to find. */
 export function SiteFooter() {
-  const home = usePathname() === '/';
   return (
-    <footer className={`lr-footer${home ? ' labs-home-footer' : ''}`}>
-      {!home && <span>Questions first. Evidence next.</span>}
-      <div className="lr-footer-links">
+    <footer className="lr-footer">
+      <p className="footer-farewell">Stay curious.</p>
+      <nav className="lr-footer-links" aria-label="Footer navigation">
         <a href="https://kristiansalmeron.com/" referrerPolicy="origin">
-          Portfolio <span aria-hidden="true">↗</span>
+          Portfolio
         </a>
-        <Link href="/privacy/">Privacy & analytics</Link>
+        <Link href="/privacy/">Privacy</Link>
         <ThemeToggle />
-      </div>
+      </nav>
     </footer>
   );
 }

@@ -1,3 +1,4 @@
+/** Generates the sitemap from public pages and registered experiments. */
 import type { MetadataRoute } from 'next';
 import { EXPERIMENTS, getExperimentPath } from '@/lib/experiments';
 import { SITE_ORIGIN } from '@/lib/site';
@@ -14,5 +15,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/experiments/pdf-first-page/evidence/',
     '/experiments/pdf-first-page/replicate/',
     ...EXPERIMENTS.map(({ slug }) => getExperimentPath(slug)),
-  ].map((path) => ({ url: `${SITE_ORIGIN}${path}` }));
+  ].map((pagePath) => ({ url: `${SITE_ORIGIN}${pagePath}` }));
 }
