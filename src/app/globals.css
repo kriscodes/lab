@@ -1343,51 +1343,60 @@ summary {
 }
 #lab-refined .labs-home-index {
   border-top: 1px solid var(--lr-rule);
-  padding: 24px 0 40px;
+  padding: 0;
 }
 #lab-refined .labs-home-study {
-  display: flex;
+  display: grid;
+  grid-template-columns: 112px minmax(0, 1fr) auto;
   align-items: center;
-  gap: 20px;
-  width: min(100%, 290px);
-  padding: 10px 0;
+  gap: 30px;
+  width: 100%;
+  min-height: 170px;
+  padding: 24px 18px 24px 0;
   text-decoration: none;
+  transition: background-color 180ms ease;
+}
+#lab-refined .labs-home-study-name {
   font:
-    400 25px/1.3 'Source Serif 4',
+    400 clamp(32px, 3.8vw, 44px)/1.2 'Source Serif 4',
     Georgia,
     serif;
+  letter-spacing: -0.035em;
 }
-#lab-refined .labs-home-study:hover {
+#lab-refined .labs-home-study:hover,
+#lab-refined .labs-home-study:focus-visible {
+  background: var(--lr-wash);
   color: var(--lr-blue);
 }
-#lab-refined .labs-home-study-mark {
-  position: relative;
-  width: 44px;
-  height: 48px;
+#lab-refined .labs-home-study-vessel {
+  width: 96px;
+  height: 112px;
+  justify-self: center;
   color: var(--lr-blue);
+  transition: transform 220ms ease;
 }
-#lab-refined .labs-home-study-mark span {
-  position: absolute;
-  top: 5px;
-  left: 8px;
-  width: 27px;
-  height: 36px;
-  border: 1px solid currentColor;
-  background: var(--lr-paper);
-  transform: rotate(-12deg);
+#lab-refined .labs-home-study:hover .labs-home-study-vessel {
+  transform: rotate(-8deg);
 }
-#lab-refined .labs-home-study-mark span:nth-child(2) {
-  transform: rotate(0deg);
+#lab-refined .labs-home-study-liquid-bubble {
+  fill: var(--lr-paper);
 }
-#lab-refined .labs-home-study-mark span:nth-child(3) {
-  transform: rotate(12deg);
-}
-#lab-refined .labs-home-study-plus {
-  margin-left: auto;
+#lab-refined .labs-home-study-action {
   font:
-    400 25px/1 'IBM Plex Sans',
-    sans-serif;
+    400 14px/1.5 'IBM Plex Mono',
+    monospace;
   color: var(--lr-blue);
+  border-bottom: 1px solid currentColor;
+  padding-bottom: 4px;
+}
+@media (prefers-reduced-motion: reduce) {
+  #lab-refined .labs-home-study,
+  #lab-refined .labs-home-study-vessel {
+    transition: none;
+  }
+  #lab-refined .labs-home-study:hover .labs-home-study-vessel {
+    transform: none;
+  }
 }
 #lab-refined .labs-home-footer {
   justify-content: flex-end;
@@ -1426,11 +1435,18 @@ summary {
     bottom: 0;
     right: 4%;
   }
-  #lab-refined .labs-home-index {
-    padding: 18px 0 24px;
-  }
   #lab-refined .labs-home-study {
-    width: 100%;
+    grid-template-columns: 62px minmax(0, 1fr) auto;
+    gap: 14px;
+    min-height: 132px;
+    padding: 20px 0;
+  }
+  #lab-refined .labs-home-study-vessel {
+    width: 62px;
+    height: auto;
+  }
+  #lab-refined .labs-home-study-name {
+    font-size: clamp(27px, 6.6vw, 38px);
   }
   #lab-refined .labs-home-footer {
     align-items: flex-end;
