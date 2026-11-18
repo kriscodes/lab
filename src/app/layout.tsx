@@ -55,7 +55,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           </div>
         </div>
         <Script
-          src="https://analytics.kristiansalmeron.com/analytics-assets/tracker.js"
+          src={`${process.env.NEXT_PUBLIC_ANALYTICS_ORIGIN || 'https://analytics.kristiansalmeron.com'}/analytics-assets/tracker.js`}
           strategy="afterInteractive"
           data-site="lab"
           referrerPolicy="no-referrer"

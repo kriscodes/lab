@@ -30,7 +30,7 @@ The export audit checks the five content routes, canonical and social metadata, 
 | Runtime secrets     | None                                                 |
 | Start command       | None                                                 |
 
-GitHub Actions runs `npm run verify` on every pull request and push to `main`, with a manual run option. CI covers formatting, lint, types, tests, production build, and the export audit. Use a regular feature branch, open a pull request, wait for CI, then merge into `main`. Render automatically deploys matching changes only after that commit's checks pass (`autoDeployTrigger: checksPass`). A failure or zero detected checks blocks automatic deployment. Do not add workflow path filters that skip checks on deployable commits.
+GitHub Actions runs `npm run verify` on every pull request and push to `main` or `staging`, with a manual run option. CI covers formatting, lint, types, tests, production build, and the export audit. Use a regular feature branch, open a pull request, wait for CI, then merge into `main`. Render automatically deploys matching changes only after that commit's checks pass (`autoDeployTrigger: checksPass`). A failure or zero detected checks blocks automatic deployment. Do not add workflow path filters that skip checks on deployable commits.
 
 The build filter includes application source, public assets, scripts, dependency files, and runtime/build configuration. Documentation-only changes run CI without deploying the site. Update the filter when introducing new build inputs.
 
