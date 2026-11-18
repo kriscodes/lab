@@ -1270,5 +1270,9 @@ summary {
   #lab-refined .lab-command pre {
     padding-left: 14px;
     padding-right: 14px;
+    white-space: pre-wrap;
+  }
+  #lab-refined .lab-command code {
+    overflow-wrap: anywhere;
   }
 }

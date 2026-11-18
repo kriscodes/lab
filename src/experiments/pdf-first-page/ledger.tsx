@@ -95,9 +95,7 @@ export function PdfLoadingEvidence() {
                 </p>
                 <a
                   className="lab-text-link"
-                  href={benchmarkSource(
-                    'docs/final-windows-results.md#window-1--november-18-09030906-pacific',
-                  )}
+                  href={benchmarkSource('docs/final-windows-results.md')}
                 >
                   Read the complete window record <span aria-hidden="true">↗</span>
                 </a>

@@ -10,30 +10,30 @@ import {
 } from './evidence';
 import { LabNavigation } from './navigation';
 
-const setupCommand = `git clone https://github.com/kriscodes/pdf-rendering-benchmark.git pdf-lab-001
-cd pdf-lab-001
-git checkout --detach ${BENCHMARK_REVISION}
-npm install --global pnpm@11.28.12
-pnpm install --frozen-lockfile
-python3 -m venv .venv
-.venv/bin/python -m pip install -r packages/corpus/requirements.txt
+const setupCommand = `git clone https://github.com/kriscodes/pdf-rendering-benchmark.git pdf-lab-001 &&
+cd pdf-lab-001 &&
+git checkout --detach ${BENCHMARK_REVISION} &&
+npm install --global pnpm@11.28.12 &&
+pnpm install --frozen-lockfile &&
+python3 -m venv .venv &&
+.venv/bin/python -m pip install -r packages/corpus/requirements.txt &&
 pnpm --filter @pdf-benchmark/runner exec playwright install chromium --only-shell`;
-const verifyCommand = `mkdir -p corpus/generated/pilot
-unzip pdf-lab-001-corpus.zip -d corpus/generated/pilot
-qpdf --version
-pdftoppm -v
-.venv/bin/python --version
-node --version
-pnpm --version
+const verifyCommand = `mkdir -p corpus/generated/pilot &&
+unzip pdf-lab-001-corpus.zip -d corpus/generated/pilot &&
+qpdf --version &&
+pdftoppm -v &&
+.venv/bin/python --version &&
+node --version &&
+pnpm --version &&
 pnpm corpus:verify`;
-const controlledCommand = `pnpm --filter @pdf-benchmark/runner build
-node packages/runner/dist/controlled-delivery.js --calibrate-only
-# Continue only if calibration succeeds.
-mkdir -p results/raw/controlled-delivery
-run_dir="$(mktemp -d "$PWD/results/raw/controlled-delivery/replicate.XXXXXX")"
+const controlledCommand = `pnpm --filter @pdf-benchmark/runner build &&
+node packages/runner/dist/controlled-delivery.js --calibrate-only &&
+mkdir -p results/raw/controlled-delivery &&
+run_dir="$(mktemp -d "$PWD/results/raw/controlled-delivery/replicate.XXXXXX")" &&
 node packages/runner/dist/controlled-delivery.js --output-dir "$run_dir"`;
 const auditCommand = `# In the same terminal, after the controlled-delivery attempt:
-audit_dir="$(mktemp -d "$PWD/results/raw/manual-audit.XXXXXX")"
+test -n "$run_dir" &&
+audit_dir="$(mktemp -d "$PWD/results/raw/manual-audit.XXXXXX")" &&
 .venv/bin/python packages/runner/scripts/summarize_controlled_delivery.py \\
   "$run_dir/report.json" \\
   --output-prefix "$audit_dir/summary" \\
@@ -48,8 +48,7 @@ export function PdfLoadingReplication() {
       </div>
       <h1 className="lr-title lab-page-title">
         Make the experiment
-        <br />
-        <em>repeatable.</em>
+        <br /> <em>repeatable.</em>
       </h1>
       <p className="lab-intro">
         The same inputs. A pinned source revision. A record of your own environment and every
