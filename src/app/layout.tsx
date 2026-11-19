@@ -4,6 +4,7 @@ import Script from 'next/script';
 import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
 import { ResearchDisclosure } from '@/components/research-disclosure';
+import { BubbleEffects } from '@/components/bubble-effects';
 import { SITE_NAME, SITE_ORIGIN } from '@/lib/site';
 import { APPEARANCE_BOOTSTRAP } from '@/lib/appearance';
 import './globals.css';
@@ -46,6 +47,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             </main>
             <ResearchDisclosure />
             <SiteFooter />
+            <BubbleEffects />
           </div>
         </div>
         <Script
