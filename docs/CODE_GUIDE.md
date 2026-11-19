@@ -23,7 +23,7 @@ Each source file begins with a brief description of its responsibility. Named fu
 
 | File                                                    | Responsibility and main functions                                                                                                                                                                                                       |
 | ------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `src/app/layout.tsx`                                    | `RootLayout()` renders document metadata, the pre-hydration appearance script, header, main content, disclosure, footer, and optional tracker. `metadata` and `viewport` are required Next.js exports.                                  |
+| `src/app/layout.tsx`                                    | `RootLayout()` renders document metadata, the pre-hydration appearance script, header, main content, disclosure, footer, decorative bubble layer, and optional tracker. `metadata` and `viewport` are required Next.js exports.         |
 | `src/app/globals.css`                                   | Local font faces, descriptive theme colors, shared editorial layout, article styles, responsive tables, home artwork, lab entry, and normal-flow footer. Keep selectors scoped to their feature and respect reduced-motion preferences. |
 | `src/app/page.tsx`                                      | `HomePage()` composes the sparse Labs cover, large heading, `HomeExperiment`, and the test-tube Lab001 link. It owns the root page metadata.                                                                                            |
 | `src/app/experiments/page.tsx`                          | `ExperimentsPage()` introduces how study questions are chosen, combining the hero, topic selector, three-step process, and quiet links to existing work.                                                                                |
@@ -51,7 +51,7 @@ The Studies route explains the purpose and selection of experiments. It is not a
 | `src/app/experiments/study-topics.tsx`   | `StudyTopics()` owns the selected topic and displays the matching example question. Native buttons expose selection state and a polite live region announces the changed question. |
 | `src/app/experiments/studies.module.css` | Layout, illustration, topic buttons, process steps, and responsive appearance for the Studies route. Uses the shared theme colors.                                                 |
 
-The topics—Loading, Motion, Accessibility, and Efficiency—are editorial prompts. Selecting one changes the local question; it does not filter experiments, change their research status, send a measurement, or navigate away. The default Loading question is included in the static export. After hydration, `selectedTopicName` chooses an item from `studyTopics`; its label and question update the live region together. Keep the illustration static and the topic update immediate: new bubble motion, page transitions, and hover animations are still design-only.
+The topics—Loading, Motion, Accessibility, and Efficiency—are editorial prompts. Selecting one changes the local question; it does not filter experiments, change their research status, send a measurement, or navigate away. The default Loading question is included in the static export. After hydration, `selectedTopicName` chooses an item from `studyTopics`; its label and question update the live region together. Keep the illustration static and the topic update immediate. The shared bubble layer may decorate hover entry on these buttons without changing their selected state or adding a page-navigation transition.
 
 ## Method: an approachable first read
 
@@ -59,7 +59,7 @@ The topics—Loading, Motion, Accessibility, and Efficiency—are editorial prom
 
 `src/app/methodology/methodology.module.css` gives the page a two-column editorial grid on larger screens and a single column on smaller screens. The large headings, quiet separators, and disclosures use the same typography and theme colors as the site.
 
-The principles cover a testable question, a fair comparison, a declared measurement boundary, complete repeated observations, honest limits, and repeatability. Their approachable summaries do not replace the technical standards: the full requirements remain in the exported HTML and are readable without JavaScript. The page adds no animation or custom disclosure state.
+The principles cover a testable question, a fair comparison, a declared measurement boundary, complete repeated observations, honest limits, and repeatability. Their approachable summaries do not replace the technical standards: the full requirements remain in the exported HTML and are readable without JavaScript. The principles add no custom animation or disclosure state. Shared hover bubbles are independent of the native disclosure behavior.
 
 ## Reusable components
 
@@ -71,6 +71,41 @@ The principles cover a testable question, a fair comparison, a declared measurem
 | `src/components/theme-toggle.tsx`        | `ThemeToggle()` reads the external appearance store, toggles the preference, and announces whether the choice was saved. The optional control stays hidden during server rendering.                                                                                                                                                    |
 | `src/components/command-block.tsx`       | `CommandBlock()` displays a labeled command and copy control. `copyCommand()` writes the complete command to the clipboard and reports a readable fallback when access fails.                                                                                                                                                          |
 | `src/components/home-experiment.tsx`     | `HomeExperiment()` renders the static SVG sculpture, observes reduced-motion preferences, and updates the paths after hydration when motion is allowed. `createCoilFrame()` projects ring paths from elapsed seconds, `syncMotionPreference()` observes the browser preference, and `renderAnimationFrame()` schedules visual updates. |
+
+### Decorative bubble files
+
+| File                                       | Responsibility and main functions                                                                                                                                                                                              |
+| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `src/components/bubble-effects.tsx`        | `BubbleEffects()` connects the layer to document arrival, pointer entry, keyboard focus, touch presses, motion preferences, and cleanup. `findBubbleTarget()` selects the nearest enabled link, button, or disclosure summary. |
+| `src/components/bubble-effects.module.css` | Bubble appearance, the non-interactive viewport layer, and the short pop treatment. Uses the shared theme colors.                                                                                                              |
+| `src/lib/bubble-arrival.ts`                | `createHomeArrivalGate()` returns `claimHomeArrival()`, a document-scoped decision that can grant arrival only once and never on back/forward navigation.                                                                      |
+| `src/lib/bubble-motion.ts`                 | Pure timing and motion calculations for the approved bubble counts, sizes, launch directions, deceleration, and viewport reflections.                                                                                          |
+| `src/lib/bubble-animation.ts`              | `createBubbleAnimator()` owns temporary DOM elements, frame requests, browser animations, and their cleanup. It returns `playHomeArrival()`, `playHover()`, `clear()`, and `destroy()`.                                        |
+
+### When the home arrival can play
+
+The arrival belongs to a document load, not to a route change. `createHomeArrivalGate()` receives the original document path and navigation type. Its returned function consumes the opportunity on first evaluation: it allows a fresh home document, rejects a document initially loaded on another route, and rejects a `back_forward` navigation. Leaving home before that first evaluation also consumes the opportunity. Returning home later in the same document cannot rearm it.
+
+A refresh creates a new document and a new gate, so the home arrival may play again. Browser-history restoration must not restart it. This policy uses no cookies or session storage. Reduced-motion preferences or a hidden document can skip an eligible effect; turning motion back on or showing the document does not create a new arrival.
+
+### How the bubbles move and finish
+
+The home arrival emits 14 bubbles at seven per second from the lower-left corner. Responsive diameters range from 8 pixels to the smaller of 160 pixels and 38% of viewport width. Random launch directions and viewport reflections create their paths; a gentle initial velocity decreases linearly to zero at 2.9 seconds. Every arrival bubble begins its 190-millisecond pop at the shared three-second deadline.
+
+| Motion function              | Purpose                                                                                                                                                 |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `createHomeBubbleMotions()`  | Plans the 14 sizes, launch directions, initial speeds, and individual emission delays. Accepts a random-number source so tests can repeat a trajectory. |
+| `sampleHomeBubble()`         | Samples one arrival bubble at an elapsed time, returning no frame before its emission and a stationary position after the shared stop time.             |
+| `reflectAtWall()`            | Folds an unbounded coordinate between two walls, preserving multiple crossings even after a slow frame.                                                 |
+| `bubbleTransform()`          | Converts a center position, diameter, and scale into a CSS transform.                                                                                   |
+| `createHoverBubbleFlights()` | Fans six fixed-size interaction bubbles from a pointer, touch, or focus position.                                                                       |
+| `getHoverBubbleKeyframes()`  | Supplies the four approved hover keyframes, independent of the arrival reflection model.                                                                |
+
+Pointer entry creates six bubbles near the pointer on enabled links, buttons, and disclosure summaries. Keyboard-visible focus uses the control's center; touch presses use the touch point without cancelling the native tap. Each burst travels for two seconds before a 190-millisecond pop. Moving between descendants of the same interactive item does not count as another entry. These smaller bursts are clipped at the viewport edge rather than reflected. The layer stays outside normal document flow, ignores pointer input, and is hidden from assistive technology.
+
+`createBubbleAnimator()` leaves navigation and preferences to `BubbleEffects`. Its `playHomeArrival()` samples elapsed time in animation frames, while `playHover()` uses the browser's animation API. `clear()` cancels outstanding frames and animations and removes all elements; `destroy()` also prevents stale callbacks from starting new work. The internal `animateElement()`, `launchHoverBubble()`, and `popBubble()` functions track each browser animation and remove its temporary element on completion or cancellation. If the browser animation API is unavailable, the decoration is skipped.
+
+Reduced motion skips all new bubbles. A page departure, hidden document, or component cleanup removes active elements and pending work. Keep these effects separate from the existing sculpture and from research measurements. Their shared layer must not change content, link destinations, selected topic state, focus behavior, or scroll position.
 
 ### How the sculpture works
 
@@ -170,13 +205,15 @@ The audit returns errors, the expected page count, and the number of referenced 
 
 ## Regression tests
 
-| File                         | Contract protected                                                                                                                                                                  |
-| ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `tests/appearance.test.mjs`  | Saved preferences, startup behavior, document/theme updates, blocked storage, tab synchronization, and listener cleanup. Browser and storage fixtures make side effects observable. |
-| `tests/experiments.test.mjs` | Unique identities, canonical routes, stable immutable registry values, and the boundary between proposals and published findings.                                                   |
-| `tests/export.test.mjs`      | Includes the export-audit tests in the standard `npm test` run.                                                                                                                     |
-| `tests/pdf-loading.test.mjs` | Exact corpus bytes and hashes, ZIP identity, and the dated distinction between observer validity and timing acceptance.                                                             |
-| `tests/site.test.mjs`        | Correct homepage and study sharing titles without duplicated site names.                                                                                                            |
+| File                            | Contract protected                                                                                                                                                                                       |
+| ------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `tests/appearance.test.mjs`     | Saved preferences, startup behavior, document/theme updates, blocked storage, tab synchronization, and listener cleanup. Browser and storage fixtures make side effects observable.                      |
+| `tests/bubble-arrival.test.mjs` | Fresh home loads and refreshes may play once; other initial routes, later route changes, departures before evaluation, and back/forward history do not gain or replay arrival.                           |
+| `tests/bubble-motion.test.mjs`  | Bubble timing, responsive size bounds, deceleration, viewport reflection, and shared arrival completion. `createRandomSequence()` and `createStraightMotion()` make the physical contracts reproducible. |
+| `tests/experiments.test.mjs`    | Unique identities, canonical routes, stable immutable registry values, and the boundary between proposals and published findings.                                                                        |
+| `tests/export.test.mjs`         | Includes the export-audit tests in the standard `npm test` run.                                                                                                                                          |
+| `tests/pdf-loading.test.mjs`    | Exact corpus bytes and hashes, ZIP identity, and the dated distinction between observer validity and timing acceptance.                                                                                  |
+| `tests/site.test.mjs`           | Correct homepage and study sharing titles without duplicated site names.                                                                                                                                 |
 
 Use tests for behavior and contracts that could regress. Browser checks cover presentation, keyboard access, footer flow, and optional interactions. Do not add tests that only repeat a component's literal implementation.
 
@@ -208,6 +245,6 @@ Use tests for behavior and contracts that could regress. Browser checks cover pr
 
 ## Before handing off a change
 
-Run checks appropriate to the work and `npm run verify` before an approved release. Review the static export in the browser, including a narrow viewport and direct nested-route loads. Keep commits focused and messages concrete. Use a descriptive feature branch rather than a `codex/` branch. The current release approval includes the Studies and Method designs with the earlier home refinements; follow the scope in [Deployment](DEPLOYMENT.md). Keep the new animation concepts outside production until separately approved.
+Run checks appropriate to the work and `npm run verify` before an approved release. Review the static export in the browser, including a narrow viewport and direct nested-route loads. Keep commits focused and messages concrete. Use a descriptive feature branch rather than a `codex/` branch. The current release approval covers only the decorative bubbles on `feat/labs-bubble-animations`; preserve all existing design, copy, and research content. Verify the provider revision and live behavior before considering the release complete. Follow the exact arrival policy and release checks in [Deployment](DEPLOYMENT.md).
 
 When a route, function responsibility, environment setting, or user-visible behavior changes, update the relevant section of this guide and the concise entry in the README. Treat deployment status and benchmark status as separate facts, each requiring its own evidence.

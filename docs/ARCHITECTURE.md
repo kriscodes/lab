@@ -6,7 +6,7 @@ Labs is a static publication site built with Next.js App Router, React, and Type
 
 `next.config.ts` sets `output: 'export'`, `trailingSlash: true`, and unoptimized images. Server Components execute at build time. The `out/` directory contains the pages and assets that hosting serves. Lab has no request-time application server, database, or runtime secrets.
 
-Small Client Components add appearance switching, home artwork motion, Studies topic selection, command copying, and route-aware navigation. Their presence does not make the article depend on JavaScript: headings, text, links, commands, and native disclosures are included in the export.
+Small Client Components add appearance switching, home artwork motion, decorative bubbles, Studies topic selection, command copying, and route-aware navigation. Their presence does not make the article depend on JavaScript: headings, text, links, commands, and native disclosures are included in the export.
 
 ## Page structure
 
@@ -37,7 +37,7 @@ Studies is an introduction to choosing useful questions. `src/app/experiments/pa
 
 Method renders six approachable principles from `researchPrinciples`. Each principle pairs a short introduction with native `<details>` containing its technical standard. The complete text remains in the static export and can be expanded without JavaScript. Styles are colocated in the two routes' CSS modules, keeping these layouts separate from the research articles.
 
-The Studies illustration is static and topic changes have no transition. New bubble motion, page transitions, and hover-animation concepts are outside the approved production implementation. The existing home sculpture retains its established behavior.
+The Studies illustration is static and topic changes have no transition. Shared hover bubbles decorate interactive items without changing the topic selection or layout. The arrival bubbles play only on a fresh home document; they are not a page-navigation transition. The existing home sculpture retains its established behavior.
 
 ## Research data and publication states
 
@@ -74,6 +74,14 @@ The home animation respects reduced-motion preferences and skips visual updates 
 
 `CommandBlock` adds clipboard copying to commands that remain selectable in static HTML. Clipboard errors produce a visible fallback message. Fonts are local, with source attribution and licenses in `public/fonts/`.
 
+## Decorative bubble behavior
+
+The shared `BubbleEffects` component owns a non-interactive decorative layer. The initial arrival is eligible only when a new document loads `/`. Refreshing the home creates a new eligible document. Client-side navigation, a later visit to `/` in the same document, back/forward history restoration, and direct loads of other routes do not play it. The decision uses document lifetime and navigation information, not cookies or session storage.
+
+The arrival emits 14 bubbles at seven per second. Their responsive diameters range from 8 to 160 pixels. They travel in random directions, reflect at the viewport walls, and slow linearly from a gentle launch until stopping at 2.9 seconds. All arrival bubbles begin their pop at three seconds. Hovering an enabled link, button, or disclosure summary creates six bubbles near the pointer; keyboard focus and touch presses receive the same feedback. Each interaction burst lasts two seconds before its 190-millisecond pop. These smaller bursts follow their own short paths and are clipped at the viewport edge rather than reflected.
+
+Reduced-motion preferences skip both bubble effects. Hiding or leaving the page clears active bubbles and scheduled work. The layer must not intercept pointer input or enter the accessibility tree. Animation timing and geometry live in small shared modules, while browser events and cleanup belong to the component. These effects are decorative and do not change the page layout, publication content, or research measurements.
+
 ## Audience measurement
 
 `RootLayout` loads the Portfolio-owned tracker after hydration with `data-site="lab"` and `referrerPolicy="no-referrer"`. `NEXT_PUBLIC_ANALYTICS_ORIGIN` may replace the default origin at build time. The tracker is optional: failure must not prevent reading, using navigation, or downloading the corpus.
@@ -84,6 +92,6 @@ The external collector owns route allowlists, validation, retention, and reporti
 
 GitHub Actions runs `npm run verify` for pull requests, pushes to `main` and `staging`, and manual workflow dispatches. It uses read-only repository permissions and contains no deployment job. The Render configuration separately observes the production branch and passing checks.
 
-The current release approval covers the home refinements, Studies, and Method on `feat/labs-front-page`, including implementation, commits, pushing, and deployment. New animation concepts remain design-only. Use a descriptive feature branch, keep changes reviewable, and follow the scope and verification steps in [Deployment](DEPLOYMENT.md). A successful local build alone does not establish deployment.
+The current release approval is limited to decorative bubbles on `feat/labs-bubble-animations`, including implementation, pushing, and deployment. All other design and content remain unchanged. Verify the provider revision and live behavior before considering the release complete; follow [Deployment](DEPLOYMENT.md) for those checks. A successful local build alone does not establish deployment.
 
 Browser review covers keyboard use, narrow layouts, footer flow, theme persistence, blocked storage, reduced motion, and content without JavaScript. Future measurement runners need separate entry points and bundles; keep publication rendering, navigation, and unrelated framework code outside timed work. An iframe isolates a document but does not guarantee a dedicated process or CPU thread.

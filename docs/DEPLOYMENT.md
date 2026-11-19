@@ -4,11 +4,11 @@ Lab deploys as a Render Static Site at `https://lab.kristiansalmeron.com/`. The 
 
 ## Approved release scope
 
-The user has approved implementation and release of the Studies design and friendlier Method page, together with the earlier home, footer, navigation, code-readability, and documentation refinements on `feat/labs-front-page`. Focused commits, pushing the approved work, and deployment are authorized. Keep the branch name descriptive; do not create a `codex/` branch.
+The user has approved implementation, pushing, and deployment of decorative bubbles only on `feat/labs-bubble-animations`. The release adds home-arrival bubbles and hover bursts on interactive items. Nothing else in the design, copy, routes, research content, or infrastructure changes. Keep the branch name descriptive; do not create a `codex/` branch.
 
-New bubble, page-transition, and hover-animation concepts are design-only. Keep their mockups outside the production source and exclude them from this release. The existing home sculpture remains part of the approved site. No benchmark update, new measurement campaign, staging activation, or infrastructure redesign is part of this release.
+The home arrival plays only on a new document loaded at `/`, including a refresh. It does not play on client-side navigation, a later home visit within the same document, back/forward history restoration, or a direct load of another route. Hover bursts retain their approved behavior. Reduced-motion preferences skip both effects; hidden pages and page departures clear them. Playback uses no cookies or session storage.
 
-A local build, passing tests, a commit, or an open pull request is not evidence of a production release. Verify the provider's deployed source revision and the public website before recording deployment as complete. The [Studies and Method record](reviews/2026-11-18/studies-and-method.md) captures the design scope.
+Verify the provider revision and live behavior before considering the release complete. A local build, passing tests, a commit, or an open pull request is not evidence of a production release. Verify the provider's deployed source revision and the public website before recording deployment as complete. The earlier [Studies and Method record](reviews/2026-11-18/studies-and-method.md) remains a historical record of that separate design round.
 
 ## Build and preview
 
@@ -21,6 +21,15 @@ npm run preview
 ```
 
 The export audit checks the eight content routes, canonical and social metadata, sitemap, robots file, local resources, and custom 404. Preview serves the actual export at `http://127.0.0.1:4174/`. Check direct nested-route loads, keyboard navigation, theme persistence, blocked storage, reduced motion, and a narrow viewport. On the home, check the Lab001 entry and the footer at the bottom of a short viewport. On longer research pages, confirm that the footer follows the content and never overlays it. Check all four Studies topic buttons with keyboard and pointer input, including their selected state and question announcement. Confirm that Method disclosures expose the full standards without JavaScript. Inspect both pages in light and dark appearances and at narrow widths.
+
+### Bubble release checks
+
+1. Open `/` as a new document and refresh it. Each load should emit 14 arrival bubbles at seven per second, decelerate them to rest by 2.9 seconds, and begin their shared pop at three seconds.
+2. Navigate between pages and back to home with site links. Use browser back and forward, including a restored history entry. No arrival should replay. A direct document load of Studies, Method, or a research page must also skip it.
+3. Hover enabled links, buttons, and disclosure summaries. Each burst creates six bubbles near the pointer, moves for two seconds, and pops over 190 milliseconds. Moving within one interactive item must not create repeated entry bursts. Check matching feedback from keyboard-visible focus and touch presses without interrupting the native interaction.
+4. Check light and dark appearance, narrow viewports, and resized windows. Arrival bubbles should reflect within the viewport; interaction bursts may be clipped at its edge. The layer must never block interaction, intercept focus, or change document layout.
+5. Enable reduced motion before loading and while an effect is active. Both effects must be skipped or cleared. Hide or leave the page during an effect and confirm that pending bubbles are cleared rather than resumed.
+6. Confirm that the arrival policy writes no cookies or session storage, and that all existing navigation, content, disclosures, downloads, and appearance controls still work.
 
 ## Render configuration
 
