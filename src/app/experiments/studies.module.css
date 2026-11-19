@@ -1,0 +1,437 @@
+/* Studies keeps its editorial artwork and question changes still at every viewport size. */
+.studiesPage {
+  container-type: inline-size;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: 1.12fr 1fr;
+  gap: 15px;
+  align-items: center;
+  padding: 60px 0 55px;
+}
+
+:global(#lab-refined) .heroTitle {
+  font:
+    400 clamp(60px, 8.5cqw, 102px) / 0.99 'Source Serif 4',
+    Georgia,
+    serif;
+  letter-spacing: -0.065em;
+}
+
+.heroTitle em {
+  color: var(--accent-color);
+  font-weight: 400;
+}
+
+:global(#lab-refined) .introduction {
+  max-width: 280px;
+  margin-top: 25px;
+  color: var(--text-muted);
+  font-size: 17px;
+  line-height: 1.55;
+}
+
+.questionArtwork {
+  position: relative;
+  aspect-ratio: 1.05;
+  color: var(--accent-color);
+  isolation: isolate;
+}
+
+.orbit,
+.outerOrbit {
+  position: absolute;
+  inset: 12%;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  opacity: 0.28;
+  transform: rotate(-28deg) scaleY(0.64);
+}
+
+.crossingOrbit {
+  transform: rotate(42deg) scaleY(0.64);
+}
+
+.uprightOrbit {
+  transform: rotate(100deg) scaleY(0.64);
+}
+
+.outerOrbit {
+  inset: 4%;
+  border-style: dotted;
+  opacity: 0.18;
+  transform: none;
+}
+
+.questionMark {
+  position: absolute;
+  inset: 18%;
+  display: grid;
+  place-items: center;
+  font:
+    italic 400 clamp(115px, 20cqw, 230px) / 1 'Source Serif 4',
+    Georgia,
+    serif;
+  transform: rotate(7deg);
+}
+
+.satellite {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background: var(--page-background);
+}
+
+.satellite svg {
+  width: 63px;
+  height: 63px;
+}
+
+.rabbitSatellite {
+  top: 19%;
+  left: 4%;
+  transform: rotate(-15deg);
+}
+
+.handSatellite {
+  top: 35%;
+  right: 2%;
+  transform: rotate(8deg);
+}
+
+.featherSatellite {
+  bottom: 0;
+  left: 39%;
+  transform: rotate(-6deg);
+}
+
+.orbitDot,
+.smallOrbitDot {
+  position: absolute;
+  top: 8%;
+  right: 25%;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.smallOrbitDot {
+  top: auto;
+  right: auto;
+  bottom: 17%;
+  left: 17%;
+  width: 5px;
+  height: 5px;
+}
+
+.topics {
+  padding-top: 25px;
+  border-top: 1px solid var(--border-color);
+}
+
+:global(#lab-refined) .kicker {
+  color: var(--text-muted);
+  font:
+    400 12px / 1.5 'IBM Plex Mono',
+    monospace;
+  letter-spacing: 0.06em;
+}
+
+.topicGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 24px;
+  padding: 29px 0 32px;
+}
+
+:global(#lab-refined) .topicButton {
+  padding: 0 0 17px;
+  appearance: none;
+  border-bottom: 2px solid transparent;
+  text-align: left;
+}
+
+:global(#lab-refined) .topicButton:hover {
+  color: var(--accent-color);
+}
+
+:global(#lab-refined) .topicButton[aria-pressed='true'] {
+  border-bottom-color: var(--accent-color);
+}
+
+.topicSymbol {
+  display: flex;
+  align-items: flex-start;
+  height: 95px;
+  color: var(--accent-color);
+}
+
+.topicSymbol svg {
+  width: 80px;
+  height: 80px;
+}
+
+.topicName {
+  display: block;
+  font:
+    400 29px / 1.2 'Source Serif 4',
+    Georgia,
+    serif;
+  letter-spacing: -0.035em;
+}
+
+.topicIntroduction {
+  display: block;
+  max-width: 165px;
+  margin-top: 10px;
+  color: var(--text-muted);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.question {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 30px;
+  align-items: start;
+  min-height: 147px;
+  padding: 31px 0 37px;
+  border-bottom: 1px solid var(--text-primary);
+}
+
+:global(#lab-refined) .questionLabel {
+  margin-top: 4px;
+  color: var(--text-muted);
+  font:
+    400 12px / 1.6 'IBM Plex Mono',
+    monospace;
+}
+
+:global(#lab-refined) .questionText {
+  max-width: 620px;
+  color: var(--accent-color);
+  font:
+    italic 400 31px / 1.25 'Source Serif 4',
+    Georgia,
+    serif;
+  letter-spacing: -0.025em;
+}
+
+.process {
+  padding: 55px 0 46px;
+}
+
+:global(#lab-refined) .sectionTitle {
+  margin-bottom: 33px;
+  font:
+    400 45px / 1.1 'Source Serif 4',
+    Georgia,
+    serif;
+  letter-spacing: -0.045em;
+}
+
+.sectionTitle em {
+  color: var(--accent-color);
+  font-weight: 400;
+}
+
+.processSteps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 35px;
+}
+
+:global(#lab-refined) .stepTitle {
+  margin-bottom: 12px;
+  font:
+    400 29px / 1.2 'Source Serif 4',
+    Georgia,
+    serif;
+  letter-spacing: -0.025em;
+}
+
+.processSteps p {
+  color: var(--text-muted);
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.closing {
+  display: flex;
+  gap: 35px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 35px 0 40px;
+  border-top: 1px solid var(--border-color);
+}
+
+.closing p {
+  max-width: 590px;
+  font:
+    400 23px / 1.4 'Source Serif 4',
+    Georgia,
+    serif;
+}
+
+.researchLinks {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 15px;
+}
+
+:global(#lab-refined) .labLink {
+  color: var(--accent-color);
+  font:
+    400 14px / 1.5 'IBM Plex Mono',
+    monospace;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 8px;
+}
+
+:global(#lab-refined) .proposalLink {
+  color: var(--text-muted);
+  font-size: 12px;
+  text-decoration-thickness: 1px;
+}
+
+@container (max-width: 700px) {
+  .hero {
+    padding: 45px 0;
+    grid-template-columns: 1.1fr 1fr;
+  }
+
+  :global(#lab-refined) .heroTitle {
+    font-size: clamp(46px, 8.4cqw, 72px);
+  }
+
+  :global(#lab-refined) .introduction {
+    font-size: 15px;
+  }
+
+  .satellite {
+    width: 58px;
+    height: 58px;
+  }
+
+  .satellite svg {
+    width: 49px;
+    height: 49px;
+  }
+
+  .topicGrid {
+    gap: 18px;
+  }
+
+  .topicName {
+    font-size: 23px;
+  }
+
+  .topicIntroduction {
+    font-size: 14px;
+  }
+
+  .question {
+    grid-template-columns: 115px 1fr;
+    gap: 20px;
+    min-height: 170px;
+  }
+
+  :global(#lab-refined) .questionText {
+    font-size: 27px;
+  }
+
+  .processSteps {
+    gap: 25px;
+  }
+
+  .processSteps p {
+    font-size: 15px;
+  }
+
+  :global(#lab-refined) .stepTitle {
+    font-size: 25px;
+  }
+}
+
+@container (max-width: 510px) {
+  .hero {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 42px 0 30px;
+  }
+
+  :global(#lab-refined) .heroTitle {
+    font-size: clamp(44px, 14cqw, 60px);
+  }
+
+  :global(#lab-refined) .introduction {
+    max-width: 250px;
+    margin-top: 20px;
+    font-size: 16px;
+  }
+
+  .questionArtwork {
+    width: min(100%, 320px);
+    justify-self: center;
+  }
+
+  .questionMark {
+    font-size: 160px;
+  }
+
+  .topicGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 26px 25px;
+  }
+
+  .topicName {
+    font-size: clamp(22px, 6.4cqw, 27px);
+  }
+
+  .topicIntroduction {
+    font-size: 15px;
+  }
+
+  .question {
+    grid-template-columns: 1fr;
+    gap: 15px;
+    min-height: 225px;
+  }
+
+  :global(#lab-refined) .questionText {
+    font-size: 29px;
+  }
+
+  :global(#lab-refined) .sectionTitle {
+    font-size: 37px;
+  }
+
+  .processSteps {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
+  :global(#lab-refined) .stepTitle {
+    font-size: 29px;
+  }
+
+  .processSteps p {
+    font-size: 16px;
+  }
+
+  .closing {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 25px;
+  }
+
+  .closing p {
+    font-size: 24px;
+  }
+}
