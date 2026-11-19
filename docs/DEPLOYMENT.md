@@ -2,11 +2,13 @@
 
 Lab deploys as a Render Static Site at `https://lab.kristiansalmeron.com/`. The artifact is `out/`; no request-time Node server or Lab database is required. The optional audience tracker uses the separately deployed Portfolio analytics service.
 
-## Current review boundary
+## Approved release scope
 
-The current design work is on `feat/labs-front-page`. Local edits and focused local commits are authorized. Pushing, merging, and deploying require explicit approval for this review. The existing pull request does not change that boundary. Keep the branch name descriptive; do not create a `codex/` branch.
+The user has approved implementation and release of the Studies design and friendlier Method page, together with the earlier home, footer, navigation, code-readability, and documentation refinements on `feat/labs-front-page`. Focused commits, pushing the approved work, and deployment are authorized. Keep the branch name descriptive; do not create a `codex/` branch.
 
-The dedicated home and current footer/navigation refinements may be present in this checkout before they appear on the public website. A local build, passing tests, a commit, or an open pull request is not evidence of a production release.
+New bubble, page-transition, and hover-animation concepts are design-only. Keep their mockups outside the production source and exclude them from this release. The existing home sculpture remains part of the approved site. No benchmark update, new measurement campaign, staging activation, or infrastructure redesign is part of this release.
+
+A local build, passing tests, a commit, or an open pull request is not evidence of a production release. Verify the provider's deployed source revision and the public website before recording deployment as complete. The [Studies and Method record](reviews/2026-11-18/studies-and-method.md) captures the design scope.
 
 ## Build and preview
 
@@ -18,7 +20,7 @@ npm run verify
 npm run preview
 ```
 
-The export audit checks the eight content routes, canonical and social metadata, sitemap, robots file, local resources, and custom 404. Preview serves the actual export at `http://127.0.0.1:4174/`. Check direct nested-route loads, keyboard navigation, theme persistence, blocked storage, reduced motion, and a narrow viewport. On the home, check the Lab001 entry and the footer at the bottom of a short viewport. On longer research pages, confirm that the footer follows the content and never overlays it.
+The export audit checks the eight content routes, canonical and social metadata, sitemap, robots file, local resources, and custom 404. Preview serves the actual export at `http://127.0.0.1:4174/`. Check direct nested-route loads, keyboard navigation, theme persistence, blocked storage, reduced motion, and a narrow viewport. On the home, check the Lab001 entry and the footer at the bottom of a short viewport. On longer research pages, confirm that the footer follows the content and never overlays it. Check all four Studies topic buttons with keyboard and pointer input, including their selected state and question announcement. Confirm that Method disclosures expose the full standards without JavaScript. Inspect both pages in light and dark appearances and at narrow widths.
 
 ## Render configuration
 

@@ -2,7 +2,7 @@
 
 This document describes the separate [`render.staging.yaml`](../render.staging.yaml) configuration. The file declares `kriscodes-lab-staging` at `lab.staging.kristiansalmeron.com`, using the same static export and build inputs as production. No application API or database is needed for Lab itself.
 
-The configuration's presence does not prove that a service, DNS record, remote branch, or deployment currently exists. Verify those states in the provider before activation or promotion. During the current design review, local commits are permitted; pushing, merging, provider changes, and deployment require explicit approval.
+The configuration's presence does not prove that a service, DNS record, remote branch, or deployment currently exists. Verify those states in the provider before activation or promotion. The current [production release approval](DEPLOYMENT.md) covers the approved website changes; it does not activate or redesign staging.
 
 ## Build-time settings
 

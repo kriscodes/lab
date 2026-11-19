@@ -2,7 +2,7 @@
 
 A little room for curiosity. Frontend experiments by Kristian Salmeron, published at [lab.kristiansalmeron.com](https://lab.kristiansalmeron.com/).
 
-The website has a separate front page and a research section. The front page pairs oversized editorial type with an animated wire sculpture and a test-tube entry for **Lab001**. The research pages keep the methods, evidence, limits, and replication instructions together.
+The website has a separate front page and a research section. The front page pairs oversized editorial type with an animated wire sculpture and a test-tube entry for **Lab001**. Studies explains how a question becomes an experiment. Method introduces the research principles in plain language, with technical details available in expandable sections. The research pages keep the evidence, limits, and replication instructions together.
 
 ## Current work
 
@@ -10,11 +10,11 @@ The website has a separate front page and a research section. The front page pai
 
 The separate **The Cost of Rendering Progress** proposal remains at `/experiments/pdf-rendering/`. It studies intermediate-frame update cadence and has no collected measurements. Lab001's loading results do not establish findings for that proposal.
 
-### Design review status
+### Approved release
 
-The dedicated Labs front page and the current footer, navigation, and readability refinements are being reviewed on `feat/labs-front-page`. Local commits are allowed; pushing, merging, and deploying need explicit approval for this review. The repository describes the current source, which may be ahead of the public website. See [Deployment](docs/DEPLOYMENT.md) before a release.
+The approved release on `feat/labs-front-page` includes the dedicated home, footer/navigation refinements, clearer code and documentation, the new Studies page, and the friendlier Method page. Implementation, focused commits, pushing, and deployment are authorized for that scope. New bubble, page-transition, and hover-animation ideas remain design concepts and are excluded from this release.
 
-The [current design review](docs/reviews/2026-11-18/labs-front-page.md) records the browser checks, screenshots, and Notion organization.
+Approval and deployment are separate facts. Follow [Deployment](docs/DEPLOYMENT.md) to verify the released revision. The [front-page review](docs/reviews/2026-11-18/labs-front-page.md) preserves earlier local checks, screenshots, and Notion organization; the [Studies and Method record](docs/reviews/2026-11-18/studies-and-method.md) describes the approved follow-up.
 
 ## Work locally
 
@@ -66,6 +66,8 @@ The preview opens at `http://127.0.0.1:4174/`. Set `LAB_PREVIEW_PORT` to use ano
 ## Review the experience
 
 Start at `/` for the large hero, Lab001 entry, and footer. On a short page, the footer should sit at the bottom of the viewport; on a long page it should follow the content and scroll normally. It must not cover the article. Header navigation contains Studies and Method. Footer links use Portfolio and Privacy; decorative arrow glyphs are not part of the design.
+
+On `/experiments/`, try the Loading, Motion, Accessibility, and Efficiency topic buttons with pointer and keyboard input; they change the example question without navigating away. On `/methodology/`, read the six principles and open the native disclosures for technical details. The Studies illustration is static. These pages introduce the work without changing its research status.
 
 For Lab001, open `/experiments/pdf-first-page/`, `/experiments/pdf-first-page/evidence/`, and `/experiments/pdf-first-page/replicate/`. Check desktop and narrow widths, both appearances, keyboard navigation, native disclosures, command copying, and downloads. Confirm that the sculpture remains still for reduced-motion preferences and stops updating while the page or artwork is hidden. Static headings, links, article text, commands, and the initial artwork must remain available without JavaScript.
 

@@ -26,12 +26,12 @@ Each source file begins with a brief description of its responsibility. Named fu
 | `src/app/layout.tsx`                                    | `RootLayout()` renders document metadata, the pre-hydration appearance script, header, main content, disclosure, footer, and optional tracker. `metadata` and `viewport` are required Next.js exports.                                  |
 | `src/app/globals.css`                                   | Local font faces, descriptive theme colors, shared editorial layout, article styles, responsive tables, home artwork, lab entry, and normal-flow footer. Keep selectors scoped to their feature and respect reduced-motion preferences. |
 | `src/app/page.tsx`                                      | `HomePage()` composes the sparse Labs cover, large heading, `HomeExperiment`, and the test-tube Lab001 link. It owns the root page metadata.                                                                                            |
-| `src/app/experiments/page.tsx`                          | `ExperimentsPage()` lists the immutable experiment registry with publication labels, status, titles, and summaries.                                                                                                                     |
+| `src/app/experiments/page.tsx`                          | `ExperimentsPage()` introduces how study questions are chosen, combining the hero, topic selector, three-step process, and quiet links to existing work.                                                                                |
 | `src/app/experiments/[slug]/page.tsx`                   | `generateStaticParams()` selects supported dynamic routes; `generateMetadata()` resolves their sharing metadata; `ExperimentPage()` chooses the proposal component and sends unsupported slugs to the missing-page response.            |
 | `src/app/experiments/pdf-first-page/page.tsx`           | Static route and metadata for the Lab001 overview; `PdfLoadingOverviewPage()` renders `PdfLoadingOverview()`.                                                                                                                           |
 | `src/app/experiments/pdf-first-page/evidence/page.tsx`  | Static route and metadata for the evidence ledger; `PdfLoadingEvidencePage()` renders `PdfLoadingEvidence()`.                                                                                                                           |
 | `src/app/experiments/pdf-first-page/replicate/page.tsx` | Static route and metadata for the replication guide; `PdfLoadingReplicationPage()` renders `PdfLoadingReplication()`.                                                                                                                   |
-| `src/app/methodology/page.tsx`                          | `MethodologyPage()` renders the six publication standards from the local standards data.                                                                                                                                                |
+| `src/app/methodology/page.tsx`                          | `MethodologyPage()` renders six friendly research principles and their native expandable technical standards from `researchPrinciples`.                                                                                                 |
 | `src/app/privacy/page.tsx`                              | `PrivacyPage()` explains the separate audience tracker and links to participation controls. The website does not implement the collector.                                                                                               |
 | `src/app/not-found.tsx`                                 | The missing-page component gives unknown routes a clear message and a link back to Labs. Next.js exports it as `404.html`.                                                                                                              |
 | `src/app/robots.ts`                                     | Generates static crawler instructions and the canonical sitemap location.                                                                                                                                                               |
@@ -40,6 +40,26 @@ Each source file begins with a brief description of its responsibility. Named fu
 ### What belongs in a route file?
 
 A route file should select a page, declare its metadata, and handle route-specific validation. Longer research narratives and their data belong in `src/experiments/`. Keep the homepage presentation independent from a particular report so adding or updating a study does not replace the Labs cover.
+
+## Studies: choosing a useful question
+
+The Studies route explains the purpose and selection of experiments. It is not a catalogue of completed findings. Its “What if it felt better?” hero leads to four example topics, the “Follow the hmm.” process, and quieter links to Lab001 and the separate rendering-progress proposal. Those links retain the existing research routes and status boundaries.
+
+| File                                     | Responsibility and main functions                                                                                                                                                  |
+| ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/app/experiments/study-symbol.tsx`   | `StudySymbol()` draws one of four decorative topic symbols: a rabbit, orbit, hand, or feather. The page and topic buttons reuse these static SVGs.                                 |
+| `src/app/experiments/study-topics.tsx`   | `StudyTopics()` owns the selected topic and displays the matching example question. Native buttons expose selection state and a polite live region announces the changed question. |
+| `src/app/experiments/studies.module.css` | Layout, illustration, topic buttons, process steps, and responsive appearance for the Studies route. Uses the shared theme colors.                                                 |
+
+The topics—Loading, Motion, Accessibility, and Efficiency—are editorial prompts. Selecting one changes the local question; it does not filter experiments, change their research status, send a measurement, or navigate away. The default Loading question is included in the static export. After hydration, `selectedTopicName` chooses an item from `studyTopics`; its label and question update the live region together. Keep the illustration static and the topic update immediate: new bubble motion, page transitions, and hover animations are still design-only.
+
+## Method: an approachable first read
+
+`src/app/methodology/page.tsx` introduces “Curious by nature. Careful by design.” and stores the six `researchPrinciples`. Each item has a heading, a short introduction, a disclosure label, and the technical requirements. `MethodologyPage()` maps those values into semantic sections and native `<details>` elements, then links back to Studies.
+
+`src/app/methodology/methodology.module.css` gives the page a two-column editorial grid on larger screens and a single column on smaller screens. The large headings, quiet separators, and disclosures use the same typography and theme colors as the site.
+
+The principles cover a testable question, a fair comparison, a declared measurement boundary, complete repeated observations, honest limits, and repeatability. Their approachable summaries do not replace the technical standards: the full requirements remain in the exported HTML and are readable without JavaScript. The page adds no animation or custom disclosure state.
 
 ## Reusable components
 
@@ -188,6 +208,6 @@ Use tests for behavior and contracts that could regress. Browser checks cover pr
 
 ## Before handing off a change
 
-Run checks appropriate to the work and `npm run verify` before an approved release. Review the static export in the browser, including a narrow viewport and direct nested-route loads. Keep commits focused and messages concrete. Use a descriptive feature branch rather than a `codex/` branch. During the current design review, keep commits local until pushing or publishing is explicitly approved.
+Run checks appropriate to the work and `npm run verify` before an approved release. Review the static export in the browser, including a narrow viewport and direct nested-route loads. Keep commits focused and messages concrete. Use a descriptive feature branch rather than a `codex/` branch. The current release approval includes the Studies and Method designs with the earlier home refinements; follow the scope in [Deployment](DEPLOYMENT.md). Keep the new animation concepts outside production until separately approved.
 
 When a route, function responsibility, environment setting, or user-visible behavior changes, update the relevant section of this guide and the concise entry in the README. Treat deployment status and benchmark status as separate facts, each requiring its own evidence.

@@ -1,6 +1,6 @@
 # PDF loading lab publication
 
-Date: November 18, 2026. Status: accepted; the Lab001 report is published. The later dedicated Labs front page and footer refinements are in local design review and are not yet deployed.
+Date: November 18, 2026. Status: accepted; the Lab001 report is published. The later dedicated Labs front page, footer, Studies, and Method refinements have separate release approval. Their deployment must be verified independently; they do not change the evidence snapshot documented here.
 
 Publish Lab 001 as an editorial report with two deeper reading paths: the evidence ledger and a replication guide. The report answers what was tested and what the current evidence permits; the ledger retains rejected and pending outcomes; the guide provides the unchanged original PDFs and commands for a separate local attempt.
 

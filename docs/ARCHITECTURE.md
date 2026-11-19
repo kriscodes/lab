@@ -6,7 +6,7 @@ Labs is a static publication site built with Next.js App Router, React, and Type
 
 `next.config.ts` sets `output: 'export'`, `trailingSlash: true`, and unoptimized images. Server Components execute at build time. The `out/` directory contains the pages and assets that hosting serves. Lab has no request-time application server, database, or runtime secrets.
 
-Small Client Components add appearance switching, motion, command copying, and route-aware navigation. Their presence does not make the article depend on JavaScript: headings, text, links, commands, and native disclosures are included in the export.
+Small Client Components add appearance switching, home artwork motion, Studies topic selection, command copying, and route-aware navigation. Their presence does not make the article depend on JavaScript: headings, text, links, commands, and native disclosures are included in the export.
 
 ## Page structure
 
@@ -19,17 +19,25 @@ The home route is an editorial cover with one Lab001 entry. Its wire sculpture s
 | Route                                    | Purpose                                                | Source                                           |
 | ---------------------------------------- | ------------------------------------------------------ | ------------------------------------------------ |
 | `/`                                      | Labs cover and Lab001 entry                            | `src/app/page.tsx`                               |
-| `/experiments/`                          | Research index and publication states                  | `src/app/experiments/page.tsx`                   |
+| `/experiments/`                          | How questions are selected and developed into studies  | `src/app/experiments/page.tsx`                   |
 | `/experiments/pdf-first-page/`           | Lab001 overview                                        | `src/experiments/pdf-first-page/overview.tsx`    |
 | `/experiments/pdf-first-page/evidence/`  | Dated evidence ledger and limits                       | `src/experiments/pdf-first-page/ledger.tsx`      |
 | `/experiments/pdf-first-page/replicate/` | Corpus downloads and portable replication guide        | `src/experiments/pdf-first-page/replication.tsx` |
 | `/experiments/pdf-rendering/`            | Separate rendering-progress proposal                   | `src/experiments/pdf-rendering/protocol.tsx`     |
-| `/methodology/`                          | Measurement and publication standards                  | `src/app/methodology/page.tsx`                   |
+| `/methodology/`                          | Friendly research principles and expandable standards  | `src/app/methodology/page.tsx`                   |
 | `/privacy/`                              | Audience-measurement notice and participation controls | `src/app/privacy/page.tsx`                       |
 
 The eight content routes are audited after every production build. Unknown paths use the exported `404.html`. `src/app/sitemap.ts` and `src/app/robots.ts` generate crawler documents during the build.
 
 Explicit route modules select the three Lab001 components. The dynamic `[slug]` route generates only the older proposal; it rejects unsupported or unknown slugs. Registry metadata alone does not create a complete article.
+
+## Studies and Method
+
+Studies is an introduction to choosing useful questions. `src/app/experiments/page.tsx` composes a static orbit-and-question illustration, topic choices, a short three-step process, and links to the two existing studies. `StudyTopics` owns the selected topic and announces its example question through a polite live region. It does not filter the registry, record a research result, or start a benchmark. The four topics are editorial prompts, not a list of measured categories.
+
+Method renders six approachable principles from `researchPrinciples`. Each principle pairs a short introduction with native `<details>` containing its technical standard. The complete text remains in the static export and can be expanded without JavaScript. Styles are colocated in the two routes' CSS modules, keeping these layouts separate from the research articles.
+
+The Studies illustration is static and topic changes have no transition. New bubble motion, page transitions, and hover-animation concepts are outside the approved production implementation. The existing home sculpture retains its established behavior.
 
 ## Research data and publication states
 
@@ -76,6 +84,6 @@ The external collector owns route allowlists, validation, retention, and reporti
 
 GitHub Actions runs `npm run verify` for pull requests, pushes to `main` and `staging`, and manual workflow dispatches. It uses read-only repository permissions and contains no deployment job. The Render configuration separately observes the production branch and passing checks.
 
-Local design review and local commits do not authorize a push, merge, or deployment. Use a descriptive feature branch, keep changes reviewable, and follow the current approval boundary in [Deployment](DEPLOYMENT.md).
+The current release approval covers the home refinements, Studies, and Method on `feat/labs-front-page`, including implementation, commits, pushing, and deployment. New animation concepts remain design-only. Use a descriptive feature branch, keep changes reviewable, and follow the scope and verification steps in [Deployment](DEPLOYMENT.md). A successful local build alone does not establish deployment.
 
 Browser review covers keyboard use, narrow layouts, footer flow, theme persistence, blocked storage, reduced motion, and content without JavaScript. Future measurement runners need separate entry points and bundles; keep publication rendering, navigation, and unrelated framework code outside timed work. An iframe isolates a document but does not guarantee a dedicated process or CPU thread.

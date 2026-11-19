@@ -1,6 +1,6 @@
 # Labs front page: design and readability review
 
-Reviewed November 18, 2026, on `feat/labs-front-page`. These refinements are local commits. This review did not push, merge, or deploy the website.
+Reviewed November 18, 2026, on `feat/labs-front-page`. This historical review ended with local commits; no push, merge, or deployment occurred during this round. A later round approved the Studies and Method designs and release of these earlier refinements; see the [follow-up record](studies-and-method.md).
 
 ## Design
 
@@ -32,6 +32,8 @@ The existing Labs home now uses the same headline, a static version of the wire 
 The organization is Labs, then Lab001, then the research notebook and its supporting records. Website maintenance notes remain beside Lab001 under Labs. No research records were deleted.
 
 ## Screenshots
+
+These images show this review round. A later home simplification removed the manual playback control and adjusted the hero; these screenshots do not establish the latest appearance.
 
 - [Desktop home](labs-home-desktop.jpg)
 - [Mobile footer](labs-footer-mobile.jpg)

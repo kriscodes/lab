@@ -2,7 +2,7 @@
 
 Historical local review recorded on November 18, 2026. Branch at review: `feat/pdf-loading-lab`. Base: `cc7f7c4`. The verification below describes that review session; no deployment or remote branch push occurred during it.
 
-The Lab001 report was published afterward. The current `feat/labs-front-page` design review gives `/` a separate cover and revises the shared footer/navigation. These screenshots and results remain evidence of the earlier report review, not a claim that they show the latest homepage or that later changes have been deployed.
+The Lab001 report was published afterward. Later work on `feat/labs-front-page` gives `/` a separate cover, revises the shared footer/navigation, and introduces the approved Studies and Method designs. See the [follow-up record](studies-and-method.md) for that scope. These screenshots and results remain evidence of the earlier report review, not a claim that they show the latest homepage or that later changes have been deployed.
 
 ## Implemented
 
