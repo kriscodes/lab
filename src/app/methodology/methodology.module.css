@@ -1,0 +1,158 @@
+/* A quiet editorial method page: generous type, paired principles, and optional detail. */
+.methodPage {
+  padding: 34px 0 48px;
+}
+
+.introduction {
+  padding-bottom: 62px;
+}
+
+.eyebrow {
+  color: var(--accent-color);
+  font:
+    400 14px/1.5 'IBM Plex Mono',
+    monospace;
+}
+
+.title {
+  padding: 29px 0 26px;
+  font:
+    400 clamp(44px, 5.9vw, 76px)/1.09 'Source Serif 4',
+    Georgia,
+    serif;
+  letter-spacing: -0.045em;
+}
+
+.title em {
+  color: var(--accent-color);
+  font-weight: 400;
+}
+
+.lead {
+  max-width: 650px;
+  color: var(--text-muted);
+  font-size: 18px;
+  line-height: 1.75;
+}
+
+.principles {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 64px;
+}
+
+.principle {
+  padding: 30px 0 38px;
+  border-top: 1px solid var(--border-color);
+}
+
+.principle h2 {
+  max-width: 440px;
+  font:
+    400 clamp(27px, 2.8vw, 34px)/1.2 'Source Serif 4',
+    Georgia,
+    serif;
+  letter-spacing: -0.025em;
+}
+
+.principleIntroduction {
+  max-width: 470px;
+  padding-top: 16px;
+  color: var(--text-muted);
+  font-size: 16px;
+  line-height: 1.75;
+}
+
+.technicalDetails {
+  padding-top: 22px;
+  font-size: 16px;
+  line-height: 1.75;
+}
+
+.technicalDetails summary {
+  width: fit-content;
+  color: var(--accent-color);
+  padding: 8px 0;
+}
+
+.technicalDetails summary::marker {
+  color: var(--accent-color);
+  font-size: 0.8em;
+}
+
+.technicalDetails p {
+  padding: 10px 0 0;
+  color: var(--text-muted);
+}
+
+.closing {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px 32px;
+  border-top: 1px solid var(--text-primary);
+  padding-top: 32px;
+}
+
+.closing h2 {
+  font:
+    italic 400 32px/1.25 'Source Serif 4',
+    Georgia,
+    serif;
+  letter-spacing: -0.025em;
+}
+
+:global(#lab-refined) .closingLink {
+  color: var(--accent-color);
+  font-size: 16px;
+  padding: 8px 0;
+}
+
+@media (max-width: 800px) {
+  .principles {
+    column-gap: 34px;
+  }
+}
+
+@media (max-width: 650px) {
+  .methodPage {
+    padding-top: 28px;
+    padding-bottom: 36px;
+  }
+
+  .introduction {
+    padding-bottom: 42px;
+  }
+
+  .title {
+    padding-top: 26px;
+    font-size: clamp(39px, 8vw, 52px);
+    letter-spacing: -0.045em;
+  }
+
+  .lead {
+    font-size: 17px;
+  }
+
+  .principles {
+    grid-template-columns: 1fr;
+  }
+
+  .principle {
+    padding: 27px 0 30px;
+  }
+
+  .principle h2 {
+    font-size: 29px;
+  }
+
+  .closing {
+    padding-top: 28px;
+    gap: 12px;
+  }
+
+  .closing h2 {
+    font-size: 29px;
+  }
+}

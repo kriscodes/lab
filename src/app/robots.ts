@@ -1,3 +1,4 @@
+/** Generates crawler permissions and the location of the public sitemap. */
 import type { MetadataRoute } from 'next';
 import { SITE_ORIGIN } from '@/lib/site';
 

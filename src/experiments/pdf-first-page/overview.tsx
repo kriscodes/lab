@@ -1,8 +1,9 @@
 /** Editorial introduction to the loading study; all measurements live in the separate harness. */
 import Link from 'next/link';
-import { benchmarkSource, FINAL_WINDOWS, LAB_PATH } from './evidence';
+import { getBenchmarkSourceUrl, FINAL_WINDOWS, LAB_PATH } from './evidence';
 import { EvidenceDate, LabNavigation } from './navigation';
 
+/** Introduces the research question, fixed campaign and paths to its supporting records. */
 export function PdfLoadingOverview() {
   return (
     <article className="loading-lab">
@@ -25,7 +26,7 @@ export function PdfLoadingOverview() {
           001
         </span>
       </div>
-      <LabNavigation current="overview" />
+      <LabNavigation currentSection="overview" />
       <section className="lab-current" aria-labelledby="current-evidence">
         <p className="lr-mono lab-eyebrow">CURRENT EVIDENCE</p>
         <div>
@@ -36,31 +37,31 @@ export function PdfLoadingOverview() {
           </p>
           <div className="lab-actions">
             <Link className="lab-text-link" href={`${LAB_PATH}evidence/`}>
-              Explore the evidence <span aria-hidden="true">↗</span>
+              Explore the evidence
             </Link>
             <Link className="lab-text-link" href={`${LAB_PATH}replicate/`}>
-              Try the experiment <span aria-hidden="true">↗</span>
+              Try the experiment
             </Link>
           </div>
         </div>
       </section>
       <EvidenceDate />
       <ol className="lab-windows" aria-label="Final campaign schedule, Pacific time">
-        {FINAL_WINDOWS.map((window) => (
-          <li key={window.number}>
+        {FINAL_WINDOWS.map((campaignWindow) => (
+          <li key={campaignWindow.number}>
             <div className="lr-mono">
               <span>
-                {window.number} /{' '}
-                <time dateTime={window.startsAt}>
-                  {window.date} · {window.time}
+                {campaignWindow.number} /{' '}
+                <time dateTime={campaignWindow.startsAt}>
+                  {campaignWindow.date} · {campaignWindow.time}
                 </time>
               </span>
               <span>Pacific</span>
             </div>
-            <h3 className={window.performance === 'rejected' ? 'lab-rejected' : ''}>
-              {window.performance === 'rejected' ? 'Rejected' : 'Scheduled'}
+            <h3 className={campaignWindow.performance === 'rejected' ? 'lab-rejected' : ''}>
+              {campaignWindow.performance === 'rejected' ? 'Rejected' : 'Scheduled'}
             </h3>
-            <p>{window.note}</p>
+            <p>{campaignWindow.note}</p>
           </li>
         ))}
       </ol>
@@ -128,8 +129,8 @@ export function PdfLoadingOverview() {
             </p>
           </div>
         </div>
-        <a className="lab-text-link" href={benchmarkSource('docs/final-windows.md')}>
-          Read the declared protocol <span aria-hidden="true">↗</span>
+        <a className="lab-text-link" href={getBenchmarkSourceUrl('docs/final-windows.md')}>
+          Read the declared protocol
         </a>
       </section>
 
@@ -153,7 +154,7 @@ export function PdfLoadingOverview() {
             verification and screenshot capture sit outside the measured interval.
           </p>
           <Link className="lab-text-link" href={`${LAB_PATH}evidence/#limits`}>
-            Read the limits of the measurement <span aria-hidden="true">↗</span>
+            Read the limits of the measurement
           </Link>
         </div>
       </section>
@@ -164,7 +165,7 @@ export function PdfLoadingOverview() {
           <h2>Follow the evidence.</h2>
           <p>See the run ledger, earlier diagnostics and why a rejected result still matters.</p>
           <Link className="lab-text-link" href={`${LAB_PATH}evidence/`}>
-            Open the research record <span aria-hidden="true">→</span>
+            Open the research record
           </Link>
         </div>
         <div>
@@ -174,7 +175,7 @@ export function PdfLoadingOverview() {
             Get the original PDFs, prepare a separate workspace and keep a record you can inspect.
           </p>
           <Link className="lab-text-link" href={`${LAB_PATH}replicate/`}>
-            Follow the replication guide <span aria-hidden="true">→</span>
+            Follow the replication guide
           </Link>
         </div>
       </section>

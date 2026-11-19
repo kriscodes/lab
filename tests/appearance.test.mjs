@@ -1,3 +1,5 @@
+/** @file Verifies appearance persistence, cross-tab updates, blocked storage, and subscription cleanup. */
+
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { runInNewContext } from 'node:vm';
@@ -11,98 +13,114 @@ import {
 } from '../src/lib/appearance.ts';
 
 /** Records every browser-storage access without involving an actual browser profile. */
-function createStorage(entries = [], blocked = false) {
-  const values = new Map(entries);
-  const calls = [];
+function createStorageRecorder(initialEntries = [], storageIsBlocked = false) {
+  const storedValues = new Map(initialEntries);
+  const storageCalls = [];
   return {
-    values,
-    calls,
+    values: storedValues,
+    calls: storageCalls,
+    /** Reads a saved preference and records the attempted browser-storage operation. */
     getItem(key) {
-      calls.push(['get', key]);
-      if (blocked) throw new Error('Storage unavailable.');
-      return values.get(key) ?? null;
+      storageCalls.push(['get', key]);
+      if (storageIsBlocked) throw new Error('Storage unavailable.');
+      return storedValues.get(key) ?? null;
     },
+    /** Records a preference write, including attempts rejected by blocked storage. */
     setItem(key, value) {
-      calls.push(['set', key, String(value)]);
-      if (blocked) throw new Error('Storage unavailable.');
-      values.set(key, String(value));
+      storageCalls.push(['set', key, String(value)]);
+      if (storageIsBlocked) throw new Error('Storage unavailable.');
+      storedValues.set(key, String(value));
     },
+    /** Removes one fixture entry using the browser Storage interface. */
     removeItem(key) {
-      calls.push(['remove', key]);
-      values.delete(key);
+      storageCalls.push(['remove', key]);
+      storedValues.delete(key);
     },
+    /** Clears the fixture while recording the whole-storage operation. */
     clear() {
-      calls.push(['clear']);
-      values.clear();
+      storageCalls.push(['clear']);
+      storedValues.clear();
     },
   };
 }
 
 /** Uses Node's actual event dispatch while exposing listener ownership for cleanup assertions. */
-class FakeWindow extends EventTarget {
+class EventTrackingWindow extends EventTarget {
   listeners = new Map();
 
-  addEventListener(type, listener, options) {
-    const listeners = this.listeners.get(type) ?? new Set();
-    listeners.add(listener);
-    this.listeners.set(type, listeners);
-    super.addEventListener(type, listener, options);
+  /** Tracks listener ownership before delegating to Node's event dispatcher. */
+  addEventListener(eventType, listener, options) {
+    const eventListeners = this.listeners.get(eventType) ?? new Set();
+    eventListeners.add(listener);
+    this.listeners.set(eventType, eventListeners);
+    super.addEventListener(eventType, listener, options);
   }
 
-  removeEventListener(type, listener, options) {
-    this.listeners.get(type)?.delete(listener);
-    super.removeEventListener(type, listener, options);
+  /** Removes the tracked subscription and its underlying event listener. */
+  removeEventListener(eventType, listener, options) {
+    this.listeners.get(eventType)?.delete(listener);
+    super.removeEventListener(eventType, listener, options);
   }
 
-  listenerCount() {
-    return [...this.listeners.values()].reduce((total, listeners) => total + listeners.size, 0);
+  /** Counts all active subscriptions so cleanup can be asserted directly. */
+  getListenerCount() {
+    return [...this.listeners.values()].reduce(
+      (listenerTotal, eventListeners) => listenerTotal + eventListeners.size,
+      0,
+    );
   }
 
-  sendStorage(key, newValue, storageArea) {
-    const event = new Event('storage');
-    Object.defineProperties(event, {
+  /** Delivers a realistic cross-tab storage notification without opening another browser. */
+  dispatchStorageChange(key, newValue, storageArea) {
+    const storageEvent = new Event('storage');
+    Object.defineProperties(storageEvent, {
       key: { value: key },
       newValue: { value: newValue },
       storageArea: { value: storageArea },
     });
-    this.dispatchEvent(event);
+    this.dispatchEvent(storageEvent);
   }
 }
 
 /** Installs the minimum document boundary and restores every replaced global after the test. */
-function createPage(t, storage = createStorage()) {
-  const meta = { content: '#ffffff' };
+function createBrowserFixture(testContext, storage = createStorageRecorder()) {
+  const themeColorElement = { content: '#ffffff' };
   const document = {
     documentElement: { dataset: { theme: 'light' } },
+    /** Supplies only the theme-color element expected by the appearance helper. */
     querySelector(selector) {
       assert.equal(selector, 'meta[name="theme-color"]');
-      return meta;
+      return themeColorElement;
     },
   };
-  const window = new FakeWindow();
-  const originals = new Map();
-  const subscriptions = new Set();
-  for (const [name, value] of [
+  const window = new EventTrackingWindow();
+  const originalGlobalDescriptors = new Map();
+  const activeSubscriptions = new Set();
+  for (const [globalName, value] of [
     ['document', document],
     ['window', window],
     ['localStorage', storage],
   ]) {
-    originals.set(name, Object.getOwnPropertyDescriptor(globalThis, name));
-    Object.defineProperty(globalThis, name, { configurable: true, writable: true, value });
+    originalGlobalDescriptors.set(
+      globalName,
+      Object.getOwnPropertyDescriptor(globalThis, globalName),
+    );
+    Object.defineProperty(globalThis, globalName, { configurable: true, writable: true, value });
   }
-  t.after(() => {
-    for (const unsubscribe of subscriptions) unsubscribe();
-    for (const [name, descriptor] of originals) {
-      if (descriptor) Object.defineProperty(globalThis, name, descriptor);
-      else delete globalThis[name];
+  testContext.after(() => {
+    for (const unsubscribe of activeSubscriptions) unsubscribe();
+    for (const [globalName, originalDescriptor] of originalGlobalDescriptors) {
+      if (originalDescriptor) Object.defineProperty(globalThis, globalName, originalDescriptor);
+      else delete globalThis[globalName];
     }
   });
   return {
     document,
-    meta,
+    meta: themeColorElement,
     window,
     storage,
-    bootstrap() {
+    /** Runs the exact first-paint script in an isolated document context. */
+    runAppearanceBootstrap() {
       runInNewContext(
         APPEARANCE_BOOTSTRAP,
         { document, localStorage: storage },
@@ -112,32 +130,33 @@ function createPage(t, storage = createStorage()) {
         },
       );
     },
-    subscribe(onChange) {
-      const unsubscribe = subscribeAppearance(onChange);
-      subscriptions.add(unsubscribe);
+    /** Registers an appearance subscription and retains cleanup ownership for the test. */
+    subscribeToAppearance(notifyAppearanceChange) {
+      const unsubscribe = subscribeAppearance(notifyAppearanceChange);
+      activeSubscriptions.add(unsubscribe);
       return () => {
         unsubscribe();
-        subscriptions.delete(unsubscribe);
+        activeSubscriptions.delete(unsubscribe);
       };
     },
   };
 }
 
 /** Checks the state consumed by React together with the document and browser chrome. */
-function assertAppearance(page, appearance) {
-  assert.equal(getAppearance(), appearance);
-  assert.equal(page.document.documentElement.dataset.theme, appearance);
-  assert.equal(page.meta.content, appearance === 'dark' ? '#10161f' : '#ffffff');
+function assertAppearance(browserFixture, expectedAppearance) {
+  assert.equal(getAppearance(), expectedAppearance);
+  assert.equal(browserFixture.document.documentElement.dataset.theme, expectedAppearance);
+  assert.equal(browserFixture.meta.content, expectedAppearance === 'dark' ? '#10161f' : '#ffffff');
 }
 
-test('saved dark preference is applied by the actual pre-hydration bootstrap without a write', (t) => {
-  const storage = createStorage([[APPEARANCE_KEY, 'dark']]);
-  const page = createPage(t, storage);
-  assertAppearance(page, 'light');
-  page.bootstrap();
-  assertAppearance(page, 'dark');
+test('saved dark preference is applied by the actual pre-hydration bootstrap without a write', (testContext) => {
+  const storage = createStorageRecorder([[APPEARANCE_KEY, 'dark']]);
+  const browserFixture = createBrowserFixture(testContext, storage);
+  assertAppearance(browserFixture, 'light');
+  browserFixture.runAppearanceBootstrap();
+  assertAppearance(browserFixture, 'dark');
   assert.equal(
-    page.window.listenerCount(),
+    browserFixture.window.getListenerCount(),
     0,
     'First-paint state does not require a hydrated control.',
   );
@@ -149,23 +168,23 @@ test('saved dark preference is applied by the actual pre-hydration bootstrap wit
   assert.deepEqual(storage.calls, [['get', APPEARANCE_KEY]]);
 });
 
-test('two toggles persist only the Lab preference and notify subscribers of document state', (t) => {
-  const unrelated = [
+test('two toggles persist only the Lab preference and notify subscribers of document state', (testContext) => {
+  const unrelatedStorageEntries = [
     ['toolbox.theme.v1', 'dark'],
     ['toolbox.prompt-builder.library.v1', ' { "draft": }\u0000 preserve-me '],
     ['toolbox.pinned-projects.v1', ' [ "prompt", "family" ] \n'],
   ];
-  const storage = createStorage(unrelated);
-  const page = createPage(t, storage);
-  page.bootstrap();
-  assertAppearance(page, 'light');
-  const snapshots = [];
-  page.subscribe(() => snapshots.push(getAppearance()));
+  const storage = createStorageRecorder(unrelatedStorageEntries);
+  const browserFixture = createBrowserFixture(testContext, storage);
+  browserFixture.runAppearanceBootstrap();
+  assertAppearance(browserFixture, 'light');
+  const appearanceSnapshots = [];
+  browserFixture.subscribeToAppearance(() => appearanceSnapshots.push(getAppearance()));
   assert.equal(setAppearance(getAppearance() === 'light' ? 'dark' : 'light'), true);
-  assertAppearance(page, 'dark');
+  assertAppearance(browserFixture, 'dark');
   assert.equal(setAppearance(getAppearance() === 'light' ? 'dark' : 'light'), true);
-  assertAppearance(page, 'light');
-  assert.deepEqual(snapshots, ['dark', 'light']);
+  assertAppearance(browserFixture, 'light');
+  assert.deepEqual(appearanceSnapshots, ['dark', 'light']);
   assert.deepEqual(storage.calls, [
     ['get', APPEARANCE_KEY],
     ['set', APPEARANCE_KEY, 'dark'],
@@ -174,22 +193,26 @@ test('two toggles persist only the Lab preference and notify subscribers of docu
   assert.equal(storage.values.get(APPEARANCE_KEY), 'light');
   assert.deepEqual(
     [...storage.values].filter(([key]) => key !== APPEARANCE_KEY),
-    unrelated,
+    unrelatedStorageEntries,
   );
 });
 
-test('blocked storage preserves a usable control and returns false for visit-only feedback', (t) => {
-  const storage = createStorage([], true);
-  const page = createPage(t, storage);
-  assert.doesNotThrow(() => page.bootstrap());
-  assertAppearance(page, 'light');
-  const snapshots = [];
-  page.subscribe(() => snapshots.push(getAppearance()));
+test('blocked storage preserves a usable control and returns false for visit-only feedback', (testContext) => {
+  const storage = createStorageRecorder([], true);
+  const browserFixture = createBrowserFixture(testContext, storage);
+  assert.doesNotThrow(() => browserFixture.runAppearanceBootstrap());
+  assertAppearance(browserFixture, 'light');
+  const appearanceSnapshots = [];
+  browserFixture.subscribeToAppearance(() => appearanceSnapshots.push(getAppearance()));
   assert.equal(setAppearance('dark'), false);
-  assertAppearance(page, 'dark');
+  assertAppearance(browserFixture, 'dark');
   assert.equal(setAppearance('light'), false);
-  assertAppearance(page, 'light');
-  assert.deepEqual(snapshots, ['dark', 'light'], 'React is notified even when persistence fails.');
+  assertAppearance(browserFixture, 'light');
+  assert.deepEqual(
+    appearanceSnapshots,
+    ['dark', 'light'],
+    'React is notified even when persistence fails.',
+  );
   assert.equal(storage.values.has(APPEARANCE_KEY), false);
   assert.deepEqual(storage.calls, [
     ['get', APPEARANCE_KEY],
@@ -198,46 +221,50 @@ test('blocked storage preserves a usable control and returns false for visit-onl
   ]);
 });
 
-test('other-tab preferences and clearing synchronize without writeback; unrelated keys are ignored', (t) => {
-  const page = createPage(t);
-  page.bootstrap();
-  const snapshots = [];
-  page.subscribe(() => snapshots.push(getAppearance()));
-  const callsBeforeEvents = [...page.storage.calls];
-  page.window.sendStorage('toolbox.theme.v1', 'dark', page.storage);
-  assertAppearance(page, 'light');
-  assert.deepEqual(snapshots, []);
-  page.window.sendStorage(APPEARANCE_KEY, 'dark', page.storage);
-  assertAppearance(page, 'dark');
-  page.window.sendStorage('toolbox.prompt-builder.library.v1', 'light', page.storage);
-  assertAppearance(page, 'dark');
-  page.window.sendStorage(APPEARANCE_KEY, null, page.storage);
-  assertAppearance(page, 'light');
-  page.window.sendStorage(APPEARANCE_KEY, 'dark', page.storage);
-  assertAppearance(page, 'dark');
-  page.window.sendStorage(null, null, page.storage);
-  assertAppearance(page, 'light');
-  assert.deepEqual(snapshots, ['dark', 'light', 'dark', 'light']);
-  assert.deepEqual(page.storage.calls, callsBeforeEvents);
+test('other-tab preferences and clearing synchronize without writeback; unrelated keys are ignored', (testContext) => {
+  const browserFixture = createBrowserFixture(testContext);
+  browserFixture.runAppearanceBootstrap();
+  const appearanceSnapshots = [];
+  browserFixture.subscribeToAppearance(() => appearanceSnapshots.push(getAppearance()));
+  const callsBeforeEvents = [...browserFixture.storage.calls];
+  browserFixture.window.dispatchStorageChange('toolbox.theme.v1', 'dark', browserFixture.storage);
+  assertAppearance(browserFixture, 'light');
+  assert.deepEqual(appearanceSnapshots, []);
+  browserFixture.window.dispatchStorageChange(APPEARANCE_KEY, 'dark', browserFixture.storage);
+  assertAppearance(browserFixture, 'dark');
+  browserFixture.window.dispatchStorageChange(
+    'toolbox.prompt-builder.library.v1',
+    'light',
+    browserFixture.storage,
+  );
+  assertAppearance(browserFixture, 'dark');
+  browserFixture.window.dispatchStorageChange(APPEARANCE_KEY, null, browserFixture.storage);
+  assertAppearance(browserFixture, 'light');
+  browserFixture.window.dispatchStorageChange(APPEARANCE_KEY, 'dark', browserFixture.storage);
+  assertAppearance(browserFixture, 'dark');
+  browserFixture.window.dispatchStorageChange(null, null, browserFixture.storage);
+  assertAppearance(browserFixture, 'light');
+  assert.deepEqual(appearanceSnapshots, ['dark', 'light', 'dark', 'light']);
+  assert.deepEqual(browserFixture.storage.calls, callsBeforeEvents);
 });
 
-test('unsubscribe removes both listeners and prevents notifications or later storage updates', (t) => {
-  const page = createPage(t);
-  page.bootstrap();
-  let notifications = 0;
-  const unsubscribe = page.subscribe(() => {
-    notifications += 1;
+test('unsubscribe removes both listeners and prevents notifications or later storage updates', (testContext) => {
+  const browserFixture = createBrowserFixture(testContext);
+  browserFixture.runAppearanceBootstrap();
+  let notificationCount = 0;
+  const unsubscribe = browserFixture.subscribeToAppearance(() => {
+    notificationCount += 1;
   });
-  assert.equal(page.window.listenerCount(), 2);
+  assert.equal(browserFixture.window.getListenerCount(), 2);
   setAppearance('dark');
-  assert.equal(notifications, 1);
+  assert.equal(notificationCount, 1);
   unsubscribe();
   unsubscribe();
-  assert.equal(page.window.listenerCount(), 0);
-  page.window.sendStorage(APPEARANCE_KEY, 'light', page.storage);
-  assertAppearance(page, 'dark');
-  assert.equal(notifications, 1);
+  assert.equal(browserFixture.window.getListenerCount(), 0);
+  browserFixture.window.dispatchStorageChange(APPEARANCE_KEY, 'light', browserFixture.storage);
+  assertAppearance(browserFixture, 'dark');
+  assert.equal(notificationCount, 1);
   setAppearance('light');
-  assertAppearance(page, 'light');
-  assert.equal(notifications, 1, 'A removed subscriber cannot receive same-document changes.');
+  assertAppearance(browserFixture, 'light');
+  assert.equal(notificationCount, 1, 'A removed subscriber cannot receive same-document changes.');
 });

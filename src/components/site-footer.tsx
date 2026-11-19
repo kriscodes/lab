@@ -1,17 +1,19 @@
+/** Shared closing note and quiet navigation at the natural end of every page. */
 import Link from 'next/link';
 import { ThemeToggle } from './theme-toggle';
 
+/** Invite another visit and keep privacy, portfolio, and appearance controls easy to find. */
 export function SiteFooter() {
   return (
     <footer className="lr-footer">
-      <span>Questions first. Evidence next.</span>
-      <div className="lr-footer-links">
+      <p className="footer-farewell">Stay curious.</p>
+      <nav className="lr-footer-links" aria-label="Footer navigation">
         <a href="https://kristiansalmeron.com/" referrerPolicy="origin">
-          Portfolio <span aria-hidden="true">↗</span>
+          Portfolio
         </a>
-        <Link href="/privacy/">Privacy & analytics</Link>
+        <Link href="/privacy/">Privacy</Link>
         <ThemeToggle />
-      </div>
+      </nav>
     </footer>
   );
 }

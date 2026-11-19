@@ -1,11 +1,13 @@
+/** @file Serves the built static site locally with direct routes, uncached assets, and real 404s. */
+
 import { createServer } from 'node:http';
 import { readFile, stat } from 'node:fs/promises';
 import { extname, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const root = fileURLToPath(new URL('../out/', import.meta.url));
-const port = Number(process.env.LAB_PREVIEW_PORT ?? 4174);
-const mime = {
+const exportDirectory = fileURLToPath(new URL('../out/', import.meta.url));
+const previewPort = Number(process.env.LAB_PREVIEW_PORT ?? 4174);
+const contentTypesByExtension = {
   '.html': 'text/html; charset=utf-8',
   '.js': 'text/javascript; charset=utf-8',
   '.css': 'text/css; charset=utf-8',
@@ -19,38 +21,51 @@ const mime = {
   '.zip': 'application/zip',
 };
 
-// Serve the actual export, with deep links and real 404 responses; this is a local review tool only.
-const server = createServer(async (request, response) => {
+/** Resolves one preview request inside the export directory and returns the matching static file. */
+async function serveExportedFile(request, response) {
   try {
-    const url = new URL(request.url ?? '/', 'http://127.0.0.1');
-    let target = resolve(root, `.${decodeURIComponent(url.pathname)}`);
-    if (target !== resolve(root) && !target.startsWith(`${resolve(root)}${sep}`)) {
+    const requestedUrl = new URL(request.url ?? '/', 'http://127.0.0.1');
+    let requestedFilePath = resolve(
+      exportDirectory,
+      `.${decodeURIComponent(requestedUrl.pathname)}`,
+    );
+    if (
+      requestedFilePath !== resolve(exportDirectory) &&
+      !requestedFilePath.startsWith(`${resolve(exportDirectory)}${sep}`)
+    ) {
       response.writeHead(400);
       response.end('Invalid path');
       return;
     }
-    if ((await stat(target)).isDirectory()) {
-      if (!url.pathname.endsWith('/')) {
-        response.writeHead(308, { Location: `${url.pathname}/${url.search}` });
+    if ((await stat(requestedFilePath)).isDirectory()) {
+      if (!requestedUrl.pathname.endsWith('/')) {
+        response.writeHead(308, { Location: `${requestedUrl.pathname}/${requestedUrl.search}` });
         response.end();
         return;
       }
-      target = resolve(target, 'index.html');
+      requestedFilePath = resolve(requestedFilePath, 'index.html');
     }
-    const content = await readFile(target);
+    const fileContent = await readFile(requestedFilePath);
     response.writeHead(200, {
-      'Content-Type': mime[extname(target)] ?? 'application/octet-stream',
+      'Content-Type':
+        contentTypesByExtension[extname(requestedFilePath)] ?? 'application/octet-stream',
       'Cache-Control': 'no-store',
     });
-    response.end(request.method === 'HEAD' ? undefined : content);
+    response.end(request.method === 'HEAD' ? undefined : fileContent);
   } catch {
     response.writeHead(404, { 'Content-Type': 'text/html; charset=utf-8' });
     try {
-      response.end(await readFile(resolve(root, '404.html')));
+      response.end(await readFile(resolve(exportDirectory, '404.html')));
     } catch {
       response.end('Build Lab before previewing it.');
     }
   }
-});
+}
 
-server.listen(port, '127.0.0.1', () => console.log(`Lab local preview: http://127.0.0.1:${port}/`));
+/** Prints the loopback address after the preview server begins accepting requests. */
+function announcePreviewAddress() {
+  console.log(`Lab local preview: http://127.0.0.1:${previewPort}/`);
+}
+
+const previewServer = createServer(serveExportedFile);
+previewServer.listen(previewPort, '127.0.0.1', announcePreviewAddress);

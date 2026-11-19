@@ -1,14 +1,21 @@
 /** Dated evidence ledger. Rejected and unattempted windows never become timing estimates. */
 import Link from 'next/link';
-import { benchmarkSource, CORPUS_PATH, FINAL_WINDOWS, LAB_PATH, RESEARCH_STAGES } from './evidence';
+import {
+  getBenchmarkSourceUrl,
+  CORPUS_PATH,
+  FINAL_WINDOWS,
+  LAB_PATH,
+  RESEARCH_STAGES,
+} from './evidence';
 import { EvidenceDate, LabNavigation } from './navigation';
 
+/** Displays the reviewed campaign outcomes, earlier diagnostics and limits of the evidence. */
 export function PdfLoadingEvidence() {
   return (
     <article className="loading-lab">
       <div className="lr-kicker lr-mono">
         <span>PDF LOADING / LAB 001</span>
-        <Link href={LAB_PATH}>← Back to the overview</Link>
+        <Link href={LAB_PATH}>Back to the overview</Link>
       </div>
       <h1 className="lr-title lab-page-title">
         Follow the <em>evidence.</em>
@@ -16,7 +23,7 @@ export function PdfLoadingEvidence() {
       <p className="lab-intro">
         A record of what ran, what passed, and what we can actually conclude.
       </p>
-      <LabNavigation current="evidence" />
+      <LabNavigation currentSection="evidence" />
       <div className="lab-evidence-layout">
         <nav className="lab-contents" aria-label="Evidence sections">
           <span className="lr-mono">IN THIS RECORD</span>
@@ -51,24 +58,24 @@ export function PdfLoadingEvidence() {
                 </tr>
               </thead>
               <tbody>
-                {FINAL_WINDOWS.map((window) => (
-                  <tr key={window.number}>
+                {FINAL_WINDOWS.map((campaignWindow) => (
+                  <tr key={campaignWindow.number}>
                     <th scope="row">
-                      <span className="lr-mono">{window.number}</span>{' '}
-                      <time dateTime={window.startsAt}>
-                        {window.date}, {window.time}
+                      <span className="lr-mono">{campaignWindow.number}</span>{' '}
+                      <time dateTime={campaignWindow.startsAt}>
+                        {campaignWindow.date}, {campaignWindow.time}
                       </time>
                     </th>
-                    <td data-label="Observer workload">{window.observer}</td>
+                    <td data-label="Observer workload">{campaignWindow.observer}</td>
                     <td data-label="Performance">
                       <span
                         className={
-                          window.performance === 'rejected'
+                          campaignWindow.performance === 'rejected'
                             ? 'lab-status lab-rejected'
                             : 'lab-status'
                         }
                       >
-                        {window.performance === 'rejected' ? 'Rejected' : 'Pending'}
+                        {campaignWindow.performance === 'rejected' ? 'Rejected' : 'Pending'}
                       </span>
                     </td>
                   </tr>
@@ -95,9 +102,9 @@ export function PdfLoadingEvidence() {
                 </p>
                 <a
                   className="lab-text-link"
-                  href={benchmarkSource('docs/final-windows-results.md')}
+                  href={getBenchmarkSourceUrl('docs/final-windows-results.md')}
                 >
-                  Read the complete window record <span aria-hidden="true">↗</span>
+                  Read the complete window record
                 </a>
               </div>
             </details>
@@ -119,19 +126,19 @@ export function PdfLoadingEvidence() {
               are not pooled with the final campaign.
             </p>
             <ol className="lab-history">
-              {RESEARCH_STAGES.map(([number, title, description, source]) => (
-                <li key={number}>
-                  <span className="lr-mono">{number}</span>
-                  <div>
-                    <h3>
-                      <a href={benchmarkSource(source)}>
-                        {title} <span aria-hidden="true">↗</span>
-                      </a>
-                    </h3>
-                    <p>{description}</p>
-                  </div>
-                </li>
-              ))}
+              {RESEARCH_STAGES.map(
+                ([stageNumber, stageTitle, stageDescription, sourceFilePath]) => (
+                  <li key={stageNumber}>
+                    <span className="lr-mono">{stageNumber}</span>
+                    <div>
+                      <h3>
+                        <a href={getBenchmarkSourceUrl(sourceFilePath)}>{stageTitle}</a>
+                      </h3>
+                      <p>{stageDescription}</p>
+                    </div>
+                  </li>
+                ),
+              )}
             </ol>
           </section>
           <section id="artifacts" className="lab-section" aria-labelledby="artifacts-heading">
@@ -139,32 +146,32 @@ export function PdfLoadingEvidence() {
             <h2 id="artifacts-heading">The source behind the summary.</h2>
             <ul className="lab-artifacts">
               <li>
-                <a href={benchmarkSource('docs/data/final-windows-progress-window-1.json')}>
-                  Independent progress audit <span aria-hidden="true">↗</span>
+                <a href={getBenchmarkSourceUrl('docs/data/final-windows-progress-window-1.json')}>
+                  Independent progress audit
                 </a>
                 <span>JSON · complete, versioned audit</span>
               </li>
               <li>
-                <a href={benchmarkSource('docs/data/final-windows-progress-window-1.csv')}>
-                  Window outcomes <span aria-hidden="true">↗</span>
+                <a href={getBenchmarkSourceUrl('docs/data/final-windows-progress-window-1.csv')}>
+                  Window outcomes
                 </a>
                 <span>CSV · includes rejected and pending windows</span>
               </li>
               <li>
-                <a href={benchmarkSource('experiments/final-windows.json')}>
-                  Frozen experiment plan <span aria-hidden="true">↗</span>
+                <a href={getBenchmarkSourceUrl('experiments/final-windows.json')}>
+                  Frozen experiment plan
                 </a>
                 <span>JSON · schedule, controls and source hashes</span>
               </li>
               <li>
                 <a href={`${CORPUS_PATH}pdf-lab-001-corpus.zip`} download>
-                  Original PDF pair <span aria-hidden="true">↓</span>
+                  Original PDF pair
                 </a>
                 <span>ZIP · two PDFs and the unchanged manifest</span>
               </li>
               <li>
                 <a href="https://app.notion.com/p/41ce9784880681ca958ac1a6484f4eb2">
-                  Full raw archive in the lab notebook <span aria-hidden="true">↗</span>
+                  Full raw archive in the lab notebook
                 </a>
                 <span>Notion · access may be required</span>
               </li>
@@ -200,7 +207,7 @@ export function PdfLoadingEvidence() {
               </li>
             </ul>
             <Link className="lab-text-link" href={`${LAB_PATH}replicate/`}>
-              Run a separate, documented attempt <span aria-hidden="true">→</span>
+              Run a separate, documented attempt
             </Link>
           </section>
         </div>

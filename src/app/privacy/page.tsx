@@ -1,3 +1,4 @@
+/** Documents the shared audience measurement policy and browser opt-out links. */
 import { pageMetadata } from '@/lib/site';
 
 export const metadata = pageMetadata(

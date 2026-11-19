@@ -1,3 +1,4 @@
+/** Publishes the independent PDF loading replication guide and its sharing metadata. */
 import { PdfLoadingReplication } from '@/experiments/pdf-first-page/replication';
 import { pageMetadata } from '@/lib/site';
 
@@ -7,6 +8,7 @@ export const metadata = pageMetadata(
   '/experiments/pdf-first-page/replicate/',
 );
 
-export default function Page() {
+/** Displays the instructions for a separate, documented replication attempt. */
+export default function PdfLoadingReplicationPage() {
   return <PdfLoadingReplication />;
 }

@@ -1,3 +1,4 @@
+/** Publishes the dated PDF loading evidence ledger and its sharing metadata. */
 import { PdfLoadingEvidence } from '@/experiments/pdf-first-page/ledger';
 import { pageMetadata } from '@/lib/site';
 
@@ -7,6 +8,7 @@ export const metadata = pageMetadata(
   '/experiments/pdf-first-page/evidence/',
 );
 
-export default function Page() {
+/** Displays the reviewed PDF loading evidence and its limitations. */
+export default function PdfLoadingEvidencePage() {
   return <PdfLoadingEvidence />;
 }

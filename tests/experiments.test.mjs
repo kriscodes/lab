@@ -1,3 +1,5 @@
+/** @file Protects experiment identities, honest publication status, and immutable catalog navigation. */
+
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {

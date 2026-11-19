@@ -1,46 +1,80 @@
-# Engineering Lab
+# Labs
 
-Research questions, methods, and findings from frontend engineering investigations by Kristian Salmeron. The site is published at [lab.kristiansalmeron.com](https://lab.kristiansalmeron.com/).
+A little room for curiosity. Frontend experiments by Kristian Salmeron, published at [lab.kristiansalmeron.com](https://lab.kristiansalmeron.com/).
 
-The featured **PDF loading lab (Lab 001)** presents the controlled first-page experiment from [PDF Rendering Benchmark](https://github.com/kriscodes/pdf-rendering-benchmark). Its overview, evidence ledger and replication guide distinguish accepted, rejected and pending outcomes. The current publication snapshot is dated November 18, 2026; the final campaign is not complete.
+The website has a separate front page and a research section. The front page pairs oversized editorial type with an animated wire sculpture and a test-tube entry for **Lab001**. Studies explains how a question becomes an experiment. Method introduces the research principles in plain language, with technical details available in expandable sections. The research pages keep the evidence, limits, and replication instructions together.
 
-The separate **The Cost of Rendering Progress** proposal remains at `/experiments/pdf-rendering/`. It concerns intermediate-frame update cadence and has no collected measurements. Loading results do not establish findings for that proposal.
+## Current work
 
-## Development
+**Lab001 — How soon can a PDF show its first page?** compares a controlled PDF pair under a declared delivery profile. Its overview, evidence ledger, and replication guide distinguish accepted, rejected, and pending outcomes. The published evidence snapshot is **November 18, 2026, 09:06 Pacific**; it records one rejected final-campaign window and two pending windows. That date is part of the evidence, not a live status indicator.
 
-Use Node **22.23.4** from [.node-version](.node-version) and the committed npm lockfile:
+The separate **The Cost of Rendering Progress** proposal remains at `/experiments/pdf-rendering/`. It studies intermediate-frame update cadence and has no collected measurements. Lab001's loading results do not establish findings for that proposal.
+
+### Approved release
+
+The approved release on `feat/labs-front-page` includes the dedicated home, footer/navigation refinements, clearer code and documentation, the new Studies page, and the friendlier Method page. Implementation, focused commits, pushing, and deployment are authorized for that scope. New bubble, page-transition, and hover-animation ideas remain design concepts and are excluded from this release.
+
+Approval and deployment are separate facts. Follow [Deployment](docs/DEPLOYMENT.md) to verify the released revision. The [front-page review](docs/reviews/2026-11-18/labs-front-page.md) preserves earlier local checks, screenshots, and Notion organization; the [Studies and Method record](docs/reviews/2026-11-18/studies-and-method.md) describes the approved follow-up.
+
+## Work locally
+
+Use Node **22.23.4**, pinned in [.node-version](.node-version), and the committed npm lockfile:
 
 ```sh
 npm ci
 npm run dev
 ```
 
-The development server binds to `127.0.0.1`. No environment variables or credentials are required. Lab uses Next.js, React, and TypeScript to export static HTML.
+The development server binds to `127.0.0.1`. No credentials or environment variables are required for ordinary local work. Lab uses Next.js App Router, React, and TypeScript to generate static HTML.
+
+To validate the project and review the actual production export:
 
 ```sh
 npm run verify
 npm run preview
 ```
 
-`verify` runs formatting, lint, type checks, unit tests, a production build, and an audit of the exported routes and assets. `preview` serves `out/` at `http://127.0.0.1:4174/`; set `LAB_PREVIEW_PORT` to use another port. `npm run assets` rebuilds the social image from its SVG source.
+The preview opens at `http://127.0.0.1:4174/`. Set `LAB_PREVIEW_PORT` to use another port. It serves the files in `out/`, so rebuild and reload after changing source. The current design-review preview uses port `4193`.
 
-The research content remains readable without JavaScript. Theme controls store a local preference. Optional audience measurement uses Portfolio's Studio Insights service; it is separate from research data and can be disabled through the site's [privacy controls](https://lab.kristiansalmeron.com/privacy/).
+### Useful commands
 
-## Documentation
+| Command                | What it does                                                                       |
+| ---------------------- | ---------------------------------------------------------------------------------- |
+| `npm run dev`          | Starts the local development server with live updates.                             |
+| `npm run typecheck`    | Generates Next.js route types and checks TypeScript.                               |
+| `npm test`             | Runs the appearance, registry, metadata, corpus, and export-audit tests.           |
+| `npm run build`        | Builds the static site and audits its exported routes and assets.                  |
+| `npm run preview`      | Serves the actual export with working deep links and HTTP 404 responses.           |
+| `npm run verify`       | Runs formatting, lint, type checks, tests, the production build, and export audit. |
+| `npm run format:check` | Checks repository formatting without modifying files.                              |
+| `npm run assets`       | Rebuilds the committed social image from its SVG source.                           |
 
-- [Architecture and adding studies](docs/ARCHITECTURE.md)
-- [Deployment](docs/DEPLOYMENT.md)
-- [Static publication architecture](docs/decisions/001-static-publication.md)
-- [Audience measurement boundary](docs/decisions/002-audience-measurement.md)
-- [Proposed PDF progress study](docs/decisions/003-pdf-progress-study.md)
-- [PDF loading publication and evidence updates](docs/decisions/004-pdf-loading-publication.md)
+## Find your way around
 
-## Local review of Lab 001
+| Guide                                                                        | Start here when you want to…                                                  |
+| ---------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| [Code guide](docs/CODE_GUIDE.md)                                             | Understand each file, the main functions, and how a page reaches the browser. |
+| [Architecture](docs/ARCHITECTURE.md)                                         | Change routes, add an experiment, or understand publication boundaries.       |
+| [Deployment](docs/DEPLOYMENT.md)                                             | Prepare an approved release or verify a deployed version.                     |
+| [Staging](docs/STAGING.md)                                                   | Review the separate staging configuration and promotion process.              |
+| [Static publication decision](docs/decisions/001-static-publication.md)      | Understand why this site exports static files.                                |
+| [Audience measurement decision](docs/decisions/002-audience-measurement.md)  | Understand the optional analytics dependency.                                 |
+| [Rendering-progress proposal](docs/decisions/003-pdf-progress-study.md)      | Read the separate, unmeasured research proposal.                              |
+| [Lab001 publication decision](docs/decisions/004-pdf-loading-publication.md) | Update the dated evidence and replication instructions responsibly.           |
+| [Original publication review](docs/reviews/2026-11-18/README.md)             | Inspect the historical Lab001 verification record and screenshots.            |
 
-After `npm run verify`, run `LAB_PREVIEW_PORT=4191 npm run preview` and open `http://127.0.0.1:4191/`. Review the report, `/experiments/pdf-first-page/evidence/`, and `/experiments/pdf-first-page/replicate/` at desktop and narrow widths, in both appearances. Check disclosures, keyboard navigation, command copying and downloads. The static content and original corpus remain available without JavaScript.
+## Review the experience
 
-The original PDF files and manifest in `public/downloads/pdf-lab-001/` are immutable research inputs. Do not format the manifest or regenerate them while editing the site. The tests verify their identity. Source evidence links are pinned to a reviewed benchmark commit; update the dated publication deliberately after an independent evidence audit. See decision 004 for the boundary between independent replication and the original machine's fixed-window schedule.
+Start at `/` for the large hero, Lab001 entry, and footer. On a short page, the footer should sit at the bottom of the viewport; on a long page it should follow the content and scroll normally. It must not cover the article. Header navigation contains Studies and Method. Footer links use Portfolio and Privacy; decorative arrow glyphs are not part of the design.
 
-Font source attribution and SIL Open Font License files are retained in [public/fonts](public/fonts/SOURCES.md).
+On `/experiments/`, try the Loading, Motion, Accessibility, and Efficiency topic buttons with pointer and keyboard input; they change the example question without navigating away. On `/methodology/`, read the six principles and open the native disclosures for technical details. The Studies illustration is static. These pages introduce the work without changing its research status.
 
-Staging setup and promotion: [docs/STAGING.md](docs/STAGING.md) (prepared; activation pending review).
+For Lab001, open `/experiments/pdf-first-page/`, `/experiments/pdf-first-page/evidence/`, and `/experiments/pdf-first-page/replicate/`. Check desktop and narrow widths, both appearances, keyboard navigation, native disclosures, command copying, and downloads. Confirm that the sculpture remains still for reduced-motion preferences and stops updating while the page or artwork is hidden. Static headings, links, article text, commands, and the initial artwork must remain available without JavaScript.
+
+## Protect the evidence
+
+The files in `public/downloads/pdf-lab-001/` are immutable research inputs. Do not format the original manifest or regenerate the PDFs while editing the website. Integrity tests check their sizes and SHA-256 hashes, including the corpus ZIP.
+
+Evidence links are pinned to reviewed benchmark commit `1d2ba55efa2af1203202315d2f739e9cbe3401e1`. Audit new benchmark records before changing the snapshot, then update the data, article, and date together. Never infer a completed run from a scheduled time or convert a pending outcome into a zero-duration result.
+
+The optional audience tracker belongs to Portfolio's Studio Insights service. Audience events are separate from research measurements, and a blocked tracker must not prevent reading. The [Privacy page](https://lab.kristiansalmeron.com/privacy/) contains the participation controls. Locally served fonts, source attribution, and SIL Open Font License files are retained in [public/fonts](public/fonts/SOURCES.md).

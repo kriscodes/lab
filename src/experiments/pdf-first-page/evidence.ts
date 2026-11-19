@@ -7,10 +7,11 @@ export const SNAPSHOT_DATE = 'November 18, 2026';
 export const SNAPSHOT_TIME = '09:06 Pacific';
 
 /** Pinned links keep later repository changes from silently changing this article's evidence. */
-export function benchmarkSource(path: string): string {
-  return `${BENCHMARK_REPOSITORY}/blob/${BENCHMARK_REVISION}/${path}`;
+export function getBenchmarkSourceUrl(repositoryFilePath: string): string {
+  return `${BENCHMARK_REPOSITORY}/blob/${BENCHMARK_REVISION}/${repositoryFilePath}`;
 }
 
+/** Declared campaign windows and their reviewed outcomes at the snapshot time. */
 export const FINAL_WINDOWS = [
   {
     number: '01',
@@ -41,6 +42,7 @@ export const FINAL_WINDOWS = [
   },
 ] as const;
 
+/** Original downloadable PDF pair, including exact byte counts and checksums. */
 export const CORPUS_DOCUMENTS = [
   {
     label: 'Nonlinearized',
@@ -56,6 +58,7 @@ export const CORPUS_DOCUMENTS = [
   },
 ] as const;
 
+/** Ordered investigation stages with links to their preserved source records. */
 export const RESEARCH_STAGES = [
   [
     '01',
