@@ -12,9 +12,9 @@ The separate **The Cost of Rendering Progress** proposal remains at `/experiment
 
 ### Approved release
 
-The approved release on `feat/labs-front-page` includes the dedicated home, footer/navigation refinements, clearer code and documentation, the new Studies page, and the friendlier Method page. Implementation, focused commits, pushing, and deployment are authorized for that scope. New bubble, page-transition, and hover-animation ideas remain design concepts and are excluded from this release.
+The current release on `feat/labs-bubble-animations` is limited to the approved decorative bubbles: a brief arrival on a fresh home-page load and small bursts when hovering interactive items. Implementation, pushing, and deployment are authorized for this scope. Verify the provider revision and live behavior before considering the release complete. The existing design, copy, routes, and research content stay unchanged.
 
-Approval and deployment are separate facts. Follow [Deployment](docs/DEPLOYMENT.md) to verify the released revision. The [front-page review](docs/reviews/2026-11-18/labs-front-page.md) preserves earlier local checks, screenshots, and Notion organization; the [Studies and Method record](docs/reviews/2026-11-18/studies-and-method.md) describes the approved follow-up.
+Follow [Deployment](docs/DEPLOYMENT.md) to verify the released revision. The [front-page review](docs/reviews/2026-11-18/labs-front-page.md) and [Studies and Method record](docs/reviews/2026-11-18/studies-and-method.md) preserve those earlier design rounds and their original release boundaries.
 
 ## Work locally
 
@@ -38,16 +38,16 @@ The preview opens at `http://127.0.0.1:4174/`. Set `LAB_PREVIEW_PORT` to use ano
 
 ### Useful commands
 
-| Command                | What it does                                                                       |
-| ---------------------- | ---------------------------------------------------------------------------------- |
-| `npm run dev`          | Starts the local development server with live updates.                             |
-| `npm run typecheck`    | Generates Next.js route types and checks TypeScript.                               |
-| `npm test`             | Runs the appearance, registry, metadata, corpus, and export-audit tests.           |
-| `npm run build`        | Builds the static site and audits its exported routes and assets.                  |
-| `npm run preview`      | Serves the actual export with working deep links and HTTP 404 responses.           |
-| `npm run verify`       | Runs formatting, lint, type checks, tests, the production build, and export audit. |
-| `npm run format:check` | Checks repository formatting without modifying files.                              |
-| `npm run assets`       | Rebuilds the committed social image from its SVG source.                           |
+| Command                | What it does                                                                          |
+| ---------------------- | ------------------------------------------------------------------------------------- |
+| `npm run dev`          | Starts the local development server with live updates.                                |
+| `npm run typecheck`    | Generates Next.js route types and checks TypeScript.                                  |
+| `npm test`             | Runs appearance, bubble behavior, registry, metadata, corpus, and export-audit tests. |
+| `npm run build`        | Builds the static site and audits its exported routes and assets.                     |
+| `npm run preview`      | Serves the actual export with working deep links and HTTP 404 responses.              |
+| `npm run verify`       | Runs formatting, lint, type checks, tests, the production build, and export audit.    |
+| `npm run format:check` | Checks repository formatting without modifying files.                                 |
+| `npm run assets`       | Rebuilds the committed social image from its SVG source.                              |
 
 ## Find your way around
 
@@ -70,6 +70,8 @@ Start at `/` for the large hero, Lab001 entry, and footer. On a short page, the 
 On `/experiments/`, try the Loading, Motion, Accessibility, and Efficiency topic buttons with pointer and keyboard input; they change the example question without navigating away. On `/methodology/`, read the six principles and open the native disclosures for technical details. The Studies illustration is static. These pages introduce the work without changing its research status.
 
 For Lab001, open `/experiments/pdf-first-page/`, `/experiments/pdf-first-page/evidence/`, and `/experiments/pdf-first-page/replicate/`. Check desktop and narrow widths, both appearances, keyboard navigation, native disclosures, command copying, and downloads. Confirm that the sculpture remains still for reduced-motion preferences and stops updating while the page or artwork is hidden. Static headings, links, article text, commands, and the initial artwork must remain available without JavaScript.
+
+For the bubbles, load `/` directly and refresh it: each new home document may play the arrival once. Navigating between pages, returning home through a link, restoring back/forward history, or loading another route must not play it. The six-bubble interaction bursts stay limited to enabled links, buttons, and disclosure summaries, with matching feedback for keyboard focus and touch presses. Reduced-motion preferences skip both bubble effects; hiding or leaving the page clears them. Verify that bubbles never block clicking, scrolling, reading, or keyboard focus. No cookie or session storage controls their playback.
 
 ## Protect the evidence
 
