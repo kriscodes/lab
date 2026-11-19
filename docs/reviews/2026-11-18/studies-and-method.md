@@ -28,4 +28,8 @@ The [front-page review](labs-front-page.md) and [original publication review](RE
 
 Use [Deployment](../../DEPLOYMENT.md) for release checks. Verify the eight exported routes, Studies selection with keyboard and pointer input, Method disclosures, both appearances, narrow layouts, footer flow, and the existing home motion preference. New animation concepts must remain outside the production source.
 
-Record the final checked revision and provider deployment separately when verified. A passing local build or an approved design does not establish what the public domain currently serves. Keep the Lab001 evidence date at **November 18, 2026, 09:06 Pacific** unless separately audited research is approved for publication.
+Local verification passed for source revision `22a66d2` on Node 22.23.4: formatting, zero-warning lint, TypeScript, all 15 tests, production build, and the export audit covering eight content routes, the custom 404, and 20 referenced assets. Browser checks covered desktop and 320 px layouts, light and dark appearance, Studies questions through pointer and keyboard input, and Method disclosures. Both pages fit the narrow viewport without horizontal overflow. All six original technical standards remain intact.
+
+The separate animation preview demonstrates a short bubble arrival, a 240 ms page change, and hover feedback. Its reduced-motion control removes the bubbles and changes pages immediately. The preview is outside the website repository and is not part of this release.
+
+Provider deployment must be verified separately. A passing local build does not establish what the public domain currently serves. Keep the Lab001 evidence date at **November 18, 2026, 09:06 Pacific** unless separately audited research is approved for publication.
