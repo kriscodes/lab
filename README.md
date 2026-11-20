@@ -6,7 +6,7 @@ The website has a separate front page and a research section. The front page pai
 
 ## Current work
 
-**Lab001 — How soon can a PDF show its first page?** compares a controlled PDF pair under a declared delivery profile. Its overview, evidence ledger, and replication guide distinguish accepted, rejected, and pending outcomes. The published evidence snapshot is **November 18, 2026, 09:06 Pacific**; it records one rejected final-campaign window and two pending windows. That date is part of the evidence, not a live status indicator.
+**Lab001 — How soon can a PDF show its first page?** compares a controlled PDF pair under a declared delivery profile. Its overview, evidence ledger, and replication guide distinguish accepted, rejected, and missed outcomes. The evidence snapshot is **November 19, 2026, 09:13 Pacific**: the campaign closed with one accepted window, one rejected attempt, and one missed slot. Only window 03 supplies timing estimates. One accepted window is insufficient for the planned comparison across runs; the earlier pilot remains separate. The frozen aggregate audit still fails on its handling of the missed slot, with a supplemental review explaining the discrepancy.
 
 The separate **The Cost of Rendering Progress** proposal remains at `/experiments/pdf-rendering/`. It studies intermediate-frame update cadence and has no collected measurements. Lab001's loading results do not establish findings for that proposal.
 
@@ -68,6 +68,6 @@ For the bubbles, load `/` directly and refresh it: each new home document may pl
 
 The files in `public/downloads/pdf-lab-001/` are immutable research inputs. Do not format the original manifest or regenerate the PDFs while editing the website. Integrity tests check their sizes and SHA-256 hashes, including the corpus ZIP.
 
-Evidence links are pinned to reviewed benchmark commit `1d2ba55efa2af1203202315d2f739e9cbe3401e1`. Audit new benchmark records before changing the snapshot, then update the data, article, and date together. Never infer a completed run from a scheduled time or convert a pending outcome into a zero-duration result.
+Evidence links are pinned to reviewed benchmark commit `0feddfba7a62a556a25cc2ddcab324cf67892fc0`. Audit new benchmark records before changing the snapshot, then update the data, article, and date together. Never infer a completed run from a scheduled time or convert a missed outcome into a zero-duration result.
 
 The optional audience tracker belongs to Portfolio's Studio Insights service. Audience events are separate from research measurements, and a blocked tracker must not prevent reading. The [Privacy page](https://lab.kristiansalmeron.com/privacy/) contains the participation controls. Locally served fonts, source attribution, and SIL Open Font License files are retained in [public/fonts](public/fonts/SOURCES.md).

@@ -43,16 +43,16 @@ The Studies illustration is static and topic changes have no transition. Shared 
 
 `src/lib/experiments.ts` holds the typed, immutable registry. It supports four states:
 
-| State         | Meaning                                                                             |
-| ------------- | ----------------------------------------------------------------------------------- |
-| `proposal`    | A question and candidate method; no measured findings.                              |
-| `protocol`    | A defined method and implementation plan; no measured findings.                     |
-| `in-progress` | Measurements exist, but the declared campaign and final interpretation remain open. |
-| `published`   | Findings supported by raw measurements and reproduction instructions.               |
+| State         | Meaning                                                                                       |
+| ------------- | --------------------------------------------------------------------------------------------- |
+| `proposal`    | A question and candidate method; no measured findings.                                        |
+| `protocol`    | A defined method and implementation plan; no measured findings.                               |
+| `in-progress` | Measurements exist, but the declared campaign and final interpretation remain open.           |
+| `published`   | A completed report with evidence and reproduction instructions; findings may be inconclusive. |
 
 `getPublishedFindings()` includes only `published` entries. The rendering-progress proposal retains registry ID `001`; the loading experiment uses registry ID `002` and public notebook label **Lab 001**. Registry identities and publication labels serve different purposes and must not be silently renumbered.
 
-`src/experiments/pdf-first-page/evidence.ts` owns the reviewed source revision, corpus metadata, research stages, and fixed-window outcomes. The snapshot remains **November 18, 2026, 09:06 Pacific**, with one rejected final-campaign attempt and two pending windows. It is not a live status feed. `getBenchmarkSourceUrl()` creates revision-pinned links so later benchmark edits do not silently replace the cited evidence.
+`src/experiments/pdf-first-page/evidence.ts` owns the reviewed source revision, corpus metadata, research stages, and fixed-window outcomes. The **November 19, 2026, 09:13 Pacific** snapshot closes the campaign with one accepted window, one rejected attempt, and one missed slot. `ACCEPTED_WINDOW_RESULTS` contains only window 03’s condition medians and paired structure contrasts; warmups, rejected partial trials, and the historical pilot are excluded. The article discloses the frozen aggregate audit failure and links the supplemental missed-slot and closing reviews. It is not a live status feed. `getBenchmarkSourceUrl()` creates revision-pinned links so later benchmark edits do not silently replace the cited evidence.
 
 Download fixtures are byte-preserved in `public/downloads/pdf-lab-001/` and covered by integrity tests. Website build success establishes delivery and code correctness, not validity of a performance claim.
 

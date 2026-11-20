@@ -46,6 +46,25 @@ export const FINAL_WINDOWS = [
   },
 ] as const;
 
+/** Window 3 only: audited condition medians, excluding all warmups and other windows.
+ * Source: docs/data/final-windows-final-2026-11-19.csv at BENCHMARK_REVISION.
+ */
+export const ACCEPTED_WINDOW_RESULTS = {
+  windowNumber: '03',
+  warmupTrials: 16,
+  measuredTrialsPerCondition: 12,
+  conditions: [
+    { structure: 'Nonlinearized', ranges: 'Enabled', medianRenderMilliseconds: 1008.4 },
+    { structure: 'Linearized', ranges: 'Enabled', medianRenderMilliseconds: 1110.65 },
+    { structure: 'Nonlinearized', ranges: 'Disabled', medianRenderMilliseconds: 968.15 },
+    { structure: 'Linearized', ranges: 'Disabled', medianRenderMilliseconds: 977.05 },
+  ],
+  pairedStructureDifference: {
+    rangesEnabledMilliseconds: 100.35,
+    rangesDisabledMilliseconds: 7.2,
+  },
+} as const;
+
 /** Original downloadable PDF pair, including exact byte counts and checksums. */
 export const CORPUS_DOCUMENTS = [
   {

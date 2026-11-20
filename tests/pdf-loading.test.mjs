@@ -4,7 +4,11 @@ import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
-import { CORPUS_DOCUMENTS, FINAL_WINDOWS } from '../src/experiments/pdf-first-page/evidence.ts';
+import {
+  ACCEPTED_WINDOW_RESULTS,
+  CORPUS_DOCUMENTS,
+  FINAL_WINDOWS,
+} from '../src/experiments/pdf-first-page/evidence.ts';
 
 test('public PDF downloads match the preserved corpus manifest byte for byte', async () => {
   const corpusDirectory = new URL('../public/downloads/pdf-lab-001/', import.meta.url);
@@ -34,6 +38,13 @@ test('the dated final-window snapshot does not mistake observer validity for tim
     ['rejected', 'missed', 'accepted'],
   );
   assert.equal(FINAL_WINDOWS[0].observer, '96 of 96 valid');
+  assert.equal(FINAL_WINDOWS[1].observer, 'Not attempted');
+  assert.deepEqual(
+    FINAL_WINDOWS.filter(({ performance }) => performance === 'accepted').map(
+      ({ number }) => number,
+    ),
+    [ACCEPTED_WINDOW_RESULTS.windowNumber],
+  );
   for (const campaignWindow of FINAL_WINDOWS) {
     assert.ok(!Object.hasOwn(campaignWindow, 'renderMs'));
     assert.ok(Number.isFinite(Date.parse(campaignWindow.startsAt)));

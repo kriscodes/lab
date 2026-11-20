@@ -53,7 +53,7 @@ For domain setup or recovery, attach `lab.kristiansalmeron.com` to the Static Si
 
 ## Release checks and recovery
 
-After deployment, check each route over HTTPS, refresh nested routes, confirm an unknown URL returns HTTP 404, and inspect canonical URLs, social image, sitemap, fonts, and scripts. Verify that the loading lab retains its dated in-progress snapshot, rejected/pending outcomes and replication boundaries. The separate rendering-progress study must remain an unmeasured proposal. Download the original corpus ZIP and verify its checksum; no planned values may appear as results.
+After deployment, check each route over HTTPS, refresh nested routes, confirm an unknown URL returns HTTP 404, and inspect canonical URLs, social image, sitemap, fonts, and scripts. Verify that the loading lab retains its dated closed-campaign snapshot, accepted/rejected/missed outcomes, single-window limits, aggregate audit caveat, and replication boundaries. The separate rendering-progress study must remain an unmeasured proposal. Download the original corpus ZIP and verify its checksum; no planned values may appear as results.
 
 When changing the tracker integration, deploy its compatible Portfolio collector first. Check opt-out, Global Privacy Control, Do Not Track, and blocked storage across the real subdomains; localhost cannot verify shared-domain cookie behavior. The research pages must still work when analytics is blocked.
 
