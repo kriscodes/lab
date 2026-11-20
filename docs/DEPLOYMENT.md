@@ -2,14 +2,6 @@
 
 Lab deploys as a Render Static Site at `https://lab.kristiansalmeron.com/`. The artifact is `out/`; no request-time Node server or Lab database is required. The optional audience tracker uses the separately deployed Portfolio analytics service.
 
-## Approved release scope
-
-The user has approved implementation, pushing, and deployment of decorative bubbles only on `feat/labs-bubble-animations`. The release adds home-arrival bubbles and hover bursts on interactive items. Nothing else in the design, copy, routes, research content, or infrastructure changes. Keep the branch name descriptive; do not create a `codex/` branch.
-
-The home arrival plays only on a new document loaded at `/`, including a refresh. It does not play on client-side navigation, a later home visit within the same document, back/forward history restoration, or a direct load of another route. Hover bursts retain their approved behavior. Reduced-motion preferences skip both effects; hidden pages and page departures clear them. Playback uses no cookies or session storage.
-
-Verify the provider revision and live behavior before considering the release complete. A local build, passing tests, a commit, or an open pull request is not evidence of a production release. Verify the provider's deployed source revision and the public website before recording deployment as complete. The earlier [Studies and Method record](reviews/2026-11-18/studies-and-method.md) remains a historical record of that separate design round.
-
 ## Build and preview
 
 Use Node **22.23.4**, as pinned in `.node-version`:
@@ -66,3 +58,12 @@ After deployment, check each route over HTTPS, refresh nested routes, confirm an
 When changing the tracker integration, deploy its compatible Portfolio collector first. Check opt-out, Global Privacy Control, Do Not Track, and blocked storage across the real subdomains; localhost cannot verify shared-domain cookie behavior. The research pages must still work when analytics is blocked.
 
 If a release fails, restore the last known-good Render deployment or redeploy its source commit. Recheck routes and assets after recovery.
+
+## Environments
+
+| Service               | Branch    | Render URL                                 |
+| --------------------- | --------- | ------------------------------------------ |
+| kriscodes-lab-staging | `staging` | https://kriscodes-lab-staging.onrender.com |
+| kriscodes-lab         | `main`    | https://kriscodes-lab.onrender.com         |
+
+Production and staging use separate services. Keep staging credentials and data isolated. Run CI on each release candidate, verify the deployed source revision and health endpoints, and retain the previous working deployment for recovery. Documentation-only commits can be excluded by build filters; deploy the checked revision manually when a rebuild is required.
