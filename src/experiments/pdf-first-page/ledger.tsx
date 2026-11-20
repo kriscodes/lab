@@ -2,6 +2,7 @@
 import Link from 'next/link';
 import {
   getBenchmarkSourceUrl,
+  ACCEPTED_WINDOW_RESULTS,
   CORPUS_PATH,
   FINAL_WINDOWS,
   LAB_PATH,
@@ -35,16 +36,16 @@ export function PdfLoadingEvidence() {
         <div className="lab-evidence-body">
           <section id="ledger" aria-labelledby="ledger-heading">
             <p className="lr-mono lab-eyebrow">THE FINAL CAMPAIGN</p>
-            <h2 id="ledger-heading">One attempt. An open conclusion.</h2>
+            <h2 id="ledger-heading">Three slots. One accepted window.</h2>
             <div className="lab-counts">
               <p>
                 <strong>
-                  1 <span>/ 3</span>
+                  2 <span>/ 3</span>
                 </strong>{' '}
                 windows attempted
               </p>
               <p>
-                <strong>0</strong> accepted timing windows
+                <strong>1</strong> accepted timing window
               </p>
             </div>
             <EvidenceDate />
@@ -75,13 +76,80 @@ export function PdfLoadingEvidence() {
                             : 'lab-status'
                         }
                       >
-                        {campaignWindow.performance === 'rejected' ? 'Rejected' : 'Pending'}
+                        {campaignWindow.performanceLabel}
                       </span>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
+            <div className="lab-prose">
+              <h3>What the accepted window measured</h3>
+              <p>
+                Window 03 completed on November 19, 09:01–09:05 Pacific. All 64 performance trials
+                passed the original checks: {ACCEPTED_WINDOW_RESULTS.warmupTrials} warmups, excluded
+                from the summaries, and 48 measured trials. The independent performance audit
+                accepted this window, including its pre/post controls, PDF checks, pixels, network
+                checks and strict clock gate.
+              </p>
+            </div>
+            <table className="lab-ledger">
+              <caption>
+                Window 03 only · median first-page render time ·{' '}
+                {ACCEPTED_WINDOW_RESULTS.measuredTrialsPerCondition} measured trials per condition
+              </caption>
+              <thead>
+                <tr>
+                  <th scope="col">PDF structure</th>
+                  <th scope="col">Range requests</th>
+                  <th scope="col">Median time</th>
+                </tr>
+              </thead>
+              <tbody>
+                {ACCEPTED_WINDOW_RESULTS.conditions.map((condition) => (
+                  <tr key={`${condition.structure}-${condition.ranges}`}>
+                    <th scope="row">{condition.structure}</th>
+                    <td data-label="Range requests">{condition.ranges}</td>
+                    <td data-label="Median time">
+                      {condition.medianRenderMilliseconds.toFixed(2)} ms
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <div className="lab-prose">
+              <p>
+                Within this window, the paired median difference for linearized minus nonlinearized
+                was +
+                {ACCEPTED_WINDOW_RESULTS.pairedStructureDifference.rangesEnabledMilliseconds.toFixed(
+                  2,
+                )}{' '}
+                ms with ranges enabled and +
+                {ACCEPTED_WINDOW_RESULTS.pairedStructureDifference.rangesDisabledMilliseconds.toFixed(
+                  2,
+                )}{' '}
+                ms with ranges disabled. Positive means the linearized PDF took longer in these
+                paired observations. These are medians of paired differences, not differences
+                between the four medians above. They describe one run, not a general linearization
+                penalty.
+              </p>
+              <p>
+                The separate observer diagnostic completed 96 valid workloads and 144 passing clock
+                analyses, with all six control stages passing. All 48 pairs were comparable; there
+                were no candidate-only clock acceptance gains. These checks do not establish equal
+                observer overhead or justify adopting the larger observer.
+              </p>
+            </div>
+            <details className="lab-finding">
+              <summary>Why window 02 has no measurements</summary>
+              <div className="lab-prose">
+                <p>
+                  Its allowed start interval ended before the slot was claimed. The retained ledger
+                  records a missed slot with zero attempts: neither runner started. There was no
+                  catch-up or replacement. The missed slot contributes no timing estimate.
+                </p>
+              </div>
+            </details>
             <details className="lab-finding" open>
               <summary>Why window 01 was rejected</summary>
               <div className="lab-prose">
@@ -109,13 +177,30 @@ export function PdfLoadingEvidence() {
               </div>
             </details>
             <div className="lab-prose lab-note">
-              <h3>What happens at the end?</h3>
+              <h3>The stopping rule is met. The comparison is not.</h3>
               <p>
-                Stop after the three declared windows, without replacements or relaxed gates. At
-                least two new accepted windows are needed for a descriptive comparison. If fewer
-                pass, insufficient evidence is the result. Earlier accepted pilots cannot fill a
-                missing slot.
+                All three slots are accounted for, without replacements or relaxed gates. Only one
+                of three new performance windows was accepted; the planned comparison needed at
+                least two. The final conclusion is insufficient accepted evidence for a
+                between-window timing comparison. The earlier accepted pilot stays separate.
               </p>
+            </div>
+            <div className="lab-prose lab-note">
+              <h3>The overall audit still reports a failure</h3>
+              <p>
+                The frozen campaign auditor expects a Node runtime identity for window 02, even
+                though that missed slot never launched a runner. It labels the slot
+                “integrity-failed.” A separate 14-check ledger review confirms the missed outcome
+                and zero invocations; the closing review reconciles the discrepancy. The failed
+                export and frozen code are preserved. This is not an overall audit pass, and it does
+                not change window 03’s independent acceptance.
+              </p>
+              <a
+                className="lab-text-link"
+                href={getBenchmarkSourceUrl('docs/data/final-windows-window-2-ledger-review.json')}
+              >
+                Inspect the missed-slot review
+              </a>
             </div>
           </section>
           <section id="earlier" className="lab-section" aria-labelledby="earlier-heading">
@@ -146,16 +231,36 @@ export function PdfLoadingEvidence() {
             <h2 id="artifacts-heading">The source behind the summary.</h2>
             <ul className="lab-artifacts">
               <li>
-                <a href={getBenchmarkSourceUrl('docs/data/final-windows-progress-window-1.json')}>
-                  Independent progress audit
+                <a href={getBenchmarkSourceUrl('docs/data/final-windows-final-2026-11-19.json')}>
+                  Final campaign audit
                 </a>
-                <span>JSON · complete, versioned audit</span>
+                <span>JSON · retained failed aggregate audit; see caveat above</span>
               </li>
               <li>
-                <a href={getBenchmarkSourceUrl('docs/data/final-windows-progress-window-1.csv')}>
+                <a href={getBenchmarkSourceUrl('docs/data/final-windows-final-2026-11-19.csv')}>
                   Window outcomes
                 </a>
-                <span>CSV · includes rejected and pending windows</span>
+                <span>CSV · original export, including the missed-slot classification defect</span>
+              </li>
+              <li>
+                <a
+                  href={getBenchmarkSourceUrl(
+                    'docs/data/final-windows-closing-review-2026-11-19.json',
+                  )}
+                >
+                  Closing review and conclusion
+                </a>
+                <span>JSON · reconciles the missed slot without relabeling the failed audit</span>
+              </li>
+              <li>
+                <a
+                  href={getBenchmarkSourceUrl(
+                    'docs/data/final-windows-final-publication-2026-11-19.json',
+                  )}
+                >
+                  Verified final archive receipt
+                </a>
+                <span>JSON · three ZIP parts, 231 files, downloaded and checked by SHA-256</span>
               </li>
               <li>
                 <a href={getBenchmarkSourceUrl('experiments/final-windows.json')}>
@@ -202,8 +307,8 @@ export function PdfLoadingEvidence() {
                 not unique PDF-byte coverage.
               </li>
               <li>
-                The final campaign is unfinished. Observer acceptance does not establish equivalent
-                overhead or a general speed benefit.
+                One accepted window cannot establish repeatability across runs. Observer acceptance
+                does not establish equivalent overhead or a general speed benefit.
               </li>
             </ul>
             <Link className="lab-text-link" href={`${LAB_PATH}replicate/`}>

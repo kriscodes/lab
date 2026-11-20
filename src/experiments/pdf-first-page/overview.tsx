@@ -9,7 +9,7 @@ export function PdfLoadingOverview() {
     <article className="loading-lab">
       <div className="lr-kicker lr-mono">
         <span>PDF LOADING / LAB 001</span>
-        <span>FINAL CAMPAIGN · IN PROGRESS</span>
+        <span>FINAL CAMPAIGN · CLOSED</span>
       </div>
       <div className="lab-hero">
         <div>
@@ -30,10 +30,10 @@ export function PdfLoadingOverview() {
       <section className="lab-current" aria-labelledby="current-evidence">
         <p className="lr-mono lab-eyebrow">CURRENT EVIDENCE</p>
         <div>
-          <h2 id="current-evidence">The first window did not pass the timing checks.</h2>
+          <h2 id="current-evidence">One accepted window. Not enough to compare runs.</h2>
           <p>
-            Two scheduled windows remain. The rejected run stays in the record; there is no final
-            timing conclusion yet.
+            The campaign ended with one accepted window, one rejected attempt and one missed slot.
+            We can describe the accepted run, but the planned comparison needed at least two.
           </p>
           <div className="lab-actions">
             <Link className="lab-text-link" href={`${LAB_PATH}evidence/`}>
@@ -59,7 +59,7 @@ export function PdfLoadingOverview() {
               <span>Pacific</span>
             </div>
             <h3 className={campaignWindow.performance === 'rejected' ? 'lab-rejected' : ''}>
-              {campaignWindow.performance === 'rejected' ? 'Rejected' : 'Scheduled'}
+              {campaignWindow.performanceLabel}
             </h3>
             <p>{campaignWindow.note}</p>
           </li>

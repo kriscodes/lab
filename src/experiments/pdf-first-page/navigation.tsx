@@ -1,6 +1,6 @@
 /** Reading paths shared by the static report, evidence ledger and replication guide. */
 import Link from 'next/link';
-import { LAB_PATH, SNAPSHOT_DATE, SNAPSHOT_TIME } from './evidence';
+import { LAB_PATH, SNAPSHOT_DATE, SNAPSHOT_TIME, SNAPSHOT_TIMESTAMP } from './evidence';
 
 /** Links the overview, evidence ledger and replication guide, marking the current section. */
 export function LabNavigation({
@@ -33,7 +33,7 @@ export function EvidenceDate() {
   return (
     <p className="lab-dateline">
       Evidence snapshot ·{' '}
-      <time dateTime="2026-11-18T09:06:00-08:00">
+      <time dateTime={SNAPSHOT_TIMESTAMP}>
         {SNAPSHOT_DATE}, {SNAPSHOT_TIME}
       </time>
       . Updated after review, not live.

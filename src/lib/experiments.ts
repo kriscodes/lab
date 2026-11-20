@@ -66,14 +66,14 @@ const pdfLoadingExperiment: ExperimentMetadata = Object.freeze({
   publicationLabel: 'Lab 001',
   slug: 'pdf-first-page',
   title: 'How soon can a PDF show its first page?',
-  status: 'in-progress',
+  status: 'published',
   category: 'PDF loading',
   summary:
-    'A controlled PDF pair, local browser measurements and a fixed-window campaign. One window rejected; two pending in the November 18 evidence snapshot.',
+    'A closed campaign with one accepted window, one rejected attempt and one missed slot. Insufficient accepted evidence for a comparison across runs.',
   researchQuestion:
     'Does linearization change first-page render time under controlled delivery, with and without range loading?',
   hypothesis:
-    'The order of PDF bytes may change time to first-page render under a declared delivery profile. A final timing conclusion remains open.',
+    'The order of PDF bytes may change time to first-page render under a declared delivery profile. The closed campaign did not yield enough accepted windows for a comparison across runs.',
   technologies: Object.freeze(['PDF.js', 'Chromium', 'TypeScript', 'Python']),
   strategies: Object.freeze([
     'Linearized versus nonlinearized',
@@ -106,7 +106,7 @@ export function getExperiment(experimentSlug: string): ExperimentMetadata | unde
 export function getPopulatedCategories(): readonly string[] {
   return populatedCategories;
 }
-/** Returns accepted publications without promoting proposals or work in progress. */
+/** Returns published reports, including inconclusive findings, without promoting proposals. */
 export function getPublishedFindings(): readonly ExperimentMetadata[] {
   return publishedFindings;
 }
