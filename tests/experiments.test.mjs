@@ -56,7 +56,7 @@ test('Experiment 001 is an unmeasured PDF proposal and cannot be surfaced as a f
   assert.match(experiment.summary, /No benchmark runs/u);
   assert.match(experiment.hypothesis, /remains to be measured/u);
   assert.equal(getExperiment('data-grid-rendering'), undefined);
-  assert.deepEqual(getPublishedFindings(), []);
+  assert.deepEqual(getPublishedFindings(), [getExperiment('pdf-first-page')]);
   assert.ok(!getPublishedFindings().includes(experiment));
   assert.ok(getPublishedFindings().every((entry) => entry.status === 'published'));
   assert.ok(
@@ -88,5 +88,5 @@ test('registry and navigation outputs are stable and immutable at runtime', () =
   assert.throws(() => EXPERIMENTS.pop(), TypeError);
   assert.throws(() => getPopulatedCategories().push('Empty category'), TypeError);
   assert.throws(() => getPublishedFindings().push(EXPERIMENTS[0]), TypeError);
-  assert.deepEqual(getPublishedFindings(), []);
+  assert.deepEqual(getPublishedFindings(), [getExperiment('pdf-first-page')]);
 });

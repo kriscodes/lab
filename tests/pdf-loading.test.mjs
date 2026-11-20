@@ -1,4 +1,4 @@
-/** @file Protects the original PDF corpus and the distinction between pending and accepted evidence. */
+/** @file Protects the original PDF corpus and the distinction between missed, rejected and accepted evidence. */
 
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
@@ -31,7 +31,7 @@ test('public PDF downloads match the preserved corpus manifest byte for byte', a
 test('the dated final-window snapshot does not mistake observer validity for timing acceptance', () => {
   assert.deepEqual(
     FINAL_WINDOWS.map(({ performance }) => performance),
-    ['rejected', 'pending', 'pending'],
+    ['rejected', 'missed', 'accepted'],
   );
   assert.equal(FINAL_WINDOWS[0].observer, '96 of 96 valid');
   for (const campaignWindow of FINAL_WINDOWS) {

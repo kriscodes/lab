@@ -35,16 +35,16 @@ export function PdfLoadingEvidence() {
         <div className="lab-evidence-body">
           <section id="ledger" aria-labelledby="ledger-heading">
             <p className="lr-mono lab-eyebrow">THE FINAL CAMPAIGN</p>
-            <h2 id="ledger-heading">One attempt. An open conclusion.</h2>
+            <h2 id="ledger-heading">Three slots. One accepted window.</h2>
             <div className="lab-counts">
               <p>
                 <strong>
-                  1 <span>/ 3</span>
+                  2 <span>/ 3</span>
                 </strong>{' '}
                 windows attempted
               </p>
               <p>
-                <strong>0</strong> accepted timing windows
+                <strong>1</strong> accepted timing window
               </p>
             </div>
             <EvidenceDate />
@@ -75,7 +75,7 @@ export function PdfLoadingEvidence() {
                             : 'lab-status'
                         }
                       >
-                        {campaignWindow.performance === 'rejected' ? 'Rejected' : 'Pending'}
+                        {campaignWindow.performanceLabel}
                       </span>
                     </td>
                   </tr>
@@ -109,12 +109,12 @@ export function PdfLoadingEvidence() {
               </div>
             </details>
             <div className="lab-prose lab-note">
-              <h3>What happens at the end?</h3>
+              <h3>The stopping rule is met. The comparison is not.</h3>
               <p>
-                Stop after the three declared windows, without replacements or relaxed gates. At
-                least two new accepted windows are needed for a descriptive comparison. If fewer
-                pass, insufficient evidence is the result. Earlier accepted pilots cannot fill a
-                missing slot.
+                All three slots are accounted for, without replacements or relaxed gates. Only one
+                of three new performance windows was accepted; the planned comparison needed at
+                least two. The final conclusion is insufficient accepted evidence for a
+                between-window timing comparison. The earlier accepted pilot stays separate.
               </p>
             </div>
           </section>
@@ -202,8 +202,8 @@ export function PdfLoadingEvidence() {
                 not unique PDF-byte coverage.
               </li>
               <li>
-                The final campaign is unfinished. Observer acceptance does not establish equivalent
-                overhead or a general speed benefit.
+                One accepted window cannot establish repeatability across runs. Observer acceptance
+                does not establish equivalent overhead or a general speed benefit.
               </li>
             </ul>
             <Link className="lab-text-link" href={`${LAB_PATH}replicate/`}>
