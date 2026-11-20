@@ -1,6 +1,6 @@
 # Architecture
 
-Labs is a static publication site built with Next.js App Router, React, and TypeScript. It has its own dependency lockfile and verification workflow. Portfolio and Toolbox are separate applications. The [code guide](CODE_GUIDE.md) describes individual files and functions; this document explains how the parts fit together.
+Labs is a static publication site built with Next.js App Router, React, and TypeScript. It has its own dependency lockfile and verification workflow. Portfolio and Toolbox are separate applications.
 
 ## Static by design
 
@@ -91,7 +91,5 @@ The external collector owns route allowlists, validation, retention, and reporti
 ## Verification and release boundary
 
 GitHub Actions runs `npm run verify` for pull requests, pushes to `main` and `staging`, and manual workflow dispatches. It uses read-only repository permissions and contains no deployment job. The Render configuration separately observes the production branch and passing checks.
-
-The current release approval is limited to decorative bubbles on `feat/labs-bubble-animations`, including implementation, pushing, and deployment. All other design and content remain unchanged. Verify the provider revision and live behavior before considering the release complete; follow [Deployment](DEPLOYMENT.md) for those checks. A successful local build alone does not establish deployment.
 
 Browser review covers keyboard use, narrow layouts, footer flow, theme persistence, blocked storage, reduced motion, and content without JavaScript. Future measurement runners need separate entry points and bundles; keep publication rendering, navigation, and unrelated framework code outside timed work. An iframe isolates a document but does not guarantee a dedicated process or CPU thread.

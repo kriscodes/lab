@@ -10,12 +10,6 @@ The website has a separate front page and a research section. The front page pai
 
 The separate **The Cost of Rendering Progress** proposal remains at `/experiments/pdf-rendering/`. It studies intermediate-frame update cadence and has no collected measurements. Lab001's loading results do not establish findings for that proposal.
 
-### Approved release
-
-The current release on `feat/labs-bubble-animations` is limited to the approved decorative bubbles: a brief arrival on a fresh home-page load and small bursts when hovering interactive items. Implementation, pushing, and deployment are authorized for this scope. Verify the provider revision and live behavior before considering the release complete. The existing design, copy, routes, and research content stay unchanged.
-
-Follow [Deployment](docs/DEPLOYMENT.md) to verify the released revision. The [front-page review](docs/reviews/2026-11-18/labs-front-page.md) and [Studies and Method record](docs/reviews/2026-11-18/studies-and-method.md) preserve those earlier design rounds and their original release boundaries.
-
 ## Work locally
 
 Use Node **22.23.4**, pinned in [.node-version](.node-version), and the committed npm lockfile:
@@ -34,7 +28,7 @@ npm run verify
 npm run preview
 ```
 
-The preview opens at `http://127.0.0.1:4174/`. Set `LAB_PREVIEW_PORT` to use another port. It serves the files in `out/`, so rebuild and reload after changing source. The current design-review preview uses port `4193`.
+The preview opens at `http://127.0.0.1:4174/`. Set `LAB_PREVIEW_PORT` to use another port. It serves the files in `out/`, so rebuild and reload after changing source.
 
 ### Useful commands
 
@@ -51,17 +45,14 @@ The preview opens at `http://127.0.0.1:4174/`. Set `LAB_PREVIEW_PORT` to use ano
 
 ## Find your way around
 
-| Guide                                                                        | Start here when you want to…                                                  |
-| ---------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| [Code guide](docs/CODE_GUIDE.md)                                             | Understand each file, the main functions, and how a page reaches the browser. |
-| [Architecture](docs/ARCHITECTURE.md)                                         | Change routes, add an experiment, or understand publication boundaries.       |
-| [Deployment](docs/DEPLOYMENT.md)                                             | Prepare an approved release or verify a deployed version.                     |
-| [Staging](docs/STAGING.md)                                                   | Review the separate staging configuration and promotion process.              |
-| [Static publication decision](docs/decisions/001-static-publication.md)      | Understand why this site exports static files.                                |
-| [Audience measurement decision](docs/decisions/002-audience-measurement.md)  | Understand the optional analytics dependency.                                 |
-| [Rendering-progress proposal](docs/decisions/003-pdf-progress-study.md)      | Read the separate, unmeasured research proposal.                              |
-| [Lab001 publication decision](docs/decisions/004-pdf-loading-publication.md) | Update the dated evidence and replication instructions responsibly.           |
-| [Original publication review](docs/reviews/2026-11-18/README.md)             | Inspect the historical Lab001 verification record and screenshots.            |
+| Guide                                                                        | Start here when you want to…                                            |
+| ---------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| [Architecture](docs/ARCHITECTURE.md)                                         | Change routes, add an experiment, or understand publication boundaries. |
+| [Deployment](docs/DEPLOYMENT.md)                                             | Prepare an approved release or verify a deployed version.               |
+| [Static publication decision](docs/decisions/001-static-publication.md)      | Understand why this site exports static files.                          |
+| [Audience measurement decision](docs/decisions/002-audience-measurement.md)  | Understand the optional analytics dependency.                           |
+| [Rendering-progress proposal](docs/decisions/003-pdf-progress-study.md)      | Read the separate, unmeasured research proposal.                        |
+| [Lab001 publication decision](docs/decisions/004-pdf-loading-publication.md) | Update the dated evidence and replication instructions responsibly.     |
 
 ## Review the experience
 
