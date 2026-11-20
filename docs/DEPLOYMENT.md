@@ -49,3 +49,12 @@ After deployment, check each route over HTTPS, refresh nested routes, confirm an
 When changing the tracker integration, deploy its compatible Portfolio collector first. Check opt-out, Global Privacy Control, Do Not Track, and blocked storage across the real subdomains; localhost cannot verify shared-domain cookie behavior. The research pages must still work when analytics is blocked.
 
 If a release fails, restore the last known-good Render deployment or redeploy its source commit. Recheck routes and assets after recovery.
+
+## Environments
+
+| Service               | Branch    | Render URL                                 |
+| --------------------- | --------- | ------------------------------------------ |
+| kriscodes-lab-staging | `staging` | https://kriscodes-lab-staging.onrender.com |
+| kriscodes-lab         | `main`    | https://kriscodes-lab.onrender.com         |
+
+Production and staging use separate services. Keep staging credentials and data isolated. Run CI on each release candidate, verify the deployed source revision and health endpoints, and retain the previous working deployment for recovery. Documentation-only commits can be excluded by build filters; deploy the checked revision manually when a rebuild is required.

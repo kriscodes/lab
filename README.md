@@ -33,5 +33,3 @@ The research content remains readable without JavaScript. Theme controls store a
 - [Proposed PDF progress study](docs/decisions/003-pdf-progress-study.md)
 
 Font source attribution and SIL Open Font License files are retained in [public/fonts](public/fonts/SOURCES.md).
-
-Staging setup and promotion: [docs/STAGING.md](docs/STAGING.md) (prepared; activation pending review).
