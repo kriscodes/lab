@@ -2,6 +2,7 @@
 import Link from 'next/link';
 import { getBenchmarkSourceUrl, FINAL_WINDOWS, LAB_PATH } from './evidence';
 import { EvidenceDate, LabNavigation } from './navigation';
+import { ROUND_TWO } from './round-two-data';
 
 /** Introduces the research question, fixed campaign and paths to its supporting records. */
 export function PdfLoadingOverview() {
@@ -9,7 +10,7 @@ export function PdfLoadingOverview() {
     <article className="loading-lab">
       <div className="lr-kicker lr-mono">
         <span>PDF LOADING / LAB 001</span>
-        <span>FINAL CAMPAIGN · CLOSED</span>
+        <span>ROUND TWO · COMPLETE</span>
       </div>
       <div className="lab-hero">
         <div>
@@ -28,15 +29,25 @@ export function PdfLoadingOverview() {
       </div>
       <LabNavigation currentSection="overview" />
       <section className="lab-current" aria-labelledby="current-evidence">
-        <p className="lr-mono lab-eyebrow">CURRENT EVIDENCE</p>
+        <p className="lr-mono lab-eyebrow">ROUND TWO</p>
         <div>
-          <h2 id="current-evidence">One accepted window. Not enough to compare runs.</h2>
+          <h2 id="current-evidence">{ROUND_TWO.headline}</h2>
+          <p>{ROUND_TWO.summary}</p>
+          <Link className="lab-text-link" href={`${LAB_PATH}evidence/#round-two`}>
+            See the round-two results
+          </Link>
+        </div>
+      </section>
+      <section className="lab-current" aria-labelledby="final-campaign-evidence">
+        <p className="lr-mono lab-eyebrow">NOVEMBER 19 CAMPAIGN</p>
+        <div>
+          <h2 id="final-campaign-evidence">One accepted window. Not enough to compare runs.</h2>
           <p>
             The campaign ended with one accepted window, one rejected attempt and one missed slot.
             We can describe the accepted run, but the planned comparison needed at least two.
           </p>
           <div className="lab-actions">
-            <Link className="lab-text-link" href={`${LAB_PATH}evidence/`}>
+            <Link className="lab-text-link" href={`${LAB_PATH}evidence/#ledger`}>
               Explore the evidence
             </Link>
             <Link className="lab-text-link" href={`${LAB_PATH}replicate/`}>

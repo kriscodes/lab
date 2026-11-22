@@ -4,7 +4,7 @@ import { pageMetadata } from '@/lib/site';
 
 export const metadata = pageMetadata(
   'PDF loading — Lab 001',
-  'One controlled PDF pair and the path to first-page render. Protocol, current evidence and limitations.',
+  'One controlled PDF pair and the path to first-page render. Round two tests 0 ms and 100 ms of response delay.',
   '/experiments/pdf-first-page/',
 );
 
