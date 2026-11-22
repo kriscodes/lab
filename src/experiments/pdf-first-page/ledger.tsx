@@ -9,6 +9,7 @@ import {
   RESEARCH_STAGES,
 } from './evidence';
 import { EvidenceDate, LabNavigation } from './navigation';
+import { RoundTwoResults } from './round-two';
 
 /** Displays the reviewed campaign outcomes, earlier diagnostics and limits of the evidence. */
 export function PdfLoadingEvidence() {
@@ -28,13 +29,15 @@ export function PdfLoadingEvidence() {
       <div className="lab-evidence-layout">
         <nav className="lab-contents" aria-label="Evidence sections">
           <span className="lr-mono">IN THIS RECORD</span>
+          <a href="#round-two">Round two</a>
           <a href="#ledger">Final campaign</a>
           <a href="#earlier">Earlier diagnostics</a>
           <a href="#artifacts">Source &amp; artifacts</a>
           <a href="#limits">Limits &amp; open questions</a>
         </nav>
         <div className="lab-evidence-body">
-          <section id="ledger" aria-labelledby="ledger-heading">
+          <RoundTwoResults />
+          <section id="ledger" className="lab-section" aria-labelledby="ledger-heading">
             <p className="lr-mono lab-eyebrow">THE FINAL CAMPAIGN</p>
             <h2 id="ledger-heading">Three slots. One accepted window.</h2>
             <div className="lab-counts">

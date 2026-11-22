@@ -69,15 +69,16 @@ const pdfLoadingExperiment: ExperimentMetadata = Object.freeze({
   status: 'published',
   category: 'PDF loading',
   summary:
-    'A closed campaign with one accepted window, one rejected attempt and one missed slot. Insufficient accepted evidence for a comparison across runs.',
+    'Two PDFs with the same pages. Round two tests how response delay and range loading affect first-page render time.',
   researchQuestion:
     'Does linearization change first-page render time under controlled delivery, with and without range loading?',
   hypothesis:
-    'The order of PDF bytes may change time to first-page render under a declared delivery profile. The closed campaign did not yield enough accepted windows for a comparison across runs.',
+    'The order of PDF bytes and the timing of range responses may change when PDF.js can render the first page.',
   technologies: Object.freeze(['PDF.js', 'Chromium', 'TypeScript', 'Python']),
   strategies: Object.freeze([
     'Linearized versus nonlinearized',
     'Range loading enabled versus disabled',
+    '0 versus 100 ms of response-header delay',
   ]),
   methodologyURI: '/methodology/',
   references: Object.freeze([
